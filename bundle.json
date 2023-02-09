@@ -1,0 +1,64 @@
+{
+  "name": "@openharmony/security_component",
+  "description": "security_component",
+  "version": "3.1.0",
+  "license": "Apache License 2.0",
+  "publishAs": "code-segment",
+  "segment": {
+    "destPath": "base/security/security_component"
+  },
+  "dirs": {},
+  "scripts": {},
+  "component": {
+    "name": "security_component",
+    "subsystem": "security",
+    "syscap": [],
+    "hisysevent_config": [
+    ],
+    "features": [ "security_component_feature_coverage = false" ],
+    "adapted_system_type": [
+      "standard"
+    ],
+    "rom": "2048KB",
+    "ram": "5102KB",
+    "deps": {
+      "components": [
+        "aafwk_standard",
+        "ability_base",
+        "ability_runtime",
+        "appexecfwk_standard",
+        "hiviewdfx_hilog_native",
+        "hisysevent_native",
+        "ipc_core",
+        "safwk",
+        "samgr",
+        "c_utils",
+        "samgr_proxy",
+        "samgr",
+        "system_ability_fwk",
+        "utils_base"
+      ],
+      "third_party": [
+        "cJSON",
+        "sqlite",
+        "mbedtls"
+      ]
+    },
+    "build": {
+      "sub_component": [
+        "//base/security/security_component:security_component_build_module"
+      ],
+      "inner_kits": [
+        {
+          "name": "//base/security/security_component/interfaces/inner_api/security_component:libsecurity_component_sdk",
+          "header": {
+            "header_files": [
+              "sec_comp_kit.h"
+            ],
+            "header_base": "//base/security/security_component/interfaces/inner_api/security_component/include"
+          }
+        }
+      ]
+    }
+  }
+}
