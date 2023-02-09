@@ -1,0 +1,46 @@
+# Copyright (c) 2023 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//base/security/security_component/security_component.gni")
+import("//build/ohos.gni")
+
+ohos_shared_library("libsecurity_component_framework") {
+  subsystem_name = "security"
+  part_name = "security_component"
+  output_name = "libsecurity_component_framework"
+
+  include_dirs = [
+    "include",
+    "${sec_comp_root_dir}/frameworks/common/include",
+    "${sec_comp_root_dir}/frameworks/security_component/include",
+    "${sec_comp_root_dir}/interfaces/inner_api/security_component/include",
+    "//third_party/json/include",
+  ]
+
+  sources = [
+    "common/src/sec_comp_tool.cpp",
+    "security_component/src/location_button.cpp",
+    "security_component/src/sec_comp_base.cpp",
+    "security_component/src/sec_comp_click_event_parcel.cpp",
+    "security_component/src/sec_comp_rect.cpp",
+  ]
+
+  configs = [ "//base/security/security_component/config:coverage_flags" ]
+
+  external_deps = [
+    "c_utils:utils",
+    "hiviewdfx_hilog_native:libhilog",
+  ]
+
+  cflags_cc = [ "-DHILOG_ENABLE" ]
+}

@@ -1,0 +1,17 @@
+{
+  "subsystem": "security",
+  "parts": {
+    "security_component": {
+      "variants": [
+        "phone",
+        "wearable"
+      ],
+      "module_list": [
+        "//base/security/security_component:security_component_build_module"
+      ],
+      "test_list": [
+        "//base/security/security_component:security_component_build_module_test"
+      ]
+    }
+  }
+}
