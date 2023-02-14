@@ -24,6 +24,9 @@ public:
     SystemAbilityManagerClient() = default;
     ~SystemAbilityManagerClient() = default;
 
+    static SystemAbilityManagerClient* clientInstance;
+    static SystemAbilityManagerClient defaultInstance;
+    static std::mutex instanceMtx;
     MOCK_METHOD0(GetSystemAbilityManager, sptr<ISystemAbilityManager>());
 };
 }  // namespace OHOS

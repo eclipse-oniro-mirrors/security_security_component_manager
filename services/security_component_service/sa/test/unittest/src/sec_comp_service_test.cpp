@@ -122,19 +122,21 @@ HWTEST_F(SecCompServiceTest, RegisterAppStateObserver001, TestSize.Level1)
 {
     // GetSystemAbilityManager get failed
     secCompService_->appStateObserver_ = nullptr;
-    SystemAbilityManagerClient& saClient = SystemAbilityManagerClient::GetInstance();
-    EXPECT_CALL(saClient, GetSystemAbilityManager()).WillOnce(testing::Return(nullptr));
+    std::shared_ptr<SystemAbilityManagerClient> saClient = std::make_shared<SystemAbilityManagerClient>();
+    ASSERT_NE(saClient, nullptr);
+    SystemAbilityManagerClient::clientInstance = saClient.get();
+    EXPECT_CALL(*saClient, GetSystemAbilityManager()).WillOnce(testing::Return(nullptr));
     EXPECT_FALSE(secCompService_->RegisterAppStateObserver());
 
     // GetSystemAbility get app mgr failed
     secCompService_->appStateObserver_ = nullptr;
     SystemAbilityManagerProxy proxy(nullptr);
-    EXPECT_CALL(saClient, GetSystemAbilityManager()).WillOnce(testing::Return(&proxy));
+    EXPECT_CALL(*saClient, GetSystemAbilityManager()).WillOnce(testing::Return(&proxy));
     EXPECT_FALSE(secCompService_->RegisterAppStateObserver());
 
     // RegisterApplicationStateObserver failed
     secCompService_->appStateObserver_ = nullptr;
-    EXPECT_CALL(saClient, GetSystemAbilityManager()).WillOnce(testing::Return(&proxy));
+    EXPECT_CALL(*saClient, GetSystemAbilityManager()).WillOnce(testing::Return(&proxy));
     MockIRemoteObject object;
     EXPECT_CALL(proxy, GetSystemAbility(testing::_)).WillOnce(testing::Return(&object));
     sptr<MockAppMgrProxy> appProxy = new (std::nothrow) MockAppMgrProxy(nullptr);
@@ -145,7 +147,7 @@ HWTEST_F(SecCompServiceTest, RegisterAppStateObserver001, TestSize.Level1)
 
     // GetForegroundApplications failed
     secCompService_->appStateObserver_ = nullptr;
-    EXPECT_CALL(saClient, GetSystemAbilityManager()).WillOnce(testing::Return(&proxy));
+    EXPECT_CALL(*saClient, GetSystemAbilityManager()).WillOnce(testing::Return(&proxy));
     EXPECT_CALL(proxy, GetSystemAbility(testing::_)).WillOnce(testing::Return(&object));
     EXPECT_CALL(*MockAppMgrProxy::g_MockAppMgrProxy,
         RegisterApplicationStateObserver(testing::_, testing::_)).WillOnce(testing::Return(0));
@@ -156,7 +158,7 @@ HWTEST_F(SecCompServiceTest, RegisterAppStateObserver001, TestSize.Level1)
 
     // get one foreground app
     secCompService_->appStateObserver_ = nullptr;
-    EXPECT_CALL(saClient, GetSystemAbilityManager()).WillOnce(testing::Return(&proxy));
+    EXPECT_CALL(*saClient, GetSystemAbilityManager()).WillOnce(testing::Return(&proxy));
     EXPECT_CALL(proxy, GetSystemAbility(testing::_)).WillOnce(testing::Return(&object));
     EXPECT_CALL(*MockAppMgrProxy::g_MockAppMgrProxy,
         RegisterApplicationStateObserver(testing::_, testing::_)).WillOnce(testing::Return(0));
@@ -170,6 +172,7 @@ HWTEST_F(SecCompServiceTest, RegisterAppStateObserver001, TestSize.Level1)
     EXPECT_TRUE(secCompService_->RegisterAppStateObserver());
     EXPECT_EQ(secCompService_->appStateObserver_->foregrandProcList_.size(), static_cast<const size_t>(1));
     secCompService_->UnregisterAppStateObserver();
+    SystemAbilityManagerClient::clientInstance = nullptr;
 }
 
 /**

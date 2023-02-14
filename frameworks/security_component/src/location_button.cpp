@@ -56,7 +56,7 @@ void LocationButton::FromJson(const nlohmann::json& jsonSrc)
     }
 
     if (jsonSrc.find(JSON_FONT_SIZE) != jsonSrc.end() && jsonSrc.at(JSON_FONT_SIZE).is_number()) {
-        fontSize_ = jsonSrc.at(JSON_FONT_SIZE).get<int32_t>();
+        fontSize_ = jsonSrc.at(JSON_FONT_SIZE).get<uint32_t>();
     }
 
     if (jsonSrc.find(JSON_FONT_COLOR) != jsonSrc.end() && jsonSrc.at(JSON_FONT_COLOR).is_number()) {
