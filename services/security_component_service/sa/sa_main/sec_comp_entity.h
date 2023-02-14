@@ -65,7 +65,7 @@ public:
 
 private:
     std::shared_ptr<SecCompBase> componentInfo_;
-    bool isGrant_;
+    bool isGrant_ = false;
     AccessToken::AccessTokenID tokenId_;
     int32_t scId_;
 };

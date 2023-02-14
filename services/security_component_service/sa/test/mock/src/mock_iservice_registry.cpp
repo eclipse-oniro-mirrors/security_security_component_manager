@@ -16,9 +16,19 @@
 #include "iservice_registry.h"
 
 namespace OHOS {
+SystemAbilityManagerClient* SystemAbilityManagerClient::clientInstance = nullptr;
+SystemAbilityManagerClient SystemAbilityManagerClient::defaultInstance;
+std::mutex SystemAbilityManagerClient::instanceMtx;
+
 SystemAbilityManagerClient& SystemAbilityManagerClient::GetInstance()
 {
-    static auto instance = new SystemAbilityManagerClient();
-    return *instance;
+    std::lock_guard<std::mutex> lock(instanceMtx);
+    if (clientInstance == nullptr) {
+        clientInstance = new (std::nothrow)SystemAbilityManagerClient();
+        if (clientInstance == nullptr) {
+            return defaultInstance;
+        }
+    }
+    return *clientInstance;
 }
 } // namespace OHOS
