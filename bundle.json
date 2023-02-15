@@ -58,6 +58,9 @@
             "header_base": "//base/security/security_component/interfaces/inner_api/security_component/include"
           }
         }
+      ],
+      "test": [
+        "//base/security/security_component:security_component_build_module_test"
       ]
     }
   }
