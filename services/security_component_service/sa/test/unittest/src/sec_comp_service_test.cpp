@@ -93,7 +93,7 @@ void SecCompServiceTest::TearDown()
  * @tc.name: Onstart001
  * @tc.desc: Test OnStart
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(SecCompServiceTest, OnStart001, TestSize.Level1)
 {
@@ -116,7 +116,7 @@ HWTEST_F(SecCompServiceTest, OnStart001, TestSize.Level1)
  * @tc.name: RegisterAppStateObserver001
  * @tc.desc: Test RegisterAppStateObserver
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(SecCompServiceTest, RegisterAppStateObserver001, TestSize.Level1)
 {
@@ -179,7 +179,7 @@ HWTEST_F(SecCompServiceTest, RegisterAppStateObserver001, TestSize.Level1)
  * @tc.name: UnregisterAppStateObserver001
  * @tc.desc: Test RegisterAppStateObserver
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(SecCompServiceTest, UnregisterAppStateObserver001, TestSize.Level1)
 {
@@ -196,7 +196,7 @@ HWTEST_F(SecCompServiceTest, UnregisterAppStateObserver001, TestSize.Level1)
  * @tc.name: GetCallerInfo001
  * @tc.desc: Test get caller info
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(SecCompServiceTest, GetCallerInfo001, TestSize.Level1)
 {
@@ -223,7 +223,7 @@ HWTEST_F(SecCompServiceTest, GetCallerInfo001, TestSize.Level1)
  * @tc.name: RegisterSecurityComponent001
  * @tc.desc: Test register security component
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(SecCompServiceTest, RegisterSecurityComponent001, TestSize.Level1)
 {
@@ -263,7 +263,7 @@ HWTEST_F(SecCompServiceTest, RegisterSecurityComponent001, TestSize.Level1)
  * @tc.name: UnregisterSecurityComponent001
  * @tc.desc: Test unregister security component
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(SecCompServiceTest, UnregisterSecurityComponent001, TestSize.Level1)
 {
@@ -275,7 +275,7 @@ HWTEST_F(SecCompServiceTest, UnregisterSecurityComponent001, TestSize.Level1)
  * @tc.name: UpdateSecurityComponent001
  * @tc.desc: Test update security component
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(SecCompServiceTest, UpdateSecurityComponent001, TestSize.Level1)
 {
@@ -297,7 +297,7 @@ HWTEST_F(SecCompServiceTest, UpdateSecurityComponent001, TestSize.Level1)
  * @tc.name: ReportSecurityComponentClickEvent001
  * @tc.desc: Test update security component
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(SecCompServiceTest, ReportSecurityComponentClickEvent001, TestSize.Level1)
 {

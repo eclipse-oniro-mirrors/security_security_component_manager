@@ -60,7 +60,7 @@ void SecCompEntityTest::TearDown()
  * @tc.name: RevokeTempPermission001
  * @tc.desc: Test revoke temp permission
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(SecCompEntityTest, RevokeTempPermission001, TestSize.Level1)
 {
@@ -82,7 +82,7 @@ HWTEST_F(SecCompEntityTest, RevokeTempPermission001, TestSize.Level1)
  * @tc.name: GrantTempPermission001
  * @tc.desc: Test grant permission
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(SecCompEntityTest, GrantTempPermission001, TestSize.Level1)
 {
@@ -104,7 +104,7 @@ HWTEST_F(SecCompEntityTest, GrantTempPermission001, TestSize.Level1)
  * @tc.name: CheckTouchInfo001
  * @tc.desc: Test touch info
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(SecCompEntityTest, CheckTouchInfo001, TestSize.Level1)
 {
@@ -136,7 +136,7 @@ HWTEST_F(SecCompEntityTest, CheckTouchInfo001, TestSize.Level1)
  * @tc.name: IsRectOverlaped001
  * @tc.desc: Test check rect overlap
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(SecCompEntityTest, IsRectOverlaped001, TestSize.Level1)
 {

@@ -69,6 +69,7 @@ private:
     OHOS::Utils::RWLock componentInfoLock_;
     std::mutex scIdMtx_;
     std::unordered_map<int32_t, std::vector<SecCompEntity>> componentMap_;
+    int32_t scCount_;
     int32_t scIdStart_;
 
     bool Initialize() const;

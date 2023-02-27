@@ -54,7 +54,7 @@ void SecCompBaseTest::TearDown()
  * @tc.name: FromJson001
  * @tc.desc: Test SecCompBase from json success
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(SecCompBaseTest, FromJson001, TestSize.Level1)
 {
@@ -77,7 +77,7 @@ HWTEST_F(SecCompBaseTest, FromJson001, TestSize.Level1)
  * @tc.name: FromJson002
  * @tc.desc: Test empty SecCompBase from json
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(SecCompBaseTest, FromJson002, TestSize.Level1)
 {
@@ -91,7 +91,7 @@ HWTEST_F(SecCompBaseTest, FromJson002, TestSize.Level1)
  * @tc.name: FromJson003
  * @tc.desc: Test location button from wrong type json
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(SecCompBaseTest, FromJson003, TestSize.Level1)
 {
@@ -110,7 +110,7 @@ HWTEST_F(SecCompBaseTest, FromJson003, TestSize.Level1)
  * @tc.name: FromJson004
  * @tc.desc: Test location button from wrong rect json
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(SecCompBaseTest, FromJson004, TestSize.Level1)
 {
@@ -164,7 +164,7 @@ HWTEST_F(SecCompBaseTest, FromJson004, TestSize.Level1)
  * @tc.name: IsValid001
  * @tc.desc: Test SecCompBase invalid
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(SecCompBaseTest, IsValid001, TestSize.Level1)
 {
@@ -181,7 +181,7 @@ HWTEST_F(SecCompBaseTest, IsValid001, TestSize.Level1)
  * @tc.name: Compare001
  * @tc.desc: Test SecCompBase compare
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(SecCompBaseTest, Compare001, TestSize.Level1)
 {

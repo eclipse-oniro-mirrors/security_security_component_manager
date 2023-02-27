@@ -104,7 +104,7 @@ void SecCompManagerTest::TearDown()
  * @tc.name: CreateScId001
  * @tc.desc: Test create sc id
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(SecCompManagerTest, CreateScId001, TestSize.Level1)
 {
@@ -119,7 +119,7 @@ HWTEST_F(SecCompManagerTest, CreateScId001, TestSize.Level1)
  * @tc.name: AddProcessComponent001
  * @tc.desc: Test add process component
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(SecCompManagerTest, AddProcessComponent001, TestSize.Level1)
 {
@@ -148,7 +148,7 @@ HWTEST_F(SecCompManagerTest, AddProcessComponent001, TestSize.Level1)
  * @tc.name: AddSecurityComponentToList001
  * @tc.desc: Test add security component to list
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(SecCompManagerTest, AddSecurityComponentToList001, TestSize.Level1)
 {
@@ -178,7 +178,7 @@ HWTEST_F(SecCompManagerTest, AddSecurityComponentToList001, TestSize.Level1)
  * @tc.name: DeleteSecurityComponentFromList001
  * @tc.desc: Test delete security component
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(SecCompManagerTest, DeleteSecurityComponentFromList001, TestSize.Level1)
 {
@@ -204,7 +204,7 @@ HWTEST_F(SecCompManagerTest, DeleteSecurityComponentFromList001, TestSize.Level1
  * @tc.name: GetSecurityComponentFromList001
  * @tc.desc: Test get security component
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(SecCompManagerTest, GetSecurityComponentFromList001, TestSize.Level1)
 {
@@ -226,7 +226,7 @@ HWTEST_F(SecCompManagerTest, GetSecurityComponentFromList001, TestSize.Level1)
  * @tc.name: NotifyProcessBackground001
  * @tc.desc: Test notify process background
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(SecCompManagerTest, NotifyProcessBackground001, TestSize.Level1)
 {
@@ -249,7 +249,7 @@ HWTEST_F(SecCompManagerTest, NotifyProcessBackground001, TestSize.Level1)
  * @tc.name: NotifyProcessDied001
  * @tc.desc: Test notify process died
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(SecCompManagerTest, NotifyProcessDied001, TestSize.Level1)
 {
@@ -282,7 +282,7 @@ HWTEST_F(SecCompManagerTest, NotifyProcessDied001, TestSize.Level1)
  * @tc.name: RegisterSecurityComponent001
  * @tc.desc: Test register security component
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(SecCompManagerTest, RegisterSecurityComponent001, TestSize.Level1)
 {
@@ -312,7 +312,7 @@ HWTEST_F(SecCompManagerTest, RegisterSecurityComponent001, TestSize.Level1)
  * @tc.name: UpdateSecurityComponent001
  * @tc.desc: Test update security component
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(SecCompManagerTest, UpdateSecurityComponent001, TestSize.Level1)
 {
@@ -340,7 +340,7 @@ HWTEST_F(SecCompManagerTest, UpdateSecurityComponent001, TestSize.Level1)
  * @tc.name: UnregisterSecurityComponent001
  * @tc.desc: Test unregister security component
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(SecCompManagerTest, UnregisterSecurityComponent001, TestSize.Level1)
 {
@@ -357,7 +357,7 @@ HWTEST_F(SecCompManagerTest, UnregisterSecurityComponent001, TestSize.Level1)
  * @tc.name: ReportSecurityComponentClickEvent001
  * @tc.desc: Test report security component click
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(SecCompManagerTest, ReportSecurityComponentClickEvent001, TestSize.Level1)
 {

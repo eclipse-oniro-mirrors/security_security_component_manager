@@ -80,7 +80,7 @@ void LocationButtonTest::TearDown()
  * @tc.name: FromJson001
  * @tc.desc: Test location button from json success
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(LocationButtonTest, FromJson001, TestSize.Level1)
 {
@@ -110,7 +110,7 @@ HWTEST_F(LocationButtonTest, FromJson001, TestSize.Level1)
  * @tc.name: FromJson002
  * @tc.desc: Test empty location button from json
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(LocationButtonTest, FromJson002, TestSize.Level1)
 {
@@ -124,7 +124,7 @@ HWTEST_F(LocationButtonTest, FromJson002, TestSize.Level1)
  * @tc.name: FromJson003
  * @tc.desc: Test location button from wrong type params json
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(LocationButtonTest, FromJson003, TestSize.Level1)
 {
@@ -158,7 +158,7 @@ HWTEST_F(LocationButtonTest, FromJson003, TestSize.Level1)
  * @tc.name: FromJson004
  * @tc.desc: Test location button from wrong value params json
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(LocationButtonTest, FromJson004, TestSize.Level1)
 {
@@ -188,7 +188,7 @@ HWTEST_F(LocationButtonTest, FromJson004, TestSize.Level1)
  * @tc.name: IsValid001
  * @tc.desc: Test check location button invalid
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(LocationButtonTest, IsValid001, TestSize.Level1)
 {
@@ -223,7 +223,7 @@ HWTEST_F(LocationButtonTest, IsValid001, TestSize.Level1)
  * @tc.name: CompareLocationButton001
  * @tc.desc: Test compare location button
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(LocationButtonTest, CompareLocationButton001, TestSize.Level1)
 {

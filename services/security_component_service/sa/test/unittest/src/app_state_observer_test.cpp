@@ -54,7 +54,7 @@ void AppStateObserverTest::TearDown()
  * @tc.name: IsProcessForeground001
  * @tc.desc: Test is process foreground
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(AppStateObserverTest, IsProcessForeground001, TestSize.Level1)
 {
@@ -70,7 +70,7 @@ HWTEST_F(AppStateObserverTest, IsProcessForeground001, TestSize.Level1)
  * @tc.name: AddProcessToForegroundSet001
  * @tc.desc: Test add process to foreground
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(AppStateObserverTest, AddProcessToForegroundSet001, TestSize.Level1)
 {
@@ -93,7 +93,7 @@ HWTEST_F(AppStateObserverTest, AddProcessToForegroundSet001, TestSize.Level1)
  * @tc.name: RemoveProcessFromForegroundSet001
  * @tc.desc: Test remove process from foreground
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(AppStateObserverTest, RemoveProcessFromForegroundSet001, TestSize.Level1)
 {
@@ -111,7 +111,7 @@ HWTEST_F(AppStateObserverTest, RemoveProcessFromForegroundSet001, TestSize.Level
  * @tc.name: OnProcessStateChanged001
  * @tc.desc: Test recieve process state changed
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(AppStateObserverTest, OnProcessStateChanged001, TestSize.Level1)
 {
@@ -135,7 +135,7 @@ HWTEST_F(AppStateObserverTest, OnProcessStateChanged001, TestSize.Level1)
  * @tc.name: OnProcessDied001
  * @tc.desc: Test recieve process state died
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(AppStateObserverTest, OnProcessDied001, TestSize.Level1)
 {

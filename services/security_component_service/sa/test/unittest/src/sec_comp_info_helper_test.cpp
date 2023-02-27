@@ -69,7 +69,7 @@ void SecCompInfoHelperTest::TearDown()
  * @tc.name: ParseComponent001
  * @tc.desc: Test parse component info
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(SecCompInfoHelperTest, ParseComponent001, TestSize.Level1)
 {
@@ -88,7 +88,7 @@ HWTEST_F(SecCompInfoHelperTest, ParseComponent001, TestSize.Level1)
  * @tc.name: CompareSecCompInfo001
  * @tc.desc: Test compare sec comp info
  * @tc.type: FUNC
- * @tc.require:AR000HO9IN
+ * @tc.require:
  */
 HWTEST_F(SecCompInfoHelperTest, CompareSecCompInfo001, TestSize.Level1)
 {
