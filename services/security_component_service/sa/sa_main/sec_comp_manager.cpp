@@ -15,11 +15,12 @@
 
 #include "sec_comp_manager.h"
 
+#include "i_sec_comp_service.h"
+#include "iservice_registry.h"
+#include "sec_comp_enhance_adapter.h"
 #include "sec_comp_err.h"
 #include "sec_comp_info_helper.h"
 #include "sec_comp_log.h"
-#include "iservice_registry.h"
-#include "i_sec_comp_service.h"
 
 namespace OHOS {
 namespace Security {
@@ -33,6 +34,7 @@ static constexpr int32_t MAX_INT_NUM = 0x7fffffff;
 SecCompManager::SecCompManager()
 {
     scIdStart_ = SC_ID_START;
+    scCount_ = 0;
     SC_LOG_INFO(LABEL, "SecCompManager()");
 }
 
@@ -64,6 +66,10 @@ int32_t SecCompManager::AddProcessComponent(std::vector<SecCompEntity>& componen
     }
 
     componentList.emplace_back(newEntity);
+    if (scCount_ == 0) {
+        SecCompEnhanceAdapter::EnableInputEnhance();
+    }
+    scCount_++;
     return SC_OK;
 }
 
@@ -94,6 +100,7 @@ int32_t SecCompManager::DeleteSecurityComponentFromList(int32_t uid, int32_t scI
         if (it->GetScId() == scId) {
             it->RevokeTempPermission();
             list.erase(it);
+            scCount_--;
             return SC_OK;
         }
     }
@@ -128,8 +135,12 @@ void SecCompManager::NotifyProcessBackground(int32_t uid)
     std::vector<SecCompEntity>& list = iter->second;
     for (auto it = list.begin(); it != list.end(); ++it) {
         it->RevokeTempPermission();
+        scCount_--;
     }
     list.clear();
+    if (scCount_ <= 0) {
+        SecCompEnhanceAdapter::DisableInputEnhance();
+    }
 }
 
 void SecCompManager::NotifyProcessDied(int32_t uid)
@@ -143,8 +154,12 @@ void SecCompManager::NotifyProcessDied(int32_t uid)
     std::vector<SecCompEntity>& list = iter->second;
     for (auto it = list.begin(); it != list.end(); ++it) {
         it->RevokeTempPermission();
+        scCount_--;
     }
     list.clear();
+    if (scCount_ <= 0) {
+        SecCompEnhanceAdapter::DisableInputEnhance();
+    }
     componentMap_.erase(uid);
     ExitSaAfterAllProcessDie();
 }
@@ -214,7 +229,11 @@ int32_t SecCompManager::UnregisterSecurityComponent(int32_t scId, const SecCompC
         SC_LOG_ERROR(LABEL, "ScId is invalid");
         return SC_SERVICE_ERROR_VALUE_INVALID;
     }
-    return DeleteSecurityComponentFromList(caller.uid, scId);
+    int32_t res = DeleteSecurityComponentFromList(caller.uid, scId);
+    if (res == SC_OK && scCount_ <= 0) {
+        SecCompEnhanceAdapter::DisableInputEnhance();
+    }
+    return res;
 }
 
 int32_t SecCompManager::ReportSecurityComponentClickEvent(int32_t scId,

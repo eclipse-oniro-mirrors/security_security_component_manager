@@ -20,7 +20,6 @@ ohos_shared_library("libsecurity_component_framework") {
   output_name = "libsecurity_component_framework"
 
   include_dirs = [
-    "include",
     "${sec_comp_root_dir}/frameworks/common/include",
     "${sec_comp_root_dir}/frameworks/security_component/include",
     "${sec_comp_root_dir}/interfaces/inner_api/security_component/include",
@@ -43,4 +42,32 @@ ohos_shared_library("libsecurity_component_framework") {
   ]
 
   cflags_cc = [ "-DHILOG_ENABLE" ]
+}
+
+ohos_shared_library("libsecurity_component_enhance_adapter") {
+  subsystem_name = "security"
+  part_name = "security_component"
+  output_name = "libsecurity_component_enhance_adapter"
+
+  include_dirs = [
+    "${sec_comp_root_dir}/frameworks/common/include",
+    "${sec_comp_root_dir}/frameworks/enhance_adapter/include",
+  ]
+
+  sources = [
+    "enhance_adapter/src/sec_comp_enhance_adapter.cpp",
+  ]
+
+  configs = [ "//base/security/security_component/config:coverage_flags" ]
+
+  external_deps = [
+    "c_utils:utils",
+    "hiviewdfx_hilog_native:libhilog",
+  ]
+
+  cflags_cc = [ "-DHILOG_ENABLE" ]
+
+  if (current_cpu == "arm64") {
+    defines = [ "_ARM64_" ]
+  }
 }
