@@ -70,7 +70,7 @@ HWTEST_F(SecCompStubTest, OnRemoteRequest001, TestSize.Level1)
         data, reply, option), SC_SERVICE_ERROR_PARCEL_OPERATE_FAIL);
 
     data.WriteInterfaceToken(u"ohos.security.ISecCompService");
-    ASSERT_EQ(stub_->OnRemoteRequest(0, data, reply, option), 0);
+    ASSERT_EQ(stub_->OnRemoteRequest(0, data, reply, option), 305);
 }
 
 /**
