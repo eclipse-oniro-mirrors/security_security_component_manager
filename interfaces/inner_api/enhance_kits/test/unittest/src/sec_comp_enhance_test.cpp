@@ -32,6 +32,7 @@ static const std::string LIB_PATH = "/system/lib/";
 #endif
 static const std::string ENHANCE_INPUT_INTERFACE_LIB = LIB_PATH + "libsec_comp_input_enhance.z.so";
 static const std::string ENHANCE_SRV_INTERFACE_LIB = LIB_PATH + "libsec_comp_service_enhance.z.so";
+static constexpr uint32_t MAX_HMAC_SIZE = 64;
 }  // namespace
 
 void SecCompEnhanceTest::SetUpTestCase()
@@ -90,12 +91,11 @@ HWTEST_F(SecCompEnhanceTest, GetPoniterEventEnhanceData001, TestSize.Level1)
     uint8_t originData[16] = { 0 };
     uint32_t dataLen = 16;
     uint8_t* enhanceData = nullptr;
-    uint32_t enHancedataLen = 0;
+    uint32_t enHancedataLen = MAX_HMAC_SIZE;
 
-    int32_t result = SecCompEnhanceKit::GetPointerEventEnhanceData(originData, dataLen, &enhanceData, enHancedataLen);
+    int32_t result = SecCompEnhanceKit::GetPointerEventEnhanceData(originData, dataLen, enhanceData, enHancedataLen);
     if (g_inputEnhanceExist) {
         EXPECT_EQ(result, SC_OK);
-        EXPECT_EQ(enHancedataLen, static_cast<uint32_t>(0));
     } else {
         EXPECT_EQ(result, SC_ENHANCE_ERROR_NOT_EXIST_ENHANCE);
     }

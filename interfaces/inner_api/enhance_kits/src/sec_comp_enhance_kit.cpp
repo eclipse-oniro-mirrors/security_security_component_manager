@@ -23,7 +23,7 @@ int32_t SecCompEnhanceKit::SetEnhanceCfg(SecCompEnhanceCfgBase* cfg)
 }
 
 int32_t SecCompEnhanceKit::GetPointerEventEnhanceData(void *data, uint32_t dataLen,
-    uint8_t** enhanceData, uint32_t& enHancedataLen)
+    uint8_t* enhanceData, uint32_t& enHancedataLen)
 {
     return SecCompEnhanceAdapter::GetPointerEventEnhanceData(data, dataLen, enhanceData, enHancedataLen);
 }

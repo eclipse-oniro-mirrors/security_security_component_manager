@@ -34,7 +34,7 @@ public:
     virtual SecCompEnhanceCfgBase* UnmarshallEnhanceCfg(Parcel& in) = 0;
     virtual int32_t SetEnhanceCfg(SecCompEnhanceCfgBase* cfg) = 0;
     virtual int32_t GetPointerEventEnhanceData(void *data, uint32_t dataLen,
-        uint8_t** enhanceData, uint32_t& enHancedataLen) = 0;
+        uint8_t* enhanceData, uint32_t& enHancedataLen) = 0;
 };
 
 class SecCompEnhanceServiceInterface {
@@ -49,7 +49,7 @@ struct SecCompEnhanceAdapter {
     static int32_t UnmarshallEnhanceCfg(Parcel& in, SecCompEnhanceCfgBase*& result);
     static int32_t SetEnhanceCfg(SecCompEnhanceCfgBase* cfg);
     static int32_t GetPointerEventEnhanceData(void *data, uint32_t dataLen,
-        uint8_t** enhanceData, uint32_t& enHancedataLen);
+        uint8_t* enhanceData, uint32_t& enHancedataLen);
 
     static int32_t EnableInputEnhance();
     static int32_t DisableInputEnhance();
