@@ -103,7 +103,7 @@ int32_t SecCompEnhanceAdapter::SetEnhanceCfg(SecCompEnhanceCfgBase* cfg)
 }
 
 int32_t SecCompEnhanceAdapter::GetPointerEventEnhanceData(void *data, uint32_t dataLen,
-    uint8_t** enhanceData, uint32_t& enHancedataLen)
+    uint8_t* enhanceData, uint32_t& enHancedataLen)
 {
     if (!isEnhanceInputHandlerInit) {
         InitEnhanceHandler(SEC_COMP_ENHANCE_INPUT_INTERFACE);

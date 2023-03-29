@@ -22,7 +22,7 @@ namespace SecurityComponent {
 struct SecCompEnhanceKit {
     static int32_t SetEnhanceCfg(SecCompEnhanceCfgBase* cfg);
     static int32_t GetPointerEventEnhanceData(void *data, uint32_t dataLen,
-        uint8_t** enhanceData, uint32_t& enHancedataLen);
+        uint8_t* enhanceData, uint32_t& enHancedataLen);
 };
 }  // namespace SecurityComponent
 }  // namespace Security
