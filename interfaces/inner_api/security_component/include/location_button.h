@@ -23,20 +23,52 @@
 namespace OHOS {
 namespace Security {
 namespace SecurityComponent {
+enum class LocationDesc : int32_t {
+    UNKNOWN_TEXT = -2,
+    NO_TEXT = -1,
+    CURRENT_LOCATION  = 0,
+    ADD_LOCATION = 4,
+    SELECT_LOCATION = 1,
+    SHARE_LOCATION = 2,
+    SEND_LOCATION = 3,
+    LOCATING = 5,
+    LOCATION = 6,
+    SEND_CURRENT_LOCATION = 7,
+    RELOCATION = 8,
+    PUNCH_IN = 9,
+    CURRENT_POSITION = 10,
+    MAX_LABEL_TYPE
+};
+
+enum class LocationIcon {
+    UNKNOWN_ICON = -2,
+    NO_ICON = -1,
+    FILLED_ICON = 0,
+    LINE_ICON = 1,
+    MAX_ICON_TYPE
+};
+
+enum class LocationBackground {
+    UNKNOWN_BG = -2,
+    NO_BG_TYPE = -1,
+    CAPSULE = 0,
+    CIRCLE = 1,
+    NORMAL = 2,
+    MAX_BG_TYPE
+};
+
 class LocationButton : public SecCompBase {
 public:
-    SecCompFontFamily font_ = UNKNOWN_FONT_FAMILY_TYPE;
-    SecCompLabel label_ = UNKNOWN_LABEL;
-    SecCompIcon icon_ = UNKNOWN_ICON;
-    uint32_t fontSize_ = 0;
-    SecCompColor fontColor_;
-    SecCompColor bgColor_;
-    SecCompButtonType buttonType_ = UNKNOWN_BUTTON_TYPE;
+    LocationDesc text_ = LocationDesc::UNKNOWN_TEXT;
+    LocationIcon icon_ = LocationIcon::UNKNOWN_ICON;
+    LocationBackground bg_ = LocationBackground::UNKNOWN_BG;
 
-    virtual void FromJson(const nlohmann::json& jsonSrc) override;
+    virtual bool FromJson(const nlohmann::json& jsonSrc) override;
     virtual void ToJson(nlohmann::json& jsonRes) const override;
-    virtual bool IsValid(void) const override;
-    bool operator==(const LocationButton& other) const;
+    virtual std::string ToJsonStr(void) const;
+    virtual bool CompareComponentBasicInfo(SecCompBase *other) const override;
+private:
+    bool ParseStyle(const nlohmann::json& json, const std::string& tag);
 };
 }  // namespace SecurityComponent
 }  // namespace Security

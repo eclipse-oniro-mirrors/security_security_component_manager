@@ -35,26 +35,35 @@ static constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {
 
 static constexpr uint32_t HAP_TOKEN_ID = 537715419;
 static constexpr int32_t SA_ID = 3506;
-static constexpr uint32_t TEST_FONT_SIZE = 100;
 static constexpr double TEST_COORDINATE = 100.0;
-static constexpr uint32_t TEST_COLOR = 0xffffffff;
 static constexpr int32_t TEST_SC_ID = 1;
+static constexpr double TEST_SIZE = 100.0;
+static constexpr uint32_t TEST_COLOR_1 = 0x7fff00;
+static constexpr uint32_t TEST_COLOR_2 = 0xff0000;
+static constexpr uint32_t TEST_COLOR_3 = 0x0000ff;
 
 static std::string BuildLocationComponentInfo()
 {
     LocationButton button;
-    button.fontSize_ = TEST_FONT_SIZE;
-    button.font_ = FONT_HO_SANS;
-    button.bgColor_.value = TEST_COLOR;
-    button.fontColor_.value = TEST_COLOR;
-    button.icon_ = DEFAULT_ICON;
-    button.label_ = DEFAULT_LABEL;
+    button.fontSize_ = TEST_SIZE;
+    button.iconSize_ = TEST_SIZE;
+    button.padding_.top = TEST_SIZE;
+    button.padding_.right = TEST_SIZE;
+    button.padding_.bottom = TEST_SIZE;
+    button.padding_.left = TEST_SIZE;
+    button.textIconPadding_ = TEST_SIZE;
+    button.fontColor_.value = TEST_COLOR_1;
+    button.iconColor_.value = TEST_COLOR_2;
+    button.bgColor_.value = TEST_COLOR_3;
+    button.borderWidth_ = TEST_SIZE;
+    button.type_ = LOCATION_COMPONENT;
     button.rect_.x_ = TEST_COORDINATE;
     button.rect_.y_ = TEST_COORDINATE;
     button.rect_.width_ = TEST_COORDINATE;
     button.rect_.height_ = TEST_COORDINATE;
-    button.type_ = LOCATION_COMPONENT;
-    button.buttonType_ = CAPSULE;
+    button.text_ = LocationDesc::SELECT_LOCATION;
+    button.icon_ = LocationIcon::LINE_ICON;
+    button.bg_ = LocationBackground::CIRCLE;
 
     nlohmann::json jsonRes;
     button.ToJson(jsonRes);
@@ -250,7 +259,7 @@ HWTEST_F(SecCompServiceTest, RegisterSecurityComponent001, TestSize.Level1)
     struct SecCompClickEvent touch = {
         .touchX = 100,
         .touchY = 100,
-        .timestamp = GetCurrentTime()
+        .timestamp = static_cast<uint64_t>(std::chrono::high_resolution_clock::now().time_since_epoch().count())
     };
 
     EXPECT_EQ(secCompService_->ReportSecurityComponentClickEvent(scId, BuildLocationComponentInfo(), touch),
@@ -305,7 +314,7 @@ HWTEST_F(SecCompServiceTest, ReportSecurityComponentClickEvent001, TestSize.Leve
     struct SecCompClickEvent touch = {
         .touchX = TEST_COORDINATE,
         .touchY = TEST_COORDINATE,
-        .timestamp = GetCurrentTime()
+        .timestamp = static_cast<uint64_t>(std::chrono::high_resolution_clock::now().time_since_epoch().count())
     };
     EXPECT_EQ(secCompService_->ReportSecurityComponentClickEvent(TEST_SC_ID, BuildLocationComponentInfo(), touch),
         SC_SERVICE_ERROR_VALUE_INVALID);

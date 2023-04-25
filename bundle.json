@@ -1,7 +1,7 @@
 {
   "name": "@openharmony/security_component",
   "description": "security_component",
-  "version": "3.1.0",
+  "version": "4.0.0",
   "license": "Apache License 2.0",
   "publishAs": "code-segment",
   "segment": {
@@ -56,6 +56,35 @@
               "sec_comp_kit.h"
             ],
             "header_base": "//base/security/security_component/interfaces/inner_api/security_component/include"
+          }
+        },
+        {
+          "name": "//base/security/security_component/frameworks:libsecurity_component_framework",
+          "header": {
+            "header_files": [
+               "location_button.h",
+               "paste_button.h",
+               "save_button.h"
+            ],
+            "header_base": "//base/security/security_component/interfaces/inner_api/security_component/include"
+          }
+        },
+        {
+          "name": "//base/security/security_component/frameworks:libsecurity_component_enhance_adapter",
+          "header": {
+            "header_files": [
+               "sec_comp_enhance_adapter.h"
+            ],
+            "header_base": "//base/security/security_component/frameworks/enhance_adapter/include"
+          }
+        },
+        {
+          "name": "//base/security/security_component/services/security_component_service/sa:security_component_service",
+          "header": {
+            "header_files": [
+               "sec_comp_manager.h"
+            ],
+            "header_base": "//base/security/security_component/services/security_component_service/sa/sa_main"
           }
         }
       ],

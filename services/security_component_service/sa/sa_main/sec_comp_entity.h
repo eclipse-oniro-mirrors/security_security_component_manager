@@ -59,8 +59,22 @@ public:
         componentInfo_ = com;
     };
 
-    bool CompareComponentInfo(const SecCompBase* other) const;
-    bool IsRectOverlaped(const SecCompEntity& other) const;
+    std::shared_ptr<SecCompBase> GetComponentInfo()
+    {
+        return componentInfo_;
+    };
+
+    bool GetEffective() const
+    {
+        return isEffective_;
+    };
+
+    void SetEffective(bool effective)
+    {
+        isEffective_ = effective;
+    };
+
+    bool CompareComponentBasicInfo(SecCompBase* other) const;
     bool CheckTouchInfo(const SecCompClickEvent& touchInfo) const;
 
 private:
@@ -68,6 +82,7 @@ private:
     bool isGrant_ = false;
     AccessToken::AccessTokenID tokenId_;
     int32_t scId_;
+    bool isEffective_ = false;
 };
 }  // namespace SecurityComponent
 }  // namespace Security

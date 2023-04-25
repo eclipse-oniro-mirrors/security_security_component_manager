@@ -16,11 +16,13 @@
 #define SECURITY_COMPONENT_TOOL_H
 
 #include <stdint.h>
+#include "sec_comp_info.h"
 
 namespace OHOS {
 namespace Security {
 namespace SecurityComponent {
-    uint64_t GetCurrentTime();
+    bool IsColorSimilar(const SecCompColor& color1, const SecCompColor& color2);
+    bool IsColorTransparent(const SecCompColor& color);
 }  // namespace SecurityComponent
 }  // namespace Security
 }  // namespace OHOS

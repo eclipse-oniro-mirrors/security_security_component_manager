@@ -25,8 +25,9 @@ using namespace OHOS::Security::SecurityComponent;
 namespace {
 static constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {
     LOG_CORE, SECURITY_DOMAIN_SECURITY_COMPONENT, "SecCompKitTest"};
-static constexpr uint32_t TEST_FONT_SIZE = 100;
+static constexpr float TEST_SIZE = 100.0;
 static constexpr double TEST_COORDINATE = 100.0;
+static constexpr double TEST_DIMENSION = 100.0;
 static constexpr uint32_t TEST_COLOR = 0xffffffff;
 }  // namespace
 
@@ -58,22 +59,27 @@ void SecCompKitTest::TearDown()
  */
 HWTEST_F(SecCompKitTest, ExceptCall001, TestSize.Level1)
 {
-    LocationButton button;
-    button.fontSize_ = TEST_FONT_SIZE;
-    button.font_ = FONT_HO_SANS;
-    button.bgColor_.value = TEST_COLOR;
-    button.fontColor_.value = TEST_COLOR;
-    button.icon_ = DEFAULT_ICON;
-    button.label_ = DEFAULT_LABEL;
-    button.rect_.x_ = TEST_COORDINATE;
-    button.rect_.y_ = TEST_COORDINATE;
-    button.rect_.width_ = TEST_COORDINATE;
-    button.rect_.height_ = TEST_COORDINATE;
-    button.type_ = LOCATION_COMPONENT;
-    button.buttonType_ = CAPSULE;
+    SecCompBase comp;
+    comp.fontSize_ = TEST_SIZE;
+    comp.iconSize_ = TEST_SIZE;
+    comp.padding_.top = TEST_DIMENSION;
+    comp.padding_.right = TEST_DIMENSION;
+    comp.padding_.bottom = TEST_DIMENSION;
+    comp.padding_.left = TEST_DIMENSION;
+    comp.textIconPadding_ = TEST_SIZE;
+    comp.bgColor_.value = TEST_COLOR;
+    comp.fontColor_.value = TEST_COLOR;
+    comp.iconColor_.value = TEST_COLOR;
+    comp.borderWidth_ = TEST_SIZE;
+    comp.parentEffect_ = true;
+    comp.type_ = LOCATION_COMPONENT;
+    comp.rect_.x_ = TEST_COORDINATE;
+    comp.rect_.y_ = TEST_COORDINATE;
+    comp.rect_.width_ = TEST_COORDINATE;
+    comp.rect_.height_ = TEST_COORDINATE;
 
     nlohmann::json jsonRes;
-    button.ToJson(jsonRes);
+    comp.ToJson(jsonRes);
     int32_t scId = -1;
     ASSERT_NE(SC_OK, SecCompKit::RegisterSecurityComponent(LOCATION_COMPONENT, jsonRes.dump(), scId));
     ASSERT_EQ(-1, scId);
@@ -82,7 +88,7 @@ HWTEST_F(SecCompKitTest, ExceptCall001, TestSize.Level1)
     struct SecCompClickEvent touch = {
         .touchX = TEST_COORDINATE,
         .touchY = TEST_COORDINATE,
-        .timestamp = GetCurrentTime()
+        .timestamp = static_cast<uint64_t>(std::chrono::high_resolution_clock::now().time_since_epoch().count())
     };
     EXPECT_NE(SC_OK, SecCompKit::ReportSecurityComponentClickEvent(scId, jsonRes.dump(), touch));
     EXPECT_NE(SC_OK, SecCompKit::UnregisterSecurityComponent(scId));

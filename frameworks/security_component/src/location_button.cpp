@@ -14,98 +14,88 @@
  */
 
 #include "location_button.h"
+#include <tuple>
 #include "sec_comp_err.h"
 #include "sec_comp_log.h"
+#include "sec_comp_tool.h"
 
 namespace OHOS {
 namespace Security {
 namespace SecurityComponent {
 namespace {
 constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {LOG_CORE, SECURITY_DOMAIN_SECURITY_COMPONENT, "LocationButton"};
-static const std::string JSON_FONT_FAMILY = "font";
-static const std::string JSON_LABEL_TYPE = "label";
-static const std::string JSON_ICON = "icon";
-static const std::string JSON_FONT_SIZE = "fontSize";
-static const std::string JSON_FONT_COLOR = "fontColor";
-static const std::string JSON_BG_COLOR = "bgColor";
-static const std::string JSON_BUTTON_TYPE = "buttonType";
+static const std::string JSON_STYLE_TAG = "style";
+static const std::string JSON_TEXT_TAG = "text";
+static const std::string JSON_ICON_TAG = "icon";
+static const std::string JSON_BG_TAG = "bg";
 }
 
-void LocationButton::FromJson(const nlohmann::json& jsonSrc)
+bool LocationButton::ParseStyle(const nlohmann::json& json, const std::string& tag)
 {
+    if ((json.find(tag) == json.end()) || !json.at(tag).is_object()) {
+        SC_LOG_ERROR(LABEL, "has not %{public}s.", tag.c_str());
+        return false;
+    }
+    auto jsonStyle = json.at(tag);
+    if (!ParseTypeValue<LocationDesc>(jsonStyle, JSON_TEXT_TAG, text_,
+        LocationDesc::UNKNOWN_TEXT, LocationDesc::MAX_LABEL_TYPE)) {
+        return false;
+    }
+
+    if (!ParseTypeValue<LocationIcon>(jsonStyle, JSON_ICON_TAG, icon_,
+        LocationIcon::UNKNOWN_ICON, LocationIcon::MAX_ICON_TYPE)) {
+        return false;
+    }
+
+    if (!ParseTypeValue<LocationBackground>(jsonStyle, JSON_BG_TAG, bg_,
+        LocationBackground::UNKNOWN_BG, LocationBackground::MAX_BG_TYPE)) {
+        return false;
+    }
+
+    return true;
+}
+
+bool LocationButton::FromJson(const nlohmann::json& jsonSrc)
+{
+    SC_LOG_DEBUG(LABEL, "LocationButton info %{public}s.", jsonSrc.dump().c_str());
     SecCompBase::FromJson(jsonSrc);
-    if (jsonSrc.find(JSON_FONT_FAMILY) != jsonSrc.end() && jsonSrc.at(JSON_FONT_FAMILY).is_number()) {
-        int32_t font = jsonSrc.at(JSON_FONT_FAMILY).get<int32_t>();
-        if (IsComponentFontFamilyValid(font)) {
-            font_ = static_cast<SecCompFontFamily>(font);
-        }
+    if (!ParseStyle(jsonSrc, JSON_STYLE_TAG)) {
+        SC_LOG_ERROR(LABEL, "Parse style %{public}s.", jsonSrc.dump().c_str());
+        return false;
     }
-
-    if (jsonSrc.find(JSON_LABEL_TYPE) != jsonSrc.end() && jsonSrc.at(JSON_LABEL_TYPE).is_number()) {
-        int32_t label = jsonSrc.at(JSON_LABEL_TYPE).get<int32_t>();
-        if (IsComponentLabelValid(label)) {
-            label_ = static_cast<SecCompLabel>(label);
-        }
-    }
-
-    if (jsonSrc.find(JSON_ICON) != jsonSrc.end() && jsonSrc.at(JSON_ICON).is_number()) {
-        int32_t icon = jsonSrc.at(JSON_ICON).get<int32_t>();
-        if (IsComponentIconValid(icon)) {
-            icon_ = static_cast<SecCompIcon>(icon);
-        }
-    }
-
-    if (jsonSrc.find(JSON_FONT_SIZE) != jsonSrc.end() && jsonSrc.at(JSON_FONT_SIZE).is_number()) {
-        fontSize_ = jsonSrc.at(JSON_FONT_SIZE).get<uint32_t>();
-    }
-
-    if (jsonSrc.find(JSON_FONT_COLOR) != jsonSrc.end() && jsonSrc.at(JSON_FONT_COLOR).is_number()) {
-        fontColor_.value = jsonSrc.at(JSON_FONT_COLOR).get<uint32_t>();
-    }
-
-    if (jsonSrc.find(JSON_BG_COLOR) != jsonSrc.end() && jsonSrc.at(JSON_BG_COLOR).is_number()) {
-        bgColor_.value = jsonSrc.at(JSON_BG_COLOR).get<uint32_t>();
-    }
-
-    if (jsonSrc.find(JSON_BUTTON_TYPE) != jsonSrc.end() && jsonSrc.at(JSON_BUTTON_TYPE).is_number()) {
-        int32_t type = jsonSrc.at(JSON_BUTTON_TYPE).get<int32_t>();
-        if (IsComponentButtonTypeValid(type)) {
-            buttonType_ = static_cast<SecCompButtonType>(type);
-        }
-    }
+    return true;
 }
 
 void LocationButton::ToJson(nlohmann::json& jsonRes) const
 {
     SecCompBase::ToJson(jsonRes);
-    jsonRes[JSON_FONT_FAMILY] = font_;
-    jsonRes[JSON_LABEL_TYPE] = label_;
-    jsonRes[JSON_ICON] = icon_;
-    jsonRes[JSON_FONT_SIZE] = fontSize_;
-    jsonRes[JSON_FONT_COLOR] = fontColor_.value;
-    jsonRes[JSON_BG_COLOR] = bgColor_.value;
-    jsonRes[JSON_BUTTON_TYPE] = buttonType_;
+    jsonRes[JSON_STYLE_TAG] = nlohmann::json {
+        { JSON_TEXT_TAG, text_ },
+        { JSON_ICON_TAG, icon_ },
+        { JSON_BG_TAG, bg_ },
+    };
 }
 
-bool LocationButton::IsValid(void) const
+std::string LocationButton::ToJsonStr() const
 {
-    bool locationValid = IsComponentFontFamilyValid(font_) && IsComponentLabelValid(label_) &&
-        IsComponentIconValid(icon_) && IsComponentFontSizeValid(fontSize_) &&
-        IsComponentButtonTypeValid(buttonType_);
-
-    return locationValid && SecCompBase::IsValid();
+    nlohmann::json json;
+    ToJson(json);
+    return json.dump();
 }
 
-bool LocationButton::operator==(const LocationButton& other) const
+bool LocationButton::CompareComponentBasicInfo(SecCompBase *other) const
 {
-    if (font_ != other.font_ || label_ != other.label_ || icon_ != other.icon_ ||
-        fontSize_ != other.fontSize_ || fontColor_.value != other.fontColor_.value ||
-        bgColor_.value != other.bgColor_.value || buttonType_ != other.buttonType_) {
-        SC_LOG_INFO(LABEL, "LocationButton is not equal");
+    if (!SecCompBase::CompareComponentBasicInfo(other)) {
+        SC_LOG_ERROR(LABEL, "SecComp base not equal.");
         return false;
     }
-
-    return SecCompBase::operator==(other);
+    LocationButton* otherLocationButton = reinterpret_cast<LocationButton *>(other);
+    if (otherLocationButton == nullptr) {
+        SC_LOG_ERROR(LABEL, "other is not location button.");
+        return false;
+    }
+    return (icon_ == otherLocationButton->icon_) && (text_ == otherLocationButton->text_) &&
+        (bg_ == otherLocationButton->bg_);
 }
 }  // namespace SecurityComponent
 }  // namespace Security

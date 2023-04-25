@@ -27,8 +27,9 @@ template<typename T>
 T* ConstructComponent(const nlohmann::json& jsonComponent)
 {
     T *componentPtr = new (std::nothrow)T();
-    if (componentPtr != nullptr) {
-        componentPtr->FromJson(jsonComponent);
+    if ((componentPtr != nullptr) && !componentPtr->FromJson(jsonComponent)) {
+        delete componentPtr;
+        return nullptr;
     }
     return componentPtr;
 }
@@ -36,11 +37,11 @@ T* ConstructComponent(const nlohmann::json& jsonComponent)
 class SecCompInfoHelper {
 public:
     static SecCompBase* ParseComponent(SecCompType type, const nlohmann::json& jsonComponent);
-    static bool CompareSecCompInfo(const SecCompBase* comA, const SecCompBase* comB);
     static int32_t RevokeTempPermission(AccessToken::AccessTokenID tokenId,
         const std::shared_ptr<SecCompBase>& componentInfo);
     static int32_t GrantTempPermission(AccessToken::AccessTokenID tokenId,
         const std::shared_ptr<SecCompBase>& componentInfo);
+    static bool CheckComponentValid(const SecCompBase* comp);
 };
 }  // namespace SecurityComponent
 }  // namespace Security

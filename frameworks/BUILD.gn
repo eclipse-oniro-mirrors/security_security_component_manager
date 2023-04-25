@@ -14,6 +14,13 @@
 import("//base/security/security_component/security_component.gni")
 import("//build/ohos.gni")
 
+config("libsecurity_component_framework_config") {
+  include_dirs = [
+    "${sec_comp_root_dir}/frameworks/common/include",
+    "${sec_comp_root_dir}/interfaces/inner_api/security_component/include",
+  ]
+}
+
 ohos_shared_library("libsecurity_component_framework") {
   subsystem_name = "security"
   part_name = "security_component"
@@ -31,10 +38,10 @@ ohos_shared_library("libsecurity_component_framework") {
     "security_component/src/location_button.cpp",
     "security_component/src/sec_comp_base.cpp",
     "security_component/src/sec_comp_click_event_parcel.cpp",
-    "security_component/src/sec_comp_rect.cpp",
   ]
 
   configs = [ "//base/security/security_component/config:coverage_flags" ]
+  public_configs = [ ":libsecurity_component_framework_config" ]
 
   external_deps = [
     "c_utils:utils",
@@ -42,6 +49,13 @@ ohos_shared_library("libsecurity_component_framework") {
   ]
 
   cflags_cc = [ "-DHILOG_ENABLE" ]
+}
+
+config("libsecurity_component_enhance_adapter_config") {
+  include_dirs = [
+    "${sec_comp_root_dir}/frameworks/common/include",
+    "${sec_comp_root_dir}/frameworks/enhance_adapter/include",
+  ]
 }
 
 ohos_shared_library("libsecurity_component_enhance_adapter") {
@@ -59,6 +73,7 @@ ohos_shared_library("libsecurity_component_enhance_adapter") {
   ]
 
   configs = [ "//base/security/security_component/config:coverage_flags" ]
+  public_configs = [ ":libsecurity_component_enhance_adapter_config" ]
 
   external_deps = [
     "c_utils:utils",

@@ -51,6 +51,7 @@ public:
     int32_t UnregisterSecurityComponent(int32_t scId,     const SecCompCallerInfo& caller);
     int32_t ReportSecurityComponentClickEvent(int32_t scId, const nlohmann::json& jsonComponent,
         const SecCompCallerInfo& caller, const SecCompClickEvent& touchInfo);
+    void NotifyProcessForeground(int32_t uid);
     void NotifyProcessBackground(int32_t uid);
     void NotifyProcessDied(int32_t uid);
     void DumpSecComp(std::string& dumpStr) const;
@@ -69,7 +70,7 @@ private:
     OHOS::Utils::RWLock componentInfoLock_;
     std::mutex scIdMtx_;
     std::unordered_map<int32_t, std::vector<SecCompEntity>> componentMap_;
-    int32_t scCount_;
+    int32_t scValidCount_;
     int32_t scIdStart_;
 
     bool Initialize() const;

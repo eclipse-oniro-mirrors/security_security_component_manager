@@ -24,11 +24,6 @@ namespace OHOS {
 namespace Security {
 namespace SecurityComponent {
 class SaveButton : public SecCompBase {
-public:
-    bool operator==(const SaveButton& other) const
-    {
-        return SecCompBase::operator==(other);
-    };
 };
 }  // namespace SecurityComponent
 }  // namespace Security
