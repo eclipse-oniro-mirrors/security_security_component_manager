@@ -25,13 +25,11 @@ namespace {
 static constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {
     LOG_CORE, SECURITY_DOMAIN_SECURITY_COMPONENT, "LocationButtonTest"};
 
-static const std::string JSON_FONT_FAMILY = "font";
-static const std::string JSON_LABEL_TYPE = "label";
-static const std::string JSON_ICON = "icon";
-static const std::string JSON_FONT_SIZE = "fontSize";
-static const std::string JSON_FONT_COLOR = "fontColor";
-static const std::string JSON_BG_COLOR = "bgColor";
-static const std::string JSON_BUTTON_TYPE = "buttonType";
+static const std::string JSON_STYLE_TAG = "style";
+static const std::string JSON_TEXT_TAG = "text";
+static const std::string JSON_ICON_TAG = "icon";
+static const std::string JSON_BG_TAG = "bg";
+
 static const std::string JSON_RECT = "rect";
 static const std::string JSON_SC_TYPE = "type";
 static const std::string JSON_RECT_X = "x";
@@ -39,26 +37,76 @@ static const std::string JSON_RECT_Y = "y";
 static const std::string JSON_RECT_WIDTH = "width";
 static const std::string JSON_RECT_HEIGHT = "height";
 
-static constexpr uint32_t TEST_FONT_SIZE = 100;
-static constexpr uint32_t TEST_INVALID_FONT_SIZE = 0;
-static constexpr double TEST_COORDINATE = 100.0;
-static constexpr uint32_t TEST_COLOR = 0xffffffff;
-static constexpr uint32_t TEST_DIFF_COLOR = 0;
+static const std::string JSON_SIZE_TAG = "size";
+static const std::string JSON_FONT_SIZE_TAG = "fontSize";
+static const std::string JSON_ICON_SIZE_TAG = "iconSize";
+static const std::string JSON_PADDING_SIZE_TAG = "paddingSize";
+static const std::string JSON_PADDING_LEFT_TAG = "left";
+static const std::string JSON_PADDING_TOP_TAG = "top";
+static const std::string JSON_PADDING_RIGHT_TAG = "right";
+static const std::string JSON_PADDING_BOTTOM_TAG = "bottom";
+static const std::string JSON_TEXT_ICON_PADDING_TAG = "textIconPadding";
+static const std::string JSON_RECT_WIDTH_TAG = "width";
+static const std::string JSON_RECT_HEIGHT_TAG = "height";
 
-static void BuildLocationComponentInfo(LocationButton& button)
+static const std::string JSON_COLORS_TAG = "colors";
+static const std::string JSON_FONT_COLOR_TAG = "fontColor";
+static const std::string JSON_ICON_COLOR_TAG = "iconColor";
+static const std::string JSON_BG_COLOR_TAG = "bgColor";
+
+static const std::string JSON_BORDER_TAG = "border";
+static const std::string JSON_BORDER_WIDTH_TAG = "borderWidth";
+static const std::string JSON_PARENT_TAG = "parent";
+static const std::string JSON_PARENT_EFFECT_TAG = "parentEffect";
+
+static const std::string WRONG_TYPE = "wrongType";
+static constexpr float TEST_SIZE = 100.0;
+static constexpr double TEST_COORDINATE = 100.0;
+static constexpr double TEST_DIMENSION = 100.0;
+static constexpr uint32_t TEST_COLOR_1 = 0x7fff00;
+static constexpr uint32_t TEST_COLOR_2 = 0xff0000;
+static constexpr uint32_t TEST_COLOR_3 = 0x0000ff;
+
+static void BuildLocationComponentInfo(nlohmann::json& jsonComponent)
 {
-    button.fontSize_ = TEST_FONT_SIZE;
-    button.font_ = FONT_HO_SANS;
-    button.bgColor_.value = TEST_COLOR;
-    button.fontColor_.value = TEST_COLOR;
-    button.icon_ = DEFAULT_ICON;
-    button.label_ = DEFAULT_LABEL;
-    button.rect_.x_ = TEST_COORDINATE;
-    button.rect_.y_ = TEST_COORDINATE;
-    button.rect_.width_ = TEST_COORDINATE;
-    button.rect_.height_ = TEST_COORDINATE;
-    button.type_ = LOCATION_COMPONENT;
-    button.buttonType_ = CAPSULE;
+    jsonComponent[JSON_SC_TYPE] = LOCATION_COMPONENT;
+    jsonComponent[JSON_RECT] =  nlohmann::json {
+        {JSON_RECT_X, TEST_COORDINATE },
+        {JSON_RECT_Y, TEST_COORDINATE },
+        {JSON_RECT_WIDTH, TEST_COORDINATE },
+        {JSON_RECT_HEIGHT, TEST_COORDINATE }
+    };
+    nlohmann::json jsonPadding = nlohmann::json {
+        { JSON_PADDING_TOP_TAG, TEST_DIMENSION },
+        { JSON_PADDING_RIGHT_TAG, TEST_DIMENSION },
+        { JSON_PADDING_BOTTOM_TAG,TEST_DIMENSION },
+        { JSON_PADDING_LEFT_TAG, TEST_DIMENSION },
+    };
+
+    jsonComponent[JSON_SIZE_TAG] = nlohmann::json {
+        { JSON_FONT_SIZE_TAG, TEST_SIZE },
+        { JSON_ICON_SIZE_TAG, TEST_SIZE },
+        { JSON_TEXT_ICON_PADDING_TAG, TEST_SIZE },
+        { JSON_PADDING_SIZE_TAG, jsonPadding },
+    };
+
+    jsonComponent[JSON_COLORS_TAG] = nlohmann::json {
+        { JSON_FONT_COLOR_TAG, TEST_COLOR_2 },
+        { JSON_ICON_COLOR_TAG, TEST_COLOR_3 },
+        { JSON_BG_COLOR_TAG, TEST_COLOR_1 }
+    };
+
+    jsonComponent[JSON_BORDER_TAG] = nlohmann::json {
+        { JSON_BORDER_WIDTH_TAG, TEST_SIZE },
+    };
+    jsonComponent[JSON_PARENT_TAG] = nlohmann::json {
+        { JSON_PARENT_EFFECT_TAG, false },
+    };
+    jsonComponent[JSON_STYLE_TAG] = nlohmann::json {
+        { JSON_TEXT_TAG, LocationDesc::SELECT_LOCATION },
+        { JSON_ICON_TAG, LocationIcon::LINE_ICON },
+        { JSON_BG_TAG, LocationBackground::CIRCLE },
+    };
 }
 }
 
@@ -85,25 +133,9 @@ void LocationButtonTest::TearDown()
 HWTEST_F(LocationButtonTest, FromJson001, TestSize.Level1)
 {
     nlohmann::json jsonComponent;
-
-    jsonComponent[JSON_FONT_FAMILY] = FONT_HO_SANS;
-    jsonComponent[JSON_LABEL_TYPE] = DEFAULT_LABEL;
-    jsonComponent[JSON_ICON] = DEFAULT_ICON;
-    jsonComponent[JSON_FONT_SIZE] = TEST_FONT_SIZE;
-    jsonComponent[JSON_FONT_COLOR] = TEST_COLOR;
-    jsonComponent[JSON_BG_COLOR] = TEST_COLOR;
-    jsonComponent[JSON_BUTTON_TYPE] = CAPSULE;
-    jsonComponent[JSON_SC_TYPE] = LOCATION_COMPONENT;
-    jsonComponent[JSON_RECT] =  nlohmann::json {
-        {JSON_RECT_X, TEST_COORDINATE},
-        {JSON_RECT_Y, TEST_COORDINATE},
-        {JSON_RECT_WIDTH, TEST_COORDINATE},
-        {JSON_RECT_HEIGHT, TEST_COORDINATE}
-    };
-
+    BuildLocationComponentInfo(jsonComponent);
     LocationButton button;
-    button.FromJson(jsonComponent);
-    ASSERT_TRUE(button.IsValid());
+    ASSERT_TRUE(button.FromJson(jsonComponent));
 }
 
 /**
@@ -116,8 +148,7 @@ HWTEST_F(LocationButtonTest, FromJson002, TestSize.Level1)
 {
     nlohmann::json jsonComponent;
     LocationButton button;
-    button.FromJson(jsonComponent);
-    ASSERT_FALSE(button.IsValid());
+    ASSERT_FALSE(button.FromJson(jsonComponent));
 }
 
 /**
@@ -129,29 +160,30 @@ HWTEST_F(LocationButtonTest, FromJson002, TestSize.Level1)
 HWTEST_F(LocationButtonTest, FromJson003, TestSize.Level1)
 {
     nlohmann::json jsonComponent;
-    jsonComponent[JSON_FONT_FAMILY] = "wrongType";
-    jsonComponent[JSON_LABEL_TYPE] = "wrongType";
-    jsonComponent[JSON_ICON] = "wrongType";
-    jsonComponent[JSON_FONT_SIZE] = "wrongType";
-    jsonComponent[JSON_FONT_COLOR] = "wrongType";
-    jsonComponent[JSON_BG_COLOR] = "wrongType";
-    jsonComponent[JSON_BUTTON_TYPE] = "wrongType";
-    jsonComponent[JSON_BUTTON_TYPE] = "wrongType";
-    jsonComponent[JSON_SC_TYPE] = "wrongType";
-    jsonComponent[JSON_RECT] =  nlohmann::json {
-        {JSON_RECT_X, TEST_COORDINATE},
-        {JSON_RECT_Y, TEST_COORDINATE},
-        {JSON_RECT_WIDTH, TEST_COORDINATE},
-        {JSON_RECT_HEIGHT, TEST_COORDINATE}
-    };
-
+    BuildLocationComponentInfo(jsonComponent);
     LocationButton button;
-    button.FromJson(jsonComponent);
-    ASSERT_FALSE(button.IsValid());
-    ASSERT_EQ(button.rect_.x_, 0);
-    ASSERT_EQ(button.rect_.y_, 0);
-    ASSERT_EQ(button.rect_.width_, 0);
-    ASSERT_EQ(button.rect_.height_, 0);
+    ASSERT_TRUE(button.FromJson(jsonComponent));
+
+    jsonComponent[JSON_STYLE_TAG] = nlohmann::json {
+        { JSON_TEXT_TAG, WRONG_TYPE },
+        { JSON_ICON_TAG, LocationIcon::LINE_ICON },
+        { JSON_BG_TAG, LocationBackground::CIRCLE },
+    };
+    ASSERT_FALSE(button.FromJson(jsonComponent));
+
+    jsonComponent[JSON_STYLE_TAG] = nlohmann::json {
+        { JSON_TEXT_TAG, LocationDesc::SELECT_LOCATION },
+        { JSON_ICON_TAG, WRONG_TYPE },
+        { JSON_BG_TAG, LocationBackground::CIRCLE },
+    };
+    ASSERT_FALSE(button.FromJson(jsonComponent));
+
+    jsonComponent[JSON_STYLE_TAG] = nlohmann::json {
+        { JSON_TEXT_TAG, LocationDesc::SELECT_LOCATION },
+        { JSON_ICON_TAG, LocationIcon::LINE_ICON },
+        { JSON_BG_TAG, WRONG_TYPE },
+    };
+    ASSERT_FALSE(button.FromJson(jsonComponent));
 }
 
 /**
@@ -162,61 +194,32 @@ HWTEST_F(LocationButtonTest, FromJson003, TestSize.Level1)
  */
 HWTEST_F(LocationButtonTest, FromJson004, TestSize.Level1)
 {
-    nlohmann::json jsonComponent;
-    jsonComponent[JSON_FONT_FAMILY] = 0;
-    jsonComponent[JSON_LABEL_TYPE] = 0;
-    jsonComponent[JSON_ICON] = 0;
-    jsonComponent[JSON_FONT_SIZE] = 0;
-    jsonComponent[JSON_FONT_COLOR] = 0;
-    jsonComponent[JSON_BG_COLOR] = 0;
-    jsonComponent[JSON_BUTTON_TYPE] = 0;
-    jsonComponent[JSON_BUTTON_TYPE] = 0;
-    jsonComponent[JSON_SC_TYPE] = 0;
-    jsonComponent[JSON_RECT] =  nlohmann::json {
-        {JSON_RECT_X, TEST_COORDINATE},
-        {JSON_RECT_Y, TEST_COORDINATE},
-        {JSON_RECT_WIDTH, TEST_COORDINATE},
-        {JSON_RECT_HEIGHT, TEST_COORDINATE}
+nlohmann::json jsonComponent;
+    BuildLocationComponentInfo(jsonComponent);
+    LocationButton button;
+
+    ASSERT_TRUE(button.FromJson(jsonComponent));
+
+    jsonComponent[JSON_STYLE_TAG] = nlohmann::json {
+        { JSON_TEXT_TAG, LocationDesc::UNKNOWN_TEXT },
+        { JSON_ICON_TAG, LocationIcon::LINE_ICON },
+        { JSON_BG_TAG, LocationBackground::CIRCLE },
     };
+    ASSERT_FALSE(button.FromJson(jsonComponent));
 
-    LocationButton button;
-    button.FromJson(jsonComponent);
-    ASSERT_FALSE(button.IsValid());
-}
+    jsonComponent[JSON_STYLE_TAG] = nlohmann::json {
+        { JSON_TEXT_TAG, LocationDesc::SELECT_LOCATION },
+        { JSON_ICON_TAG, LocationIcon::UNKNOWN_ICON },
+        { JSON_BG_TAG, LocationBackground::CIRCLE },
+    };
+    ASSERT_FALSE(button.FromJson(jsonComponent));
 
-/**
- * @tc.name: IsValid001
- * @tc.desc: Test check location button invalid
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(LocationButtonTest, IsValid001, TestSize.Level1)
-{
-    LocationButton button;
-    BuildLocationComponentInfo(button);
-
-    button.font_ = UNKNOWN_FONT_FAMILY_TYPE;
-    ASSERT_FALSE(button.IsValid());
-    button.font_ = FONT_HO_SANS;
-
-    button.label_ = UNKNOWN_LABEL;
-    ASSERT_FALSE(button.IsValid());
-    button.label_ = DEFAULT_LABEL;
-
-    button.icon_ = UNKNOWN_ICON;
-    ASSERT_FALSE(button.IsValid());
-    button.icon_ = DEFAULT_ICON;
-
-    button.fontSize_ = TEST_INVALID_FONT_SIZE;
-    ASSERT_FALSE(button.IsValid());
-    button.fontSize_ = TEST_FONT_SIZE;
-
-    button.buttonType_ = UNKNOWN_BUTTON_TYPE;
-    ASSERT_FALSE(button.IsValid());
-    button.buttonType_ = CAPSULE;
-
-    button.type_ = UNKNOWN_SC_TYPE;
-    ASSERT_FALSE(button.IsValid());
+    jsonComponent[JSON_STYLE_TAG] = nlohmann::json {
+        { JSON_TEXT_TAG, LocationDesc::SELECT_LOCATION },
+        { JSON_ICON_TAG, LocationIcon::LINE_ICON },
+        { JSON_BG_TAG, LocationBackground::UNKNOWN_BG },
+    };
+    ASSERT_FALSE(button.FromJson(jsonComponent));
 }
 
 /**
@@ -228,34 +231,26 @@ HWTEST_F(LocationButtonTest, IsValid001, TestSize.Level1)
 HWTEST_F(LocationButtonTest, CompareLocationButton001, TestSize.Level1)
 {
     LocationButton button1;
-    BuildLocationComponentInfo(button1);
-
     LocationButton button2;
-    BuildLocationComponentInfo(button2);
 
-    button1.font_ = UNKNOWN_FONT_FAMILY_TYPE;
-    ASSERT_FALSE(button1 == button2);
-    button1.font_ = FONT_HO_SANS;
+    nlohmann::json jsonComponent;
+    BuildLocationComponentInfo(jsonComponent);
 
-    button1.label_ = UNKNOWN_LABEL;
-    ASSERT_FALSE(button1 == button2);
-    button1.label_ = DEFAULT_LABEL;
+    ASSERT_TRUE(button1.FromJson(jsonComponent));
+    ASSERT_TRUE(button2.FromJson(jsonComponent));
+    ASSERT_TRUE(button1.CompareComponentBasicInfo(&button2));
 
-    button1.icon_ = UNKNOWN_ICON;
-    ASSERT_FALSE(button1 == button2);
-    button1.icon_ = DEFAULT_ICON;
+    button1.text_ = LocationDesc::UNKNOWN_TEXT;
+    ASSERT_FALSE(button1.CompareComponentBasicInfo(&button2));
+    button1.text_ = LocationDesc::SELECT_LOCATION;
 
-    button1.fontSize_ = TEST_INVALID_FONT_SIZE;
-    ASSERT_FALSE(button1 == button2);
-    button1.fontSize_ = TEST_FONT_SIZE;
+    button1.icon_ = LocationIcon::UNKNOWN_ICON;
+    ASSERT_FALSE(button1.CompareComponentBasicInfo(&button2));
+    button1.icon_ = LocationIcon::LINE_ICON;
 
-    button1.fontColor_.value = TEST_DIFF_COLOR;
-    ASSERT_FALSE(button1 == button2);
-    button1.fontColor_.value = TEST_COLOR;
+    button1.bg_ = LocationBackground::UNKNOWN_BG;
+    ASSERT_FALSE(button1.CompareComponentBasicInfo(&button2));
+    button1.bg_ = LocationBackground::CIRCLE;
 
-    button1.bgColor_.value = TEST_DIFF_COLOR;
-    ASSERT_FALSE(button1 == button2);
-    button1.bgColor_.value = TEST_COLOR;
-
-    ASSERT_TRUE(button1 == button2);
+    ASSERT_TRUE(button1.CompareComponentBasicInfo(&button2));
 }

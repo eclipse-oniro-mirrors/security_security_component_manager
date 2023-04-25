@@ -13,17 +13,17 @@
  * limitations under the License.
  */
 #include "sec_comp_entity.h"
+#include <chrono>
 #include "sec_comp_err.h"
 #include "sec_comp_info_helper.h"
 #include "sec_comp_log.h"
-#include "sec_comp_tool.h"
 
 namespace OHOS {
 namespace Security {
 namespace SecurityComponent {
 namespace {
 constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {LOG_CORE, SECURITY_DOMAIN_SECURITY_COMPONENT, "SecCompEntity"};
-static constexpr uint64_t MAX_TOUCH_INTERVAL = 1000L; // 1000ms
+static constexpr uint64_t MAX_TOUCH_INTERVAL = 1000000000L; // 1000ms
 }
 
 int32_t SecCompEntity::RevokeTempPermission()
@@ -46,14 +46,14 @@ int32_t SecCompEntity::GrantTempPermission()
     return SecCompInfoHelper::GrantTempPermission(tokenId_, componentInfo_);
 }
 
-bool SecCompEntity::CompareComponentInfo(const SecCompBase* other) const
+bool SecCompEntity::CompareComponentBasicInfo(SecCompBase* other) const
 {
-    return SecCompInfoHelper::CompareSecCompInfo(componentInfo_.get(), other);
+    return componentInfo_->CompareComponentBasicInfo(other);
 }
 
 bool SecCompEntity::CheckTouchInfo(const SecCompClickEvent& touchInfo) const
 {
-    uint64_t current = GetCurrentTime();
+    auto current = static_cast<uint64_t>(std::chrono::high_resolution_clock::now().time_since_epoch().count());
     if (touchInfo.timestamp < current - MAX_TOUCH_INTERVAL || touchInfo.timestamp > current) {
         SC_LOG_ERROR(LABEL, "touch timestamp invalid");
         return false;
@@ -64,17 +64,6 @@ bool SecCompEntity::CheckTouchInfo(const SecCompClickEvent& touchInfo) const
         return false;
     }
     return true;
-}
-
-bool SecCompEntity::IsRectOverlaped(const SecCompEntity& other) const
-{
-    std::shared_ptr<SecCompBase> otherInfo = other.GetComponentInfo();
-    if (otherInfo == nullptr) {
-        SC_LOG_ERROR(LABEL, "component info is null");
-        return true;
-    }
-
-    return componentInfo_->rect_.IsRectOverlaped(otherInfo->rect_);
 }
 }  // namespace SecurityComponent
 }  // namespace Security

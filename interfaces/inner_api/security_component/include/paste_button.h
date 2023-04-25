@@ -23,11 +23,6 @@ namespace OHOS {
 namespace Security {
 namespace SecurityComponent {
 class PasteButton : public SecCompBase {
-public:
-    bool operator==(const PasteButton& other) const
-    {
-        return SecCompBase::operator==(other);
-    };
 };
 }  // namespace SecurityComponent
 }  // namespace Security

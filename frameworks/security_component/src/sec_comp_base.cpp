@@ -28,68 +28,205 @@ static const std::string JSON_RECT_X = "x";
 static const std::string JSON_RECT_Y = "y";
 static const std::string JSON_RECT_WIDTH = "width";
 static const std::string JSON_RECT_HEIGHT = "height";
+
+static const std::string JSON_SIZE_TAG = "size";
+static const std::string JSON_FONT_SIZE_TAG = "fontSize";
+static const std::string JSON_ICON_SIZE_TAG = "iconSize";
+static const std::string JSON_PADDING_SIZE_TAG = "paddingSize";
+static const std::string JSON_PADDING_LEFT_TAG = "left";
+static const std::string JSON_PADDING_TOP_TAG = "top";
+static const std::string JSON_PADDING_RIGHT_TAG = "right";
+static const std::string JSON_PADDING_BOTTOM_TAG = "bottom";
+static const std::string JSON_TEXT_ICON_PADDING_TAG = "textIconPadding";
+static const std::string JSON_RECT_WIDTH_TAG = "width";
+static const std::string JSON_RECT_HEIGHT_TAG = "height";
+
+static const std::string JSON_COLORS_TAG = "colors";
+static const std::string JSON_FONT_COLOR_TAG = "fontColor";
+static const std::string JSON_ICON_COLOR_TAG = "iconColor";
+static const std::string JSON_BG_COLOR_TAG = "bgColor";
+
+static const std::string JSON_BORDER_TAG = "border";
+static const std::string JSON_BORDER_WIDTH_TAG = "borderWidth";
+static const std::string JSON_PARENT_TAG = "parent";
+static const std::string JSON_PARENT_EFFECT_TAG = "parentEffect";
 }
 
-void from_json(const nlohmann::json& j, SecCompRect& p)
+bool SecCompBase::ParseDimension(const nlohmann::json& json, const std::string& tag, DimensionT& res)
 {
-    SecCompRect res;
-    if (j.is_discarded()) {
-        SC_LOG_ERROR(LABEL, "component info invalid");
-        return ;
+    if ((json.find(tag) == json.end()) || !json.at(tag).is_number_float()) {
+        SC_LOG_ERROR(LABEL, "has not %{public}s.", tag.c_str());
+        return false;
     }
 
-    if (j.find(JSON_RECT_X) != j.end() && j.at(JSON_RECT_X).is_number_float()) {
-        res.x_ = j.at(JSON_RECT_X).get<double>();
-    } else {
-        SC_LOG_ERROR(LABEL, "x is invalid");
-        return;
-    }
-
-    if (j.find(JSON_RECT_Y) != j.end() && j.at(JSON_RECT_Y).is_number_float()) {
-        res.y_ = j.at(JSON_RECT_Y).get<double>();
-    } else {
-        SC_LOG_ERROR(LABEL, "y is invalid.");
-        return;
-    }
-
-    if (j.find(JSON_RECT_WIDTH) != j.end() && j.at(JSON_RECT_WIDTH).is_number_float()) {
-        res.width_ = j.at(JSON_RECT_WIDTH).get<double>();
-    } else {
-        SC_LOG_ERROR(LABEL, "width is invalid.");
-        return;
-    }
-
-    if (j.find(JSON_RECT_HEIGHT) != j.end() && j.at(JSON_RECT_HEIGHT).is_number_float()) {
-        res.height_ = j.at(JSON_RECT_HEIGHT).get<double>();
-    } else {
-        SC_LOG_ERROR(LABEL, "height is invalid.");
-        return;
-    }
-
-    p = res;
+    res = json.at(tag).get<double>();
+    return true;
 }
 
-void SecCompBase::FromJson(const nlohmann::json& jsonSrc)
+bool SecCompBase::ParseColor(const nlohmann::json& json, const std::string& tag, SecCompColor& res)
 {
-    if (jsonSrc.find(JSON_SC_TYPE) != jsonSrc.end() && jsonSrc.at(JSON_SC_TYPE).is_number()) {
-        int32_t type = jsonSrc.at(JSON_SC_TYPE).get<int32_t>();
-        if (IsComponentTypeValid(type)) {
-            type_ = static_cast<SecCompType>(type);
-        } else {
-            SC_LOG_ERROR(LABEL, "type is invalid.");
-            return;
-        }
-    } else {
-        SC_LOG_ERROR(LABEL, "get type fail.");
-        return;
+    if ((json.find(tag) == json.end()) || !json.at(tag).is_number()) {
+        SC_LOG_ERROR(LABEL, "has not %{public}s.", tag.c_str());
+        return false;
     }
 
-    if (jsonSrc.find(JSON_RECT) != jsonSrc.end() && jsonSrc.at(JSON_RECT).is_object()) {
-        rect_ = jsonSrc.at(JSON_RECT).get<SecCompRect>();
-    } else {
-        SC_LOG_ERROR(LABEL, "rect is invalid.");
-        return;
+    res.value = json.at(tag).get<uint32_t>();
+    return true;
+}
+
+bool SecCompBase::ParseBool(const nlohmann::json& json, const std::string& tag, bool& res)
+{
+    if ((json.find(tag) == json.end()) || !json.at(tag).is_boolean()) {
+        SC_LOG_ERROR(LABEL, "has not %{public}s.", tag.c_str());
+        return false;
     }
+
+    res = json.at(tag).get<bool>();
+    return true;
+}
+
+bool SecCompBase::ParsePadding(const nlohmann::json& json, const std::string& tag, PaddingSize& res)
+{
+    if ((json.find(tag) == json.end()) || !json.at(tag).is_object()) {
+        SC_LOG_ERROR(LABEL, "has not %{public}s.", tag.c_str());
+        return false;
+    }
+
+    auto jsonPadding = json.at(tag);
+    if (!ParseDimension(jsonPadding, JSON_PADDING_TOP_TAG, res.top)) {
+        return false;
+    }
+    if (!ParseDimension(jsonPadding, JSON_PADDING_RIGHT_TAG, res.right)) {
+        return false;
+    }
+    if (!ParseDimension(jsonPadding, JSON_PADDING_BOTTOM_TAG, res.bottom)) {
+        return false;
+    }
+    if (!ParseDimension(jsonPadding, JSON_PADDING_LEFT_TAG, res.left)) {
+        return false;
+    }
+    return true;
+}
+
+bool SecCompBase::ParseColors(const nlohmann::json& json, const std::string& tag)
+{
+    if ((json.find(tag) == json.end()) || !json.at(tag).is_object()) {
+        SC_LOG_ERROR(LABEL, "has not %{public}s.", tag.c_str());
+        return false;
+    }
+    auto jsonColors = json.at(tag);
+    if (!ParseColor(jsonColors, JSON_FONT_COLOR_TAG, fontColor_)) {
+        return false;
+    }
+    if (!ParseColor(jsonColors, JSON_ICON_COLOR_TAG, iconColor_)) {
+        return false;
+    }
+    if (!ParseColor(jsonColors, JSON_BG_COLOR_TAG, bgColor_)) {
+        return false;
+    }
+    return true;
+}
+
+bool SecCompBase::ParseBorders(const nlohmann::json& json, const std::string& tag)
+{
+    if ((json.find(tag) == json.end()) || !json.at(tag).is_object()) {
+        SC_LOG_ERROR(LABEL, "has not %{public}s.", tag.c_str());
+        return false;
+    }
+    auto jsonBorder = json.at(tag);
+    return ParseDimension(jsonBorder, JSON_BORDER_WIDTH_TAG, borderWidth_);
+}
+
+bool SecCompBase::ParseSize(const nlohmann::json& json, const std::string& tag)
+{
+    if ((json.find(tag) == json.end()) || !json.at(tag).is_object()) {
+        SC_LOG_ERROR(LABEL, "has not %{public}s.", tag.c_str());
+        return false;
+    }
+
+    auto jsonSize = json.at(tag);
+    if (!ParseDimension(jsonSize, JSON_FONT_SIZE_TAG, fontSize_)) {
+        return false;
+    }
+
+    if (!ParseDimension(jsonSize, JSON_ICON_SIZE_TAG, iconSize_)) {
+        return false;
+    }
+
+    if (!ParseDimension(jsonSize, JSON_TEXT_ICON_PADDING_TAG, textIconPadding_)) {
+        return false;
+    }
+
+    if (!ParsePadding(jsonSize, JSON_PADDING_SIZE_TAG, padding_)) {
+        return false;
+    }
+
+    return true;
+}
+
+bool SecCompBase::ParseParent(const nlohmann::json& json, const std::string& tag)
+{
+    if ((json.find(tag) == json.end()) || !json.at(tag).is_object()) {
+        SC_LOG_ERROR(LABEL, "has not %{public}s.", tag.c_str());
+        return false;
+    }
+    auto jsonParent = json.at(tag);
+    return ParseBool(jsonParent, JSON_PARENT_EFFECT_TAG, parentEffect_);
+}
+
+bool SecCompBase::ParseRect(const nlohmann::json& json, const std::string& tag)
+{
+    if ((json.find(tag) == json.end()) || !json.at(tag).is_object()) {
+        SC_LOG_ERROR(LABEL, "has not %{public}s.", tag.c_str());
+        return false;
+    }
+
+    auto jsonSize = json.at(tag);
+    if (!ParseDimension(jsonSize, JSON_RECT_X, rect_.x_)) {
+        return false;
+    }
+
+    if (!ParseDimension(jsonSize, JSON_RECT_Y, rect_.y_)) {
+        return false;
+    }
+
+    if (!ParseDimension(jsonSize, JSON_RECT_WIDTH, rect_.width_)) {
+        return false;
+    }
+
+    if (!ParseDimension(jsonSize, JSON_RECT_HEIGHT, rect_.height_)) {
+        return false;
+    }
+
+    return true;
+}
+
+bool SecCompBase::FromJson(const nlohmann::json& jsonSrc)
+{
+    if (!ParseTypeValue<SecCompType>(jsonSrc, JSON_SC_TYPE, type_,
+        SecCompType::UNKNOWN_SC_TYPE, SecCompType::MAX_SC_TYPE)) {
+        return false;
+    }
+
+    if (!ParseRect(jsonSrc, JSON_RECT)) {
+        return false;
+    }
+    if (!ParseSize(jsonSrc, JSON_SIZE_TAG)) {
+        return false;
+    }
+
+    if (!ParseColors(jsonSrc, JSON_COLORS_TAG)) {
+        return false;
+    }
+
+    if (!ParseBorders(jsonSrc, JSON_BORDER_TAG)) {
+        return false;
+    }
+    if (!ParseParent(jsonSrc, JSON_PARENT_TAG)) {
+        return false;
+    }
+
+    return true;
 }
 
 void SecCompBase::ToJson(nlohmann::json& jsonRes) const
@@ -101,21 +238,48 @@ void SecCompBase::ToJson(nlohmann::json& jsonRes) const
         {JSON_RECT_WIDTH, rect_.width_},
         {JSON_RECT_HEIGHT, rect_.height_}
     };
+    nlohmann::json jsonPadding = nlohmann::json {
+        { JSON_PADDING_TOP_TAG, padding_.top },
+        { JSON_PADDING_RIGHT_TAG, padding_.right },
+        { JSON_PADDING_BOTTOM_TAG, padding_.bottom },
+        { JSON_PADDING_LEFT_TAG, padding_.left },
+    };
+
+    jsonRes[JSON_SIZE_TAG] = nlohmann::json {
+        { JSON_FONT_SIZE_TAG, fontSize_ },
+        { JSON_ICON_SIZE_TAG, iconSize_ },
+        { JSON_TEXT_ICON_PADDING_TAG, textIconPadding_ },
+        { JSON_PADDING_SIZE_TAG, jsonPadding },
+    };
+
+    jsonRes[JSON_COLORS_TAG] = nlohmann::json {
+        { JSON_FONT_COLOR_TAG, fontColor_.value },
+        { JSON_ICON_COLOR_TAG, iconColor_.value },
+        { JSON_BG_COLOR_TAG, bgColor_.value }
+    };
+
+    jsonRes[JSON_BORDER_TAG] = nlohmann::json {
+        { JSON_BORDER_WIDTH_TAG, borderWidth_ },
+    };
+    jsonRes[JSON_PARENT_TAG] = nlohmann::json {
+        { JSON_PARENT_EFFECT_TAG, parentEffect_ },
+    };
 }
 
-bool SecCompBase::IsValid(void) const
+bool SecCompBase::CompareComponentBasicInfo(SecCompBase *other) const
 {
-    return IsComponentTypeValid(type_) && rect_.IsValid();
-}
-
-bool SecCompBase::operator==(const SecCompBase& other) const
-{
-    bool result = (type_ == other.type_ && rect_.x_ == other.rect_.x_ && rect_.y_ == other.rect_.y_ &&
-        rect_.width_ == other.rect_.width_ && rect_.height_ == other.rect_.height_);
-    if (!result) {
-        SC_LOG_INFO(LABEL, "SecCompBase is not equal");
+    if (other == nullptr) {
+        SC_LOG_ERROR(LABEL, "other is invalid.");
+        return false;
     }
-    return result;
+
+    auto leftValue = std::tie(type_, fontSize_, iconSize_, textIconPadding_, padding_.top, padding_.right,
+        padding_.bottom, padding_.left, fontColor_.value, bgColor_.value, iconColor_.value, borderWidth_);
+    auto rightValue = std::tie(other->type_, other->fontSize_, other->iconSize_, other->textIconPadding_,
+        other->padding_.top, other->padding_.right, other->padding_.bottom, other->padding_.left,
+        other->fontColor_.value, other->bgColor_.value, other->iconColor_.value, other->borderWidth_);
+
+    return (leftValue == rightValue);
 }
 }  // namespace base
 }  // namespace Security

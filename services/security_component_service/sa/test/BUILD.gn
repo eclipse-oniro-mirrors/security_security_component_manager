@@ -30,12 +30,6 @@ ohos_unittest("sec_comp_service_test") {
   ]
 
   sources = [
-    "unittest/src/app_state_observer_test.cpp",
-    "unittest/src/sec_comp_entity_test.cpp",
-    "unittest/src/sec_comp_info_helper_test.cpp",
-    "unittest/src/sec_comp_manager_test.cpp",
-    "unittest/src/sec_comp_service_test.cpp",
-    "unittest/src/sec_comp_stub_test.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/app_state_observer.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/sec_comp_entity.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/sec_comp_info_helper.cpp",
@@ -44,6 +38,11 @@ ohos_unittest("sec_comp_service_test") {
     "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/sec_comp_stub.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/test/mock/src/mock_app_mgr_proxy.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/test/mock/src/mock_iservice_registry.cpp",
+    "unittest/src/app_state_observer_test.cpp",
+    "unittest/src/sec_comp_entity_test.cpp",
+    "unittest/src/sec_comp_manager_test.cpp",
+    "unittest/src/sec_comp_service_test.cpp",
+    "unittest/src/sec_comp_stub_test.cpp",
   ]
 
   cflags_cc = [ "-DHILOG_ENABLE" ]
@@ -51,14 +50,16 @@ ohos_unittest("sec_comp_service_test") {
   deps = [
     "${sec_comp_root_dir}/frameworks:libsecurity_component_enhance_adapter",
     "${sec_comp_root_dir}/frameworks:libsecurity_component_framework",
+    "//foundation/graphic/graphic_2d/rosen/modules/render_service_client:librender_service_client",
     "//third_party/googletest:gmock_main",
   ]
 
   external_deps = [
+    "access_token:libtoken_setproc",
     "c_utils:utils",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "access_token:libtoken_setproc",
+    "window_manager:libdm",
   ]
 }
 

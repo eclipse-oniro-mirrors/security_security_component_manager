@@ -12,26 +12,129 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "sec_comp_tool.h"
 
+#include <cmath>
 #include <cstdint>
-#include <ctime>
+#include "sec_comp_log.h"
 
 namespace OHOS {
 namespace Security {
 namespace SecurityComponent {
 namespace {
-static constexpr uint32_t MS_PER_SECOND = 1000;
-static constexpr uint32_t NS_PER_MILLISECOND = 1000000;
+static constexpr double PI_CIRCLE = 3.1415926F;
+static constexpr double MIN_HSV_DISTANCE = 25.0F;
+static constexpr double MAX_RGB_VALUE = 255.0F;
+static constexpr uint8_t MAX_TRANSPARENT = 0x99; // 60%
+static constexpr double ZERO_DOUBLE = 0.0F;
+static constexpr double THIRTY_ANGLE = 30.0F;
+static constexpr double SIXTY_ANGLE = 60.0F;
+static constexpr double ONE_HUNDRED_TWEENTY_ANGLE = 120.0F;
+static constexpr double ONE_HUNDRED_EIGHTY_ANGLE = 180.0F;
+static constexpr double TWO_HUNDREDS_FORTY_ANGLE = 240.0F;
+static constexpr double THREE_HUNDREDS_SIXTY_ANGLE = 360.0F;
+static constexpr double DEFAULT_R = 100.0F;
+
+constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {LOG_CORE, SECURITY_DOMAIN_SECURITY_COMPONENT, "SecCompTool"};
 }
 
-uint64_t GetCurrentTime()
+static inline double MaxValue(double a, double b, double c)
 {
-    struct timespec current = {0};
-    int ret = clock_gettime(CLOCK_REALTIME, &current);
-    if (ret != 0) {
-        return 0;
+    return ((a > b) ? ((a > c) ? a : c) : ((b > c) ? b : c));
+}
+
+static inline double MinValue(double a, double b, double c)
+{
+    return ((a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c));
+}
+
+struct HsvColor {
+    double h;
+    double s;
+    double v;
+};
+
+static HsvColor RgbToHsv(uint8_t r, uint8_t g, uint8_t b)
+{
+    HsvColor hsv;
+    double red = static_cast<double>(r) / MAX_RGB_VALUE;
+    double green = static_cast<double>(g) / MAX_RGB_VALUE;
+    double blue = static_cast<double>(b) / MAX_RGB_VALUE;
+    float max = MaxValue(red, green, blue);
+    float min = MinValue(red, green, blue);
+    float delta = max - min;
+    if (max == min) {
+        hsv.h = ZERO_DOUBLE;
+    } else if (max == red) {
+        hsv.h = fmod((SIXTY_ANGLE * ((green - blue) / delta) + THREE_HUNDREDS_SIXTY_ANGLE),
+            THREE_HUNDREDS_SIXTY_ANGLE);
+    } else if (max == green) {
+        hsv.h = fmod((SIXTY_ANGLE * ((blue - red) / delta) + ONE_HUNDRED_TWEENTY_ANGLE), THREE_HUNDREDS_SIXTY_ANGLE);
+    } else if (max == blue) {
+        hsv.h = fmod((SIXTY_ANGLE * ((red - green) / delta) + TWO_HUNDREDS_FORTY_ANGLE), THREE_HUNDREDS_SIXTY_ANGLE);
     }
-    return static_cast<int64_t>(current.tv_sec) * MS_PER_SECOND + current.tv_nsec / NS_PER_MILLISECOND;
+
+    if (max == 0) {
+        hsv.s = ZERO_DOUBLE;
+    } else {
+        hsv.s = delta / max;
+    }
+
+    hsv.v = max;
+    return hsv;
+}
+
+static inline double GetHsvDisX(HsvColor& hsv, double r)
+{
+    return r * hsv.v * hsv.s * cos(hsv.h / ONE_HUNDRED_EIGHTY_ANGLE * PI_CIRCLE);
+}
+
+static inline double GetHsvDisY(HsvColor& hsv, double r)
+{
+    return r * hsv.v * hsv.s * sin(hsv.h / ONE_HUNDRED_EIGHTY_ANGLE * PI_CIRCLE);
+}
+
+static inline double GetHsvDisZ(HsvColor& hsv, double h)
+{
+    return h * (1 - hsv.v);
+}
+
+static double HsvDistance(HsvColor& hsv1, HsvColor& hsv2)
+{
+    double rDef = DEFAULT_R;
+    double angle = THIRTY_ANGLE;
+    double h = rDef * cos(angle / ONE_HUNDRED_EIGHTY_ANGLE * PI_CIRCLE);
+    double r = rDef * sin(angle / ONE_HUNDRED_EIGHTY_ANGLE * PI_CIRCLE);
+
+    double x1 = GetHsvDisX(hsv1, r);
+    double y1 = GetHsvDisY(hsv1, r);
+    double z1 = GetHsvDisZ(hsv1, h);
+
+    double x2 = GetHsvDisX(hsv2, r);
+    double y2 = GetHsvDisY(hsv2, r);
+    double z2 = GetHsvDisZ(hsv2, h);
+
+    double dx = x1 - x2;
+    double dy = y1 - y2;
+    double dz = z1 - z2;
+
+    return sqrt((dx * dx) + (dy * dy) + (dz * dz));
+}
+
+bool IsColorSimilar(const SecCompColor& color1, const SecCompColor& color2)
+{
+    HsvColor hsv1 = RgbToHsv(color1.argb.red, color1.argb.green, color1.argb.blue);
+    HsvColor hsv2 = RgbToHsv(color2.argb.red, color2.argb.green, color2.argb.blue);
+
+    double distance = HsvDistance(hsv1, hsv2);
+    SC_LOG_INFO(LABEL, "Compare color %{public}x %{public}x distance %{public}f",
+        color1.value, color2.value, distance);
+    return (distance < MIN_HSV_DISTANCE);
+}
+
+bool IsColorTransparent(const SecCompColor& color)
+{
+    return ((color.argb.alpha != 0) && (color.argb.alpha < MAX_TRANSPARENT));
 }
 }  // namespace SecurityComponent
 }  // namespace Security

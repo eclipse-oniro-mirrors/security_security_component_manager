@@ -25,8 +25,6 @@ using namespace OHOS::Security::AccessToken;
 namespace {
 static constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {
     LOG_CORE, SECURITY_DOMAIN_SECURITY_COMPONENT, "SecCompEntityTest"};
-static constexpr int32_t TEST_SC_ID = 1;
-static constexpr AccessTokenID TEST_TOKEN_ID = 1;
 static constexpr double TEST_COORDINATE = 100.0;
 static constexpr double TEST_DIFF_COORDINATE = 200.0;
 }
@@ -115,7 +113,7 @@ HWTEST_F(SecCompEntityTest, CheckTouchInfo001, TestSize.Level1)
     };
     ASSERT_FALSE(entity_->CheckTouchInfo(touch));
 
-    uint64_t current = GetCurrentTime();
+    uint64_t current = static_cast<uint64_t>(std::chrono::high_resolution_clock::now().time_since_epoch().count());
     touch.timestamp = current + 10000L; // 10s
     ASSERT_FALSE(entity_->CheckTouchInfo(touch));
 
@@ -123,36 +121,11 @@ HWTEST_F(SecCompEntityTest, CheckTouchInfo001, TestSize.Level1)
     entity_->componentInfo_->rect_.y_ = TEST_DIFF_COORDINATE;
     entity_->componentInfo_->rect_.width_ = TEST_DIFF_COORDINATE;
     entity_->componentInfo_->rect_.height_ = TEST_DIFF_COORDINATE;
-    touch.timestamp = GetCurrentTime();
+    touch.timestamp = static_cast<uint64_t>(std::chrono::high_resolution_clock::now().time_since_epoch().count());
     ASSERT_FALSE(entity_->CheckTouchInfo(touch));
 
     entity_->componentInfo_->rect_.x_ = TEST_COORDINATE;
     entity_->componentInfo_->rect_.y_ = TEST_COORDINATE;
-    touch.timestamp = GetCurrentTime();
+    touch.timestamp = static_cast<uint64_t>(std::chrono::high_resolution_clock::now().time_since_epoch().count());
     ASSERT_TRUE(entity_->CheckTouchInfo(touch));
-}
-
-/**
- * @tc.name: IsRectOverlaped001
- * @tc.desc: Test check rect overlap
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(SecCompEntityTest, IsRectOverlaped001, TestSize.Level1)
-{
-    SecCompEntity other(nullptr, TEST_TOKEN_ID, TEST_SC_ID);
-    ASSERT_TRUE(entity_->IsRectOverlaped(other));
-
-    entity_->componentInfo_->rect_.x_ = TEST_COORDINATE;
-    entity_->componentInfo_->rect_.y_ = TEST_COORDINATE;
-    entity_->componentInfo_->rect_.width_ = TEST_COORDINATE;
-    entity_->componentInfo_->rect_.height_ = TEST_COORDINATE;
-
-    other.componentInfo_ = std::make_shared<SecCompBase>();
-    ASSERT_NE(other.componentInfo_, nullptr);
-    other.componentInfo_->rect_.x_ = TEST_COORDINATE;
-    other.componentInfo_->rect_.y_ = TEST_COORDINATE;
-    other.componentInfo_->rect_.width_ = TEST_COORDINATE;
-    other.componentInfo_->rect_.height_ = TEST_COORDINATE;
-    ASSERT_TRUE(entity_->IsRectOverlaped(other));
 }

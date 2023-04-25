@@ -21,18 +21,69 @@
 namespace OHOS {
 namespace Security {
 namespace SecurityComponent {
+template<typename T>
+bool ParseTypeValue(const nlohmann::json& json, const std::string& tag,
+    T& type, const T& min, const T& max)
+{
+    if ((json.find(tag) == json.end()) || !json.at(tag).is_number()) {
+        return false;
+    }
+
+    int32_t value = json.at(tag).get<int32_t>();
+    if ((value <= static_cast<int32_t>(min)) || (value >= static_cast<int32_t>(max))) {
+        return false;
+    }
+    type = static_cast<T>(value);
+    return true;
+}
+
 class SecCompBase {
 public:
     SecCompBase() = default;
     virtual ~SecCompBase() = default;
+    virtual bool FromJson(const nlohmann::json& jsonSrc);
+    virtual void ToJson(nlohmann::json& jsonRes) const;
+    virtual bool CompareComponentBasicInfo(SecCompBase *other) const;
+    void SetValid(bool valid)
+    {
+        isValid_ = valid;
+    };
+
+    bool GetValid()
+    {
+        return isValid_;
+    };
+
+    // size
+    DimensionT fontSize_ = DEFAULT_DIMENSION;
+    DimensionT iconSize_ = DEFAULT_DIMENSION;
+    PaddingSize padding_;
+    DimensionT textIconPadding_ = DEFAULT_DIMENSION;
+
+    // color
+    SecCompColor fontColor_;
+    SecCompColor iconColor_;
+    SecCompColor bgColor_;
+
+    // border
+    DimensionT borderWidth_ = DEFAULT_DIMENSION;
+
+    // parent effect
+    bool parentEffect_ = false;
 
     SecCompType type_ = UNKNOWN_SC_TYPE;
     SecCompRect rect_;
-
-    virtual void FromJson(const nlohmann::json& jsonSrc);
-    virtual void ToJson(nlohmann::json& jsonRes) const;
-    virtual bool IsValid(void) const;
-    bool operator==(const SecCompBase& other) const;
+    bool isValid_ = false;
+private:
+    bool ParseDimension(const nlohmann::json& json, const std::string& tag, DimensionT& res);
+    bool ParseColor(const nlohmann::json& json, const std::string& tag, SecCompColor& res);
+    bool ParseBool(const nlohmann::json& json, const std::string& tag, bool& res);
+    bool ParsePadding(const nlohmann::json& json, const std::string& tag, PaddingSize& res);
+    bool ParseColors(const nlohmann::json& json, const std::string& tag);
+    bool ParseBorders(const nlohmann::json& json, const std::string& tag);
+    bool ParseSize(const nlohmann::json& json, const std::string& tag);
+    bool ParseParent(const nlohmann::json& json, const std::string& tag);
+    bool ParseRect(const nlohmann::json& json, const std::string& tag);
 };
 }  // namespace SecurityComponent
 }  // namespace Security

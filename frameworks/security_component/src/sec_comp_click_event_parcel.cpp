@@ -26,7 +26,7 @@ static constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {
 
 bool SecCompClickEventParcel::Marshalling(Parcel& out) const
 {
-    if (!(out.WriteFloat(this->touchInfoParams_.touchX)) || !(out.WriteFloat(this->touchInfoParams_.touchY))) {
+    if (!(out.WriteDouble(this->touchInfoParams_.touchX)) || !(out.WriteDouble(this->touchInfoParams_.touchY))) {
         SC_LOG_ERROR(LABEL, "Write touch xy pointer fail");
         return false;
     }
@@ -59,7 +59,7 @@ SecCompClickEventParcel* SecCompClickEventParcel::Unmarshalling(Parcel& in)
     }
 
     SecCompClickEvent touchInfo;
-    if (!in.ReadFloat(touchInfo.touchX) || !in.ReadFloat(touchInfo.touchY)) {
+    if (!in.ReadDouble(touchInfo.touchX) || !in.ReadDouble(touchInfo.touchY)) {
         SC_LOG_ERROR(LABEL, "Read touch xy porinter fail");
         delete touchInfoParcel;
         return nullptr;

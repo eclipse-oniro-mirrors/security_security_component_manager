@@ -90,6 +90,7 @@ void AppStateObserver::OnProcessStateChanged(const AppExecFwk::ProcessData &proc
 {
     if (processData.state == AppExecFwk::AppProcessState::APP_STATE_FOREGROUND) {
         AddProcessToForegroundSet(processData);
+        SecCompManager::GetInstance().NotifyProcessForeground(processData.uid);
     } else if (processData.state == AppExecFwk::AppProcessState::APP_STATE_BACKGROUND) {
         RemoveProcessFromForegroundSet(processData);
         SecCompManager::GetInstance().NotifyProcessBackground(processData.uid);

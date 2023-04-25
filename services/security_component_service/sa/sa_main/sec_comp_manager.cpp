@@ -34,7 +34,7 @@ static constexpr int32_t MAX_INT_NUM = 0x7fffffff;
 SecCompManager::SecCompManager()
 {
     scIdStart_ = SC_ID_START;
-    scCount_ = 0;
+    scValidCount_ = 0;
     SC_LOG_INFO(LABEL, "SecCompManager()");
 }
 
@@ -58,18 +58,11 @@ int32_t SecCompManager::CreateScId()
 int32_t SecCompManager::AddProcessComponent(std::vector<SecCompEntity>& componentList,
     const SecCompEntity& newEntity)
 {
-    for (auto it = componentList.begin(); it != componentList.end(); ++it) {
-        if (it->IsRectOverlaped(newEntity)) {
-            SC_LOG_ERROR(LABEL, "Components overlap");
-            return SC_SERVICE_ERROR_COMPONENT_RECT_OVERLAP;
-        }
-    }
-
     componentList.emplace_back(newEntity);
-    if (scCount_ == 0) {
+    if (scValidCount_ == 0) {
         SecCompEnhanceAdapter::EnableInputEnhance();
     }
-    scCount_++;
+    scValidCount_++;
     return SC_OK;
 }
 
@@ -99,8 +92,11 @@ int32_t SecCompManager::DeleteSecurityComponentFromList(int32_t uid, int32_t scI
     for (auto it = list.begin(); it != list.end(); ++it) {
         if (it->GetScId() == scId) {
             it->RevokeTempPermission();
+            if (it->GetEffective()) {
+                scValidCount_--;
+            }
+
             list.erase(it);
-            scCount_--;
             return SC_OK;
         }
     }
@@ -123,6 +119,25 @@ SecCompEntity* SecCompManager::GetSecurityComponentFromList(int32_t uid, int32_t
     return nullptr;
 }
 
+void SecCompManager::NotifyProcessForeground(int32_t uid)
+{
+    OHOS::Utils::UniqueWriteGuard<OHOS::Utils::RWLock> lk(this->componentInfoLock_);
+    auto iter = componentMap_.find(uid);
+    if (iter == componentMap_.end()) {
+        return;
+    }
+
+    SC_LOG_INFO(LABEL, "App uid %{public}d to foreground", uid);
+    std::vector<SecCompEntity>& list = iter->second;
+    for (auto it = list.begin(); it != list.end(); ++it) {
+        it->SetEffective(true);
+        scValidCount_++;
+    }
+    if (!list.empty()) {
+        SecCompEnhanceAdapter::EnableInputEnhance();
+    }
+}
+
 void SecCompManager::NotifyProcessBackground(int32_t uid)
 {
     OHOS::Utils::UniqueWriteGuard<OHOS::Utils::RWLock> lk(this->componentInfoLock_);
@@ -131,14 +146,14 @@ void SecCompManager::NotifyProcessBackground(int32_t uid)
         return;
     }
 
-    SC_LOG_INFO(LABEL, "uid %{public}d to background", uid);
+    SC_LOG_INFO(LABEL, "App uid %{public}d to background", uid);
     std::vector<SecCompEntity>& list = iter->second;
     for (auto it = list.begin(); it != list.end(); ++it) {
         it->RevokeTempPermission();
-        scCount_--;
+        it->SetEffective(false);
+        scValidCount_--;
     }
-    list.clear();
-    if (scCount_ <= 0) {
+    if (scValidCount_ <= 0) {
         SecCompEnhanceAdapter::DisableInputEnhance();
     }
 }
@@ -150,14 +165,16 @@ void SecCompManager::NotifyProcessDied(int32_t uid)
     if (iter == componentMap_.end()) {
         return;
     }
-    SC_LOG_INFO(LABEL, "uid %{public}d died", uid);
+    SC_LOG_INFO(LABEL, "App uid %{public}d died", uid);
     std::vector<SecCompEntity>& list = iter->second;
     for (auto it = list.begin(); it != list.end(); ++it) {
         it->RevokeTempPermission();
-        scCount_--;
+        if (it->GetEffective()) {
+            scValidCount_--;
+        }
     }
     list.clear();
-    if (scCount_ <= 0) {
+    if (scValidCount_ <= 0) {
         SecCompEnhanceAdapter::DisableInputEnhance();
     }
     componentMap_.erase(uid);
@@ -166,20 +183,21 @@ void SecCompManager::NotifyProcessDied(int32_t uid)
 
 void SecCompManager::ExitSaAfterAllProcessDie()
 {
-    if (componentMap_.empty()) {
-        SC_LOG_INFO(LABEL, "All processes using security component died, start sa exit");
-        auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-        if (systemAbilityMgr == nullptr) {
-            SC_LOG_ERROR(LABEL, "Failed to get SystemAbilityManager.");
-            return;
-        }
-        int32_t ret = systemAbilityMgr->UnloadSystemAbility(SA_ID_SECURITY_COMPONENT_SERVICE);
-        if (ret != SC_OK) {
-            SC_LOG_ERROR(LABEL, "Failed to UnloadSystemAbility service! errcode=%{public}d", ret);
-            return;
-        }
-        SC_LOG_INFO(LABEL, "UnloadSystemAbility successfully!");
+    if (!componentMap_.empty()) {
+        return;
     }
+    SC_LOG_INFO(LABEL, "All processes using security component died, start sa exit");
+    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (systemAbilityMgr == nullptr) {
+        SC_LOG_ERROR(LABEL, "Failed to get SystemAbilityManager.");
+        return;
+    }
+    int32_t ret = systemAbilityMgr->UnloadSystemAbility(SA_ID_SECURITY_COMPONENT_SERVICE);
+    if (ret != SC_OK) {
+        SC_LOG_ERROR(LABEL, "Failed to UnloadSystemAbility service! errcode=%{public}d", ret);
+        return;
+    }
+    SC_LOG_INFO(LABEL, "UnloadSystemAbility successfully!");
 }
 
 int32_t SecCompManager::RegisterSecurityComponent(SecCompType type,
@@ -194,6 +212,7 @@ int32_t SecCompManager::RegisterSecurityComponent(SecCompType type,
 
     int32_t registerId = CreateScId();
     SecCompEntity entity(component, caller.tokenId, registerId);
+    entity.SetEffective(true);
     int32_t ret = AddSecurityComponentToList(caller.uid, entity);
     if (ret == SC_OK) {
         scId = registerId;
@@ -230,7 +249,7 @@ int32_t SecCompManager::UnregisterSecurityComponent(int32_t scId, const SecCompC
         return SC_SERVICE_ERROR_VALUE_INVALID;
     }
     int32_t res = DeleteSecurityComponentFromList(caller.uid, scId);
-    if (res == SC_OK && scCount_ <= 0) {
+    if (scValidCount_ <= 0) {
         SecCompEnhanceAdapter::DisableInputEnhance();
     }
     return res;
@@ -247,17 +266,21 @@ int32_t SecCompManager::ReportSecurityComponentClickEvent(int32_t scId,
     }
 
     SecCompBase* report = SecCompInfoHelper::ParseComponent(sc->GetType(), jsonComponent);
-    std::unique_ptr<SecCompBase> reportComponentInfo(report);
-    if (reportComponentInfo == nullptr) {
+    std::shared_ptr<SecCompBase> reportComponentInfo(report);
+    if ((reportComponentInfo == nullptr) || !reportComponentInfo->GetValid()) {
         SC_LOG_ERROR(LABEL, "report component info invalid");
         return SC_SERVICE_ERROR_COMPONENT_INFO_INVALID;
     }
 
-    if (!sc->CompareComponentInfo(reportComponentInfo.get())) {
-        SC_LOG_ERROR(LABEL, "Report component compare register component failed");
+    // BasicInfo is the attributes of security component defined in ets, such as fontsize.
+    // we only compare these because they can be obtained during registration/update,
+    // but other infos such as position may not be notified because changs occur at the parent node.
+    if (!sc->CompareComponentBasicInfo(reportComponentInfo.get())) {
+        SC_LOG_ERROR(LABEL, "Report component basic compare register component failed");
         return SC_SERVICE_ERROR_COMPONENT_INFO_NOT_EQUAL;
     }
 
+    sc->SetComponentInfo(reportComponentInfo);
     if (!sc->CheckTouchInfo(touchInfo)) {
         SC_LOG_ERROR(LABEL, "touchInfo is invalid");
         return SC_SERVICE_ERROR_CLICK_EVENT_INVALID;
