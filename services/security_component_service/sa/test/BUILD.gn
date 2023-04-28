@@ -40,6 +40,7 @@ ohos_unittest("sec_comp_service_test") {
     "${sec_comp_root_dir}/services/security_component_service/sa/test/mock/src/mock_iservice_registry.cpp",
     "unittest/src/app_state_observer_test.cpp",
     "unittest/src/sec_comp_entity_test.cpp",
+    "unittest/src/sec_comp_info_helper_test.cpp",
     "unittest/src/sec_comp_manager_test.cpp",
     "unittest/src/sec_comp_service_test.cpp",
     "unittest/src/sec_comp_stub_test.cpp",
