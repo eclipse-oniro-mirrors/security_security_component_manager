@@ -11,8 +11,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import("//base/security/security_component/security_component.gni")
 import("//build/ohos.gni")
+
+sec_comp_root_dir = "../../.."
 
 config("sec_comp_enhance_config") {
   visibility = [ ":*" ]
@@ -20,7 +21,6 @@ config("sec_comp_enhance_config") {
     "include",
     "${sec_comp_root_dir}/frameworks/common/include",
     "${sec_comp_root_dir}/frameworks/enhance_adapter/include",
-    "${sec_comp_root_dir}/interfaces/inner_api/enhance_kits/include"
   ]
 }
 
@@ -39,14 +39,14 @@ ohos_shared_library("libsecurity_component_enhance_sdk") {
 
   sources = [
     "src/sec_comp_enhance_cfg_parcel.cpp",
-    "src/sec_comp_enhance_kit.cpp"
+    "src/sec_comp_enhance_kit.cpp",
   ]
 
   deps = [
-    "${sec_comp_root_dir}/frameworks:libsecurity_component_enhance_adapter"
+    "${sec_comp_root_dir}/frameworks:libsecurity_component_enhance_adapter",
   ]
 
-  configs = [ "//base/security/security_component/config:coverage_flags" ]
+  configs = [ "${sec_comp_root_dir}/config:coverage_flags" ]
 
   external_deps = [
     "c_utils:utils",
