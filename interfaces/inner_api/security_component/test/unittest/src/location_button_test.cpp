@@ -79,7 +79,7 @@ static void BuildLocationComponentInfo(nlohmann::json& jsonComponent)
     nlohmann::json jsonPadding = nlohmann::json {
         { JSON_PADDING_TOP_TAG, TEST_DIMENSION },
         { JSON_PADDING_RIGHT_TAG, TEST_DIMENSION },
-        { JSON_PADDING_BOTTOM_TAG,TEST_DIMENSION },
+        { JSON_PADDING_BOTTOM_TAG, TEST_DIMENSION },
         { JSON_PADDING_LEFT_TAG, TEST_DIMENSION },
     };
 

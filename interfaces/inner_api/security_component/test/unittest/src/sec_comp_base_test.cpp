@@ -75,7 +75,7 @@ static void BuildSecCompBaseInfo(nlohmann::json& jsonComponent)
     nlohmann::json jsonPadding = nlohmann::json {
         { JSON_PADDING_TOP_TAG, TEST_DIMENSION },
         { JSON_PADDING_RIGHT_TAG, TEST_DIMENSION },
-        { JSON_PADDING_BOTTOM_TAG,TEST_DIMENSION },
+        { JSON_PADDING_BOTTOM_TAG, TEST_DIMENSION },
         { JSON_PADDING_LEFT_TAG, TEST_DIMENSION },
     };
 
@@ -229,7 +229,7 @@ HWTEST_F(SecCompBaseTest, FromJson005, TestSize.Level1)
     nlohmann::json jsonPadding = nlohmann::json {
         { JSON_PADDING_TOP_TAG, TEST_DIMENSION },
         { JSON_PADDING_RIGHT_TAG, TEST_DIMENSION },
-        { JSON_PADDING_BOTTOM_TAG,TEST_DIMENSION },
+        { JSON_PADDING_BOTTOM_TAG, TEST_DIMENSION },
         { JSON_PADDING_LEFT_TAG, TEST_DIMENSION },
     };
 
@@ -256,11 +256,25 @@ HWTEST_F(SecCompBaseTest, FromJson005, TestSize.Level1)
         { JSON_PADDING_SIZE_TAG, jsonPadding },
     };
     ASSERT_FALSE(comp.FromJson(jsonComponent));
+}
 
-    jsonPadding = nlohmann::json {
+/**
+ * @tc.name: FromJson006
+ * @tc.desc: Test location button from wrong size json
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SecCompBaseTest, FromJson006, TestSize.Level1)
+{
+    nlohmann::json jsonComponent;
+    SecCompBase comp;
+    BuildSecCompBaseInfo(jsonComponent);
+    ASSERT_TRUE(comp.FromJson(jsonComponent));
+
+    nlohmann::json jsonPadding = nlohmann::json {
         { JSON_PADDING_TOP_TAG, WRONG_TYPE },
         { JSON_PADDING_RIGHT_TAG, TEST_DIMENSION },
-        { JSON_PADDING_BOTTOM_TAG,TEST_DIMENSION },
+        { JSON_PADDING_BOTTOM_TAG, TEST_DIMENSION },
         { JSON_PADDING_LEFT_TAG, TEST_DIMENSION },
     };
     jsonComponent[JSON_SIZE_TAG] = nlohmann::json {
@@ -274,7 +288,35 @@ HWTEST_F(SecCompBaseTest, FromJson005, TestSize.Level1)
     jsonPadding = nlohmann::json {
         { JSON_PADDING_TOP_TAG, TEST_DIMENSION },
         { JSON_PADDING_RIGHT_TAG, WRONG_TYPE },
-        { JSON_PADDING_BOTTOM_TAG,TEST_DIMENSION },
+        { JSON_PADDING_BOTTOM_TAG, TEST_DIMENSION },
+        { JSON_PADDING_LEFT_TAG, TEST_DIMENSION },
+    };
+    jsonComponent[JSON_SIZE_TAG] = nlohmann::json {
+        { JSON_FONT_SIZE_TAG, TEST_SIZE },
+        { JSON_ICON_SIZE_TAG, TEST_SIZE },
+        { JSON_TEXT_ICON_PADDING_TAG, TEST_SIZE },
+        { JSON_PADDING_SIZE_TAG, jsonPadding },
+    };
+    ASSERT_FALSE(comp.FromJson(jsonComponent));
+}
+
+/**
+ * @tc.name: FromJson007
+ * @tc.desc: Test location button from wrong size json
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SecCompBaseTest, FromJson007, TestSize.Level1)
+{
+    nlohmann::json jsonComponent;
+    SecCompBase comp;
+    BuildSecCompBaseInfo(jsonComponent);
+    ASSERT_TRUE(comp.FromJson(jsonComponent));
+
+    nlohmann::json jsonPadding = nlohmann::json {
+        { JSON_PADDING_TOP_TAG, TEST_DIMENSION },
+        { JSON_PADDING_RIGHT_TAG, TEST_DIMENSION },
+        { JSON_PADDING_BOTTOM_TAG, WRONG_TYPE },
         { JSON_PADDING_LEFT_TAG, TEST_DIMENSION },
     };
     jsonComponent[JSON_SIZE_TAG] = nlohmann::json {
@@ -288,21 +330,7 @@ HWTEST_F(SecCompBaseTest, FromJson005, TestSize.Level1)
     jsonPadding = nlohmann::json {
         { JSON_PADDING_TOP_TAG, TEST_DIMENSION },
         { JSON_PADDING_RIGHT_TAG, TEST_DIMENSION },
-        { JSON_PADDING_BOTTOM_TAG,WRONG_TYPE },
-        { JSON_PADDING_LEFT_TAG, TEST_DIMENSION },
-    };
-    jsonComponent[JSON_SIZE_TAG] = nlohmann::json {
-        { JSON_FONT_SIZE_TAG, TEST_SIZE },
-        { JSON_ICON_SIZE_TAG, TEST_SIZE },
-        { JSON_TEXT_ICON_PADDING_TAG, TEST_SIZE },
-        { JSON_PADDING_SIZE_TAG, jsonPadding },
-    };
-    ASSERT_FALSE(comp.FromJson(jsonComponent));
-
-    jsonPadding = nlohmann::json {
-        { JSON_PADDING_TOP_TAG, TEST_DIMENSION },
-        { JSON_PADDING_RIGHT_TAG, TEST_DIMENSION },
-        { JSON_PADDING_BOTTOM_TAG,TEST_DIMENSION },
+        { JSON_PADDING_BOTTOM_TAG, TEST_DIMENSION },
         { JSON_PADDING_LEFT_TAG, WRONG_TYPE },
     };
     jsonComponent[JSON_SIZE_TAG] = nlohmann::json {
@@ -315,12 +343,12 @@ HWTEST_F(SecCompBaseTest, FromJson005, TestSize.Level1)
 }
 
 /**
- * @tc.name: FromJson006
+ * @tc.name: FromJson008
  * @tc.desc: Test location button from wrong border and parent json
  * @tc.type: FUNC
  * @tc.require:
  */
-HWTEST_F(SecCompBaseTest, FromJson006, TestSize.Level1)
+HWTEST_F(SecCompBaseTest, FromJson008, TestSize.Level1)
 {
     nlohmann::json jsonComponent;
     SecCompBase comp;
