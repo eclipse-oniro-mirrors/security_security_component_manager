@@ -11,4 +11,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-sec_comp_root_dir = "//base/security/security_component"
+foundation_graphic_2d = "//foundation/graphic/graphic_2d"
