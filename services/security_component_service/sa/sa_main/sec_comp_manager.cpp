@@ -272,14 +272,6 @@ int32_t SecCompManager::ReportSecurityComponentClickEvent(int32_t scId,
         return SC_SERVICE_ERROR_COMPONENT_INFO_INVALID;
     }
 
-    // BasicInfo is the attributes of security component defined in ets, such as fontsize.
-    // we only compare these because they can be obtained during registration/update,
-    // but other infos such as position may not be notified because changs occur at the parent node.
-    if (!sc->CompareComponentBasicInfo(reportComponentInfo.get())) {
-        SC_LOG_ERROR(LABEL, "Report component basic compare register component failed");
-        return SC_SERVICE_ERROR_COMPONENT_INFO_NOT_EQUAL;
-    }
-
     sc->SetComponentInfo(reportComponentInfo);
     if (!sc->CheckTouchInfo(touchInfo)) {
         SC_LOG_ERROR(LABEL, "touchInfo is invalid");
