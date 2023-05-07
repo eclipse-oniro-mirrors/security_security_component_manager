@@ -125,8 +125,7 @@ static bool CheckSecCompBase(const SecCompBase* comp)
         return false;
     }
 
-    if ((comp->fontSize_ < MIN_FONT_SIZE) || (comp->iconSize_ < MIN_ICON_SIZE) ||
-        (comp->padding_.top < MIN_PADDING_SIZE) || (comp->padding_.right < MIN_PADDING_SIZE) ||
+    if ((comp->padding_.top < MIN_PADDING_SIZE) || (comp->padding_.right < MIN_PADDING_SIZE) ||
         (comp->padding_.bottom < MIN_PADDING_SIZE) || (comp->padding_.left < MIN_PADDING_SIZE) ||
         (comp->textIconPadding_ < MIN_PADDING_SIZE)) {
         SC_LOG_ERROR(LABEL, "size is invalid.");
@@ -146,6 +145,14 @@ static bool CheckLocationButton(const LocationButton* comp)
 {
     if ((comp->text_ == LocationDesc::NO_TEXT) && (comp->icon_ == LocationIcon::NO_ICON)) {
         SC_LOG_INFO(LABEL, "both text and icon do not exist.");
+        return false;
+    }
+    if ((comp->text_ != LocationDesc::NO_TEXT) && (comp->fontSize_ < MIN_FONT_SIZE)) {
+        SC_LOG_INFO(LABEL, "font size invalid.");
+        return false;
+    }
+    if ((comp->icon_ != LocationIcon::NO_ICON) &&(comp->iconSize_ < MIN_ICON_SIZE)) {
+        SC_LOG_INFO(LABEL, "icon size invalid.");
         return false;
     }
 
