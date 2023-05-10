@@ -23,25 +23,18 @@
     "ram": "5102KB",
     "deps": {
       "components": [
-        "aafwk_standard",
-        "ability_base",
         "ability_runtime",
-        "appexecfwk_standard",
+        "access_token",
+        "c_utils",
         "hiviewdfx_hilog_native",
-        "hisysevent_native",
-        "ipc_core",
+        "ipc",
         "safwk",
         "samgr",
-        "c_utils",
-        "samgr_proxy",
-        "samgr",
-        "system_ability_fwk",
-        "utils_base"
+        "window_manager"
       ],
       "third_party": [
-        "cJSON",
-        "sqlite",
-        "mbedtls"
+        "cjson",
+        "googletest"
       ]
     },
     "build": {
