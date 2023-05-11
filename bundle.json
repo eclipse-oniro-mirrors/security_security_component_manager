@@ -52,6 +52,15 @@
           }
         },
         {
+          "name": "//base/security/security_component/interfaces/inner_api/enhance_kits:libsecurity_component_enhance_sdk",
+          "header": {
+            "header_files": [
+              "sec_comp_enhance_kit.h"
+            ],
+            "header_base": "//base/security/security_component/interfaces/inner_api/enhance_kits/include"
+          }
+        },
+        {
           "name": "//base/security/security_component/frameworks:libsecurity_component_framework",
           "header": {
             "header_files": [
