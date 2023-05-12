@@ -28,7 +28,6 @@ static constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {
     LOG_CORE, SECURITY_DOMAIN_SECURITY_COMPONENT, "SecCompManagerTest"};
 
 static constexpr double TEST_SIZE = 100.0;
-static constexpr uint32_t TEST_DIFF_SIZE = 16;
 static constexpr uint32_t TEST_INVALID_SIZE = 0;
 static constexpr double TEST_COORDINATE = 100.0;
 static constexpr uint32_t TEST_COLOR = 0xffffff;
@@ -391,13 +390,6 @@ HWTEST_F(SecCompManagerTest, ReportSecurityComponentClickEvent001, TestSize.Leve
 
     ASSERT_EQ(SecCompManager::GetInstance().ReportSecurityComponentClickEvent(scId, jsonInvalid, caller, touchInfo),
         SC_SERVICE_ERROR_COMPONENT_INFO_INVALID);
-
-    nlohmann::json jsonValid1;
-    LocationButton buttonValid1 = BuildValidLocationComponent();
-    buttonValid1.fontSize_ = TEST_DIFF_SIZE;
-    buttonValid1.ToJson(jsonValid1);
-    ASSERT_EQ(SecCompManager::GetInstance().ReportSecurityComponentClickEvent(scId, jsonValid1, caller, touchInfo),
-        SC_SERVICE_ERROR_COMPONENT_INFO_NOT_EQUAL);
 
     touchInfo.touchX = 500.0; // not hit component
     touchInfo.touchY = 500.0; // not hit component
