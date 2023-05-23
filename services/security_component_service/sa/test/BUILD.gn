@@ -51,7 +51,6 @@ ohos_unittest("sec_comp_service_test") {
   cflags_cc = [ "-DHILOG_ENABLE" ]
 
   deps = [
-    "${foundation_graphic_2d}/rosen/modules/render_service_client:librender_service_client",
     "${sec_comp_root_dir}/frameworks:libsecurity_component_enhance_adapter",
     "${sec_comp_root_dir}/frameworks:libsecurity_component_framework",
     "//third_party/googletest:gmock_main",
@@ -60,6 +59,7 @@ ohos_unittest("sec_comp_service_test") {
   external_deps = [
     "access_token:libtoken_setproc",
     "c_utils:utils",
+    "graphic_standard:librender_service_client",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "window_manager:libdm",
