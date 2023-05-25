@@ -27,6 +27,7 @@
         "access_token",
         "c_utils",
         "hiviewdfx_hilog_native",
+        "graphic_standard",
         "ipc",
         "safwk",
         "samgr",
