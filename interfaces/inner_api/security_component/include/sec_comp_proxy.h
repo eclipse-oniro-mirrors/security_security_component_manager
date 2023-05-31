@@ -31,6 +31,7 @@ public:
     int32_t UnregisterSecurityComponent(int32_t scId) override;
     int32_t ReportSecurityComponentClickEvent(int32_t scId,
         const std::string& componentInfo, const SecCompClickEvent& touchInfo) override;
+    bool ReduceAfterVerifySavePermission(AccessToken::AccessTokenID tokenId) override;
 
 private:
     static inline BrokerDelegator<SecCompProxy> delegator_;

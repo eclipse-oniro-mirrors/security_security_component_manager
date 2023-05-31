@@ -119,6 +119,23 @@ HWTEST_F(SecCompEnhanceTest, MarshallEnhanceCfg001, TestSize.Level1)
 }
 
 /**
+ * @tc.name: SecCompEnhanceCfgParcel001
+ * @tc.desc: test Marshalling/Unmarshalling
+ * @tc.type: FUNC
+ * @tc.require: AR000HO9IN
+ */
+HWTEST_F(SecCompEnhanceTest, SecCompEnhanceCfgParcel001, TestSize.Level1)
+{
+    SecCompEnhanceCfgParcel secCompEnhanceCfgParcel;
+    OHOS::Parcel out;
+    bool result = secCompEnhanceCfgParcel.Marshalling(out);
+    EXPECT_TRUE(result);
+
+    OHOS::Parcel in;
+    EXPECT_NE(nullptr, secCompEnhanceCfgParcel.Unmarshalling(in));
+}
+
+/**
  * @tc.name: UnmarshallEnhanceCfg001
  * @tc.desc: test UnmarshallEnhanceCfg
  * @tc.type: FUNC

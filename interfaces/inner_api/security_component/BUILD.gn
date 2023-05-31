@@ -50,6 +50,7 @@ ohos_shared_library("libsecurity_component_sdk") {
   configs = [ "${sec_comp_root_dir}/config:coverage_flags" ]
 
   external_deps = [
+    "access_token:libaccesstoken_sdk",
     "c_utils:utils",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",

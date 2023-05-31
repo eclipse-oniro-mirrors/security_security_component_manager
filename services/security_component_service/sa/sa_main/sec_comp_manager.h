@@ -21,7 +21,6 @@
 #include <string>
 #include <vector>
 
-#include "access_token.h"
 #include "accesstoken_kit.h"
 #include "app_state_observer.h"
 #include "nocopyable.h"
@@ -48,13 +47,15 @@ public:
         const SecCompCallerInfo& caller, int32_t& scId);
     int32_t UpdateSecurityComponent(int32_t scId, const nlohmann::json& jsonComponent,
         const SecCompCallerInfo& caller);
-    int32_t UnregisterSecurityComponent(int32_t scId,     const SecCompCallerInfo& caller);
+    int32_t UnregisterSecurityComponent(int32_t scId, const SecCompCallerInfo& caller);
     int32_t ReportSecurityComponentClickEvent(int32_t scId, const nlohmann::json& jsonComponent,
         const SecCompCallerInfo& caller, const SecCompClickEvent& touchInfo);
+    bool ReduceAfterVerifySavePermission(AccessToken::AccessTokenID tokenId);
     void NotifyProcessForeground(int32_t uid);
     void NotifyProcessBackground(int32_t uid);
     void NotifyProcessDied(int32_t uid);
     void DumpSecComp(std::string& dumpStr) const;
+    bool Initialize();
 
 private:
     SecCompManager();
@@ -72,12 +73,9 @@ private:
     std::unordered_map<int32_t, std::vector<SecCompEntity>> componentMap_;
     int32_t scValidCount_;
     int32_t scIdStart_;
-
-    bool Initialize() const;
     DISALLOW_COPY_AND_MOVE(SecCompManager);
 };
 }  // namespace SecurityComponent
 }  // namespace Security
 }  // namespace OHOS
 #endif  // SECURITY_COMPONENT_MANAGER_H
-

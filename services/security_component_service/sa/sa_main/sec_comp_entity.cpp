@@ -38,10 +38,6 @@ int32_t SecCompEntity::RevokeTempPermission()
 
 int32_t SecCompEntity::GrantTempPermission()
 {
-    if (isGrant_) {
-        SC_LOG_ERROR(LABEL, "security component is already granted");
-        return SC_OK;
-    }
     isGrant_ = true;
     return SecCompInfoHelper::GrantTempPermission(tokenId_, componentInfo_);
 }

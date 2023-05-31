@@ -94,6 +94,17 @@ int32_t SecCompClient::ReportSecurityComponentClickEvent(int32_t scId,
     return proxy->ReportSecurityComponentClickEvent(scId, componentInfo, touchInfo);
 }
 
+bool SecCompClient::ReduceAfterVerifySavePermission(AccessToken::AccessTokenID tokenId)
+{
+    auto proxy = GetProxy();
+    if (proxy == nullptr) {
+        SC_LOG_ERROR(LABEL, "Proxy is null");
+        return false;
+    }
+
+    return proxy->ReduceAfterVerifySavePermission(tokenId);
+}
+
 bool SecCompClient::StartLoadSecCompSa()
 {
     {

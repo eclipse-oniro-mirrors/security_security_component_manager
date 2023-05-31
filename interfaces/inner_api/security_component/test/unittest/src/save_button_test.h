@@ -12,16 +12,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef SEC_COMP_BASE_TEST_H
-#define SEC_COMP_BASE_TEST_H
+
+#ifndef SEC_COMP_SAVE_BUTTON_TEST_H
+#define SEC_COMP_SAVE_BUTTON_TEST_H
 
 #include <gtest/gtest.h>
-#include "sec_comp_base.h"
+#include "save_button.h"
 
 namespace OHOS {
 namespace Security {
 namespace SecurityComponent {
-class SecCompBaseTest : public testing::Test {
+class SaveButtonTest : public testing::Test {
 public:
     static void SetUpTestCase();
 
@@ -34,4 +35,4 @@ public:
 }  // namespace SecurityComponent
 }  // namespace Security
 }  // namespace OHOS
-#endif  // SEC_COMP_BASE_TEST_H
+#endif  // SEC_COMP_SAVE_BUTTON_TEST_H

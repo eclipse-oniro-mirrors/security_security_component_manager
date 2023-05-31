@@ -199,6 +199,41 @@ int32_t SecCompProxy::ReportSecurityComponentClickEvent(int32_t scId,
     }
     return res;
 }
+
+bool SecCompProxy::ReduceAfterVerifySavePermission(AccessToken::AccessTokenID tokenId)
+{
+    MessageParcel data;
+    if (!data.WriteInterfaceToken(SecCompProxy::GetDescriptor())) {
+        SC_LOG_ERROR(LABEL, "Write descriptor fail");
+        return false;
+    }
+
+    if (!data.WriteUint32(tokenId)) {
+        SC_LOG_ERROR(LABEL, "Write Uint32 fail");
+        return false;
+    }
+
+    MessageParcel reply;
+    MessageOption option(MessageOption::TF_SYNC);
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        SC_LOG_ERROR(LABEL, "Remote service is null");
+        return false;
+    }
+    int32_t requestResult = remote->SendRequest(
+        static_cast<uint32_t>(ISecCompService::InterfaceCode::VERIFY_TEMP_SAVE_PERMISSION),
+        data, reply, option);
+    if (requestResult != SC_OK) {
+        SC_LOG_ERROR(LABEL, "Request fail, result: %{public}d", requestResult);
+        return false;
+    }
+    bool res;
+    if (!reply.ReadBool(res)) {
+        SC_LOG_ERROR(LABEL, "Read bool fail");
+        return false;
+    }
+    return res;
+}
 }  // namespace SecurityComponent
 }  // namespace Security
 }  // namespace OHOS

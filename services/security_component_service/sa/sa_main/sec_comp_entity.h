@@ -17,9 +17,10 @@
 #define SECURITY_COMPONENT_ENTITY_H
 
 #include <memory>
-#include "access_token.h"
+#include "accesstoken_kit.h"
 #include "sec_comp_base.h"
 #include "sec_comp_info.h"
+#include "sec_comp_perm_manager.h"
 
 namespace OHOS {
 namespace Security {
@@ -27,7 +28,8 @@ namespace SecurityComponent {
 class SecCompEntity {
 public:
     SecCompEntity(std::shared_ptr<SecCompBase> component,
-        AccessToken::AccessTokenID token, int32_t scId) : componentInfo_(component), tokenId_(token), scId_(scId) {};
+        AccessToken::AccessTokenID token, int32_t scId) : componentInfo_(component),
+        tokenId_(token), scId_(scId) {};
     ~SecCompEntity() = default;
     int32_t RevokeTempPermission();
     int32_t GrantTempPermission();

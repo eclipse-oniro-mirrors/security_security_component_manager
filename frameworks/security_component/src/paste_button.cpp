@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "location_button.h"
+#include "paste_button.h"
 #include <tuple>
 #include "sec_comp_err.h"
 #include "sec_comp_log.h"
@@ -23,38 +23,38 @@ namespace OHOS {
 namespace Security {
 namespace SecurityComponent {
 namespace {
-constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {LOG_CORE, SECURITY_DOMAIN_SECURITY_COMPONENT, "LocationButton"};
+constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {LOG_CORE, SECURITY_DOMAIN_SECURITY_COMPONENT, "PasteButton"};
 static const std::string JSON_STYLE_TAG = "style";
 static const std::string JSON_TEXT_TAG = "text";
 static const std::string JSON_ICON_TAG = "icon";
 static const std::string JSON_BG_TAG = "bg";
 }
 
-bool LocationButton::IsParamValid()
+bool PasteButton::IsParamValid()
 {
-    if ((static_cast<LocationDesc>(text_) <= LocationDesc::UNKNOWN_TEXT) ||
-        (static_cast<LocationDesc>(text_) >= LocationDesc::MAX_LABEL_TYPE) ||
-        (static_cast<LocationIcon>(icon_) <= LocationIcon::UNKNOWN_ICON) ||
-        (static_cast<LocationIcon>(icon_) >= LocationIcon::MAX_ICON_TYPE)) {
+    if ((static_cast<PasteDesc>(text_) <= PasteDesc::UNKNOWN_TEXT) ||
+        (static_cast<PasteDesc>(text_) >= PasteDesc::MAX_LABEL_TYPE) ||
+        (static_cast<PasteIcon>(icon_) <= PasteIcon::UNKNOWN_ICON) ||
+        (static_cast<PasteIcon>(icon_) >= PasteIcon::MAX_ICON_TYPE)) {
         return false;
     }
 
     return true;
 }
 
-bool LocationButton::CompareComponentBasicInfo(SecCompBase *other) const
+bool PasteButton::CompareComponentBasicInfo(SecCompBase *other) const
 {
     if (!SecCompBase::CompareComponentBasicInfo(other)) {
         SC_LOG_ERROR(LABEL, "SecComp base not equal.");
         return false;
     }
-    LocationButton* otherLocationButton = reinterpret_cast<LocationButton *>(other);
-    if (otherLocationButton == nullptr) {
-        SC_LOG_ERROR(LABEL, "other is not location button.");
+    PasteButton* otherPasteButton = reinterpret_cast<PasteButton *>(other);
+    if (otherPasteButton == nullptr) {
+        SC_LOG_ERROR(LABEL, "other is not paste button.");
         return false;
     }
-    return (icon_ == otherLocationButton->icon_) && (text_ == otherLocationButton->text_) &&
-        (bg_ == otherLocationButton->bg_);
+    return (icon_ == otherPasteButton->icon_) && (text_ == otherPasteButton->text_) &&
+        (bg_ == otherPasteButton->bg_);
 }
 }  // namespace SecurityComponent
 }  // namespace Security

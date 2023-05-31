@@ -37,7 +37,7 @@ static const std::string JSON_PADDING_LEFT_TAG = "left";
 static const std::string JSON_PADDING_TOP_TAG = "top";
 static const std::string JSON_PADDING_RIGHT_TAG = "right";
 static const std::string JSON_PADDING_BOTTOM_TAG = "bottom";
-static const std::string JSON_TEXT_ICON_PADDING_TAG = "textIconPadding";
+static const std::string JSON_TEXT_ICON_PADDING_TAG = "textIconSpace";
 static const std::string JSON_RECT_WIDTH_TAG = "width";
 static const std::string JSON_RECT_HEIGHT_TAG = "height";
 
@@ -50,6 +50,11 @@ static const std::string JSON_BORDER_TAG = "border";
 static const std::string JSON_BORDER_WIDTH_TAG = "borderWidth";
 static const std::string JSON_PARENT_TAG = "parent";
 static const std::string JSON_PARENT_EFFECT_TAG = "parentEffect";
+
+static const std::string JSON_STYLE_TAG = "style";
+static const std::string JSON_TEXT_TAG = "text";
+static const std::string JSON_ICON_TAG = "icon";
+static const std::string JSON_BG_TAG = "bg";
 }
 
 bool SecCompBase::ParseDimension(const nlohmann::json& json, const std::string& tag, DimensionT& res)
@@ -153,7 +158,7 @@ bool SecCompBase::ParseSize(const nlohmann::json& json, const std::string& tag)
         return false;
     }
 
-    if (!ParseDimension(jsonSize, JSON_TEXT_ICON_PADDING_TAG, textIconPadding_)) {
+    if (!ParseDimension(jsonSize, JSON_TEXT_ICON_PADDING_TAG, textIconSpace_)) {
         return false;
     }
 
@@ -203,10 +208,17 @@ bool SecCompBase::ParseRect(const nlohmann::json& json, const std::string& tag)
 
 bool SecCompBase::FromJson(const nlohmann::json& jsonSrc)
 {
-    if (!ParseTypeValue<SecCompType>(jsonSrc, JSON_SC_TYPE, type_,
-        SecCompType::UNKNOWN_SC_TYPE, SecCompType::MAX_SC_TYPE)) {
+    SC_LOG_DEBUG(LABEL, "Button info %{public}s.", jsonSrc.dump().c_str());
+    if ((jsonSrc.find(JSON_SC_TYPE) == jsonSrc.end()) ||
+        !jsonSrc.at(JSON_SC_TYPE).is_number()) {
         return false;
     }
+    int32_t value = jsonSrc.at(JSON_SC_TYPE).get<int32_t>();
+    if ((value <= static_cast<int32_t>(SecCompType::UNKNOWN_SC_TYPE)) ||
+        (value >= static_cast<int32_t>(SecCompType::MAX_SC_TYPE))) {
+        return false;
+    }
+    type_ = static_cast<SecCompType>(value);
 
     if (!ParseRect(jsonSrc, JSON_RECT)) {
         return false;
@@ -223,6 +235,10 @@ bool SecCompBase::FromJson(const nlohmann::json& jsonSrc)
         return false;
     }
     if (!ParseParent(jsonSrc, JSON_PARENT_TAG)) {
+        return false;
+    }
+
+    if (!ParseStyle(jsonSrc, JSON_STYLE_TAG)) {
         return false;
     }
 
@@ -248,7 +264,7 @@ void SecCompBase::ToJson(nlohmann::json& jsonRes) const
     jsonRes[JSON_SIZE_TAG] = nlohmann::json {
         { JSON_FONT_SIZE_TAG, fontSize_ },
         { JSON_ICON_SIZE_TAG, iconSize_ },
-        { JSON_TEXT_ICON_PADDING_TAG, textIconPadding_ },
+        { JSON_TEXT_ICON_PADDING_TAG, textIconSpace_ },
         { JSON_PADDING_SIZE_TAG, jsonPadding },
     };
 
@@ -264,6 +280,19 @@ void SecCompBase::ToJson(nlohmann::json& jsonRes) const
     jsonRes[JSON_PARENT_TAG] = nlohmann::json {
         { JSON_PARENT_EFFECT_TAG, parentEffect_ },
     };
+
+    jsonRes[JSON_STYLE_TAG] = nlohmann::json {
+        { JSON_TEXT_TAG, text_ },
+        { JSON_ICON_TAG, icon_ },
+        { JSON_BG_TAG, bg_ },
+    };
+}
+
+std::string SecCompBase::ToJsonStr() const
+{
+    nlohmann::json json;
+    ToJson(json);
+    return json.dump();
 }
 
 bool SecCompBase::CompareComponentBasicInfo(SecCompBase *other) const
@@ -273,13 +302,39 @@ bool SecCompBase::CompareComponentBasicInfo(SecCompBase *other) const
         return false;
     }
 
-    auto leftValue = std::tie(type_, fontSize_, iconSize_, textIconPadding_, padding_.top, padding_.right,
+    auto leftValue = std::tie(type_, fontSize_, iconSize_, textIconSpace_, padding_.top, padding_.right,
         padding_.bottom, padding_.left, fontColor_.value, bgColor_.value, iconColor_.value, borderWidth_);
-    auto rightValue = std::tie(other->type_, other->fontSize_, other->iconSize_, other->textIconPadding_,
+    auto rightValue = std::tie(other->type_, other->fontSize_, other->iconSize_, other->textIconSpace_,
         other->padding_.top, other->padding_.right, other->padding_.bottom, other->padding_.left,
         other->fontColor_.value, other->bgColor_.value, other->iconColor_.value, other->borderWidth_);
 
     return (leftValue == rightValue);
+}
+
+bool SecCompBase::ParseStyle(const nlohmann::json& json, const std::string& tag)
+{
+    if ((json.find(tag) == json.end()) || !json.at(tag).is_object()) {
+        SC_LOG_ERROR(LABEL, "has no %{public}s.", tag.c_str());
+        return false;
+    }
+    auto jsonStyle = json.at(tag);
+    if (!(jsonStyle.at(JSON_TEXT_TAG).is_number() && jsonStyle.at(JSON_ICON_TAG).is_number() &&
+        jsonStyle.at(JSON_BG_TAG).is_number())) {
+        SC_LOG_ERROR(LABEL, "%{public}s is not number.", tag.c_str());
+        return false;
+    }
+    text_ = jsonStyle.at(JSON_TEXT_TAG).get<int32_t>();
+    icon_ = jsonStyle.at(JSON_ICON_TAG).get<int32_t>();
+    if (!(IsParamValid())) {
+        return false;
+    }
+
+    bg_ = static_cast<SecCompBackground>(jsonStyle.at(JSON_BG_TAG).get<int32_t>());
+    if ((bg_ <= SecCompBackground::UNKNOWN_BG) || (bg_ >= SecCompBackground::MAX_BG_TYPE)) {
+        return false;
+    }
+
+    return true;
 }
 }  // namespace base
 }  // namespace Security

@@ -12,28 +12,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef SECURITY_COMPONENT_ENHANCE_KITS_TEST
-#define SECURITY_COMPONENT_ENHANCE_KITS_TEST
 
-#include <gtest/gtest.h>
-#include "sec_comp_enhance_adapter.h"
-#include "sec_comp_enhance_cfg_parcel.h"
-#include "sec_comp_enhance_kit.h"
+#ifndef SEC_EVENT_HANDLER_H
+#define SEC_EVENT_HANDLER_H
+
+#include <memory>
+
+#include "event_handler.h"
+#include "event_runner.h"
 
 namespace OHOS {
 namespace Security {
 namespace SecurityComponent {
-class SecCompEnhanceTest : public testing::Test {
+class SecEventHandler : public AppExecFwk::EventHandler {
 public:
-    static void SetUpTestCase();
+    explicit SecEventHandler(const std::shared_ptr<AppExecFwk::EventRunner>& runner);
+    ~SecEventHandler() override;
 
-    static void TearDownTestCase();
+    bool ProxyPostTask(const Callback &callback, const std::string &name = std::string(), int64_t delayTime = 0);
 
-    void SetUp() override;
-
-    void TearDown() override;
+    void ProxyRemoveTask(const std::string &name);
 };
 }  // namespace SecurityComponent
 }  // namespace Security
 }  // namespace OHOS
-#endif  // SECURITY_COMPONENT_ENHANCE_KITS_TEST
+#endif  // SEC_EVENT_HANDLER_H

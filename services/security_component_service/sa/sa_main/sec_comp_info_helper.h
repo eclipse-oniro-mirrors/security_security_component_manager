@@ -19,6 +19,7 @@
 #include "nlohmann/json.hpp"
 #include "sec_comp_base.h"
 #include "sec_comp_info.h"
+#include "sec_comp_perm_manager.h"
 
 namespace OHOS {
 namespace Security {
