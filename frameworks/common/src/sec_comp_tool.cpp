@@ -84,17 +84,17 @@ static HsvColor RgbToHsv(uint8_t r, uint8_t g, uint8_t b)
     return hsv;
 }
 
-static inline double GetHsvDisX(HsvColor& hsv, double r)
+static inline double GetHsvDisX(const HsvColor& hsv, double r)
 {
     return r * hsv.v * hsv.s * cos(hsv.h / ONE_HUNDRED_EIGHTY_ANGLE * PI_CIRCLE);
 }
 
-static inline double GetHsvDisY(HsvColor& hsv, double r)
+static inline double GetHsvDisY(const HsvColor& hsv, double r)
 {
     return r * hsv.v * hsv.s * sin(hsv.h / ONE_HUNDRED_EIGHTY_ANGLE * PI_CIRCLE);
 }
 
-static inline double GetHsvDisZ(HsvColor& hsv, double h)
+static inline double GetHsvDisZ(const HsvColor& hsv, double h)
 {
     return h * (1 - hsv.v);
 }
