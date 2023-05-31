@@ -12,8 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef SECURITY_COMPONENT_SAVE_BUTTON_H
-#define SECURITY_COMPONENT_SAVE_BUTTON_H
+#ifndef I_SECURITY_COMPONENT_SAVE_BUTTON_H
+#define I_SECURITY_COMPONENT_SAVE_BUTTON_H
 
 #include <string>
 #include "nlohmann/json.hpp"
@@ -23,9 +23,36 @@
 namespace OHOS {
 namespace Security {
 namespace SecurityComponent {
+enum class SaveDesc : int32_t {
+    UNKNOWN_TEXT = -2,
+    NO_TEXT = -1,
+    DOWNLOAD = 0,
+    DOWNLOAD_FILES,
+    SAVE,
+    SAVE_IMAGES,
+    SAVE_FILES,
+    DOWNLOAD_AND_SHARE,
+    RECEIVE,
+    CONTINUE_TO_RECEIVE,
+    MAX_LABEL_TYPE
+};
+
+enum class SaveIcon : int32_t {
+    UNKNOWN_ICON = -2,
+    NO_ICON = -1,
+    FILLED_ICON = 0,
+    LINE_ICON = 1,
+    MAX_ICON_TYPE
+};
+
 class SaveButton : public SecCompBase {
+public:
+    virtual bool IsParamValid() override;
+    virtual bool CompareComponentBasicInfo(SecCompBase *other) const override;
+private:
+    bool ParseStyle(const nlohmann::json& json, const std::string& tag);
 };
 }  // namespace SecurityComponent
 }  // namespace Security
 }  // namespace OHOS
-#endif  // SECURITY_COMPONENT_SAVE_BUTTON_H
+#endif  // I_SECURITY_COMPONENT_SAVE_BUTTON_H

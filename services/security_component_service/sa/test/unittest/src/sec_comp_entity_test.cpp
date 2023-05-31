@@ -14,6 +14,9 @@
  */
 #include "sec_comp_entity_test.h"
 #include "sec_comp_log.h"
+#include "location_button.h"
+#include "paste_button.h"
+#include "save_button.h"
 #include "sec_comp_err.h"
 #include "sec_comp_tool.h"
 
@@ -42,7 +45,7 @@ void SecCompEntityTest::SetUp()
         return;
     }
 
-    std::shared_ptr<SecCompBase> component = std::make_shared<SecCompBase>();
+    std::shared_ptr<LocationButton> component = std::make_shared<LocationButton>();
     ASSERT_NE(nullptr, component);
 
     entity_ = std::make_shared<SecCompEntity>(component, 1, 1);
@@ -58,7 +61,7 @@ void SecCompEntityTest::TearDown()
  * @tc.name: RevokeTempPermission001
  * @tc.desc: Test revoke temp permission
  * @tc.type: FUNC
- * @tc.require:
+ * @tc.require: AR000HO9J7
  */
 HWTEST_F(SecCompEntityTest, RevokeTempPermission001, TestSize.Level1)
 {
@@ -78,15 +81,12 @@ HWTEST_F(SecCompEntityTest, RevokeTempPermission001, TestSize.Level1)
 
 /**
  * @tc.name: GrantTempPermission001
- * @tc.desc: Test grant permission
+ * @tc.desc: Test grant location permission
  * @tc.type: FUNC
- * @tc.require:
+ * @tc.require: AR000HO9J7
  */
 HWTEST_F(SecCompEntityTest, GrantTempPermission001, TestSize.Level1)
 {
-    entity_->isGrant_ = true;
-    ASSERT_EQ(entity_->GrantTempPermission(), SC_OK);
-
     entity_->isGrant_ = false;
     entity_->componentInfo_->type_ = UNKNOWN_SC_TYPE;
     ASSERT_EQ(entity_->GrantTempPermission(), SC_SERVICE_ERROR_PERMISSION_OPER_FAIL);
@@ -96,13 +96,36 @@ HWTEST_F(SecCompEntityTest, GrantTempPermission001, TestSize.Level1)
     entity_->componentInfo_->type_ = LOCATION_COMPONENT;
     ASSERT_EQ(entity_->GrantTempPermission(), SC_OK);
     ASSERT_TRUE(entity_->isGrant_);
+
+    entity_->isGrant_ = false;
+    entity_->componentInfo_->type_ = PASTE_COMPONENT;
+    ASSERT_EQ(entity_->GrantTempPermission(), SC_OK);
+    ASSERT_TRUE(entity_->isGrant_);
+}
+
+/**
+ * @tc.name: GrantTempPermission002
+ * @tc.desc: Test grant paste permission with invalid tokenId.
+ * @tc.type: FUNC
+ * @tc.require: AR000HO9J7
+ */
+HWTEST_F(SecCompEntityTest, GrantTempPermission002, TestSize.Level1)
+{
+    std::shared_ptr<PasteButton> pasteComponent = std::make_shared<PasteButton>();
+    ASSERT_NE(nullptr, pasteComponent);
+
+    entity_ = std::make_shared<SecCompEntity>(pasteComponent, 0, 1);
+    ASSERT_NE(nullptr, entity_);
+
+    ASSERT_EQ(entity_->GrantTempPermission(), SC_SERVICE_ERROR_PERMISSION_OPER_FAIL);
+    ASSERT_EQ(entity_->RevokeTempPermission(), SC_SERVICE_ERROR_PERMISSION_OPER_FAIL);
 }
 
 /**
  * @tc.name: CheckTouchInfo001
  * @tc.desc: Test touch info
  * @tc.type: FUNC
- * @tc.require:
+ * @tc.require: AR000HO9J7
  */
 HWTEST_F(SecCompEntityTest, CheckTouchInfo001, TestSize.Level1)
 {

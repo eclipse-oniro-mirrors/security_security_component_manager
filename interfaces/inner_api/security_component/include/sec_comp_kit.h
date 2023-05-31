@@ -16,18 +16,21 @@
 #define INTERFACES_INNER_API_SECURITY_COMPONENT_KIT_H
 
 #include <string>
+#include "accesstoken_kit.h"
 #include "sec_comp_info.h"
 
 namespace OHOS {
 namespace Security {
 namespace SecurityComponent {
 class SecCompKit {
+
 public:
     static int32_t RegisterSecurityComponent(SecCompType type, const std::string& componentInfo, int32_t& scId);
     static int32_t UpdateSecurityComponent(int32_t scId, const std::string& componentInfo);
     static int32_t UnregisterSecurityComponent(int32_t scId);
     static int32_t ReportSecurityComponentClickEvent(int32_t scId,
         const std::string& componentInfo, const SecCompClickEvent& touchInfo);
+    static bool ReduceAfterVerifySavePermission(AccessToken::AccessTokenID tokenId);
 };
 }  // namespace SecurityComponent
 }  // namespace Security

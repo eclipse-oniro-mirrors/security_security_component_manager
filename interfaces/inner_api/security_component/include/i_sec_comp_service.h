@@ -16,6 +16,7 @@
 #define I_SECURITY_COMPONENT_SERVICE_H
 
 #include <string>
+#include "access_token.h"
 #include "iremote_broker.h"
 #include "sec_comp_info.h"
 
@@ -34,6 +35,7 @@ public:
     virtual int32_t UnregisterSecurityComponent(int32_t scId) = 0;
     virtual int32_t ReportSecurityComponentClickEvent(int32_t scId, const std::string& componentInfo,
         const SecCompClickEvent& touchInfo) = 0;
+    virtual bool ReduceAfterVerifySavePermission(AccessToken::AccessTokenID tokenId) = 0;
 
     enum class InterfaceCode {
         REGISTER_SECURITY_COMPONENT = 0xff01,
@@ -41,6 +43,7 @@ public:
         UNREGISTER_SECURITY_COMPONENT = 0xff03,
         REPORT_SECURITY_COMPONENT_CLICK_EVENT = 0xff04,
         GET_SECURITY_COMPONENT_ENHANCE_OBJECT = 0xff05,
+        VERIFY_TEMP_SAVE_PERMISSION = 0xff06,
     };
 };
 }  // namespace SecurityComponent

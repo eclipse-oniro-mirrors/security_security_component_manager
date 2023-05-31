@@ -23,6 +23,7 @@
 #include "save_button.h"
 #include "sec_comp_err.h"
 #include "sec_comp_log.h"
+#include "sec_comp_service.h"
 #include "sec_comp_tool.h"
 
 namespace OHOS {
@@ -113,6 +114,37 @@ static bool CheckRectValid(const SecCompRect& rect)
     return true;
 }
 
+static bool CheckSecCompBaseButton(const SecCompBase* comp)
+{
+    if ((comp->text_ < 0) && (comp->icon_ < 0)) {
+        SC_LOG_INFO(LABEL, "both text and icon do not exist.");
+        return false;
+    }
+    if ((comp->text_ >= 0) && comp->fontSize_ < MIN_FONT_SIZE) {
+        SC_LOG_INFO(LABEL, "font size invalid.");
+        return false;
+    }
+    if ((comp->icon_ >= 0) && comp->iconSize_ < MIN_ICON_SIZE) {
+        SC_LOG_INFO(LABEL, "icon size invalid.");
+        return false;
+    }
+
+    if (comp->bg_ != SecCompBackground::NO_BG_TYPE &&
+        (IsColorSimilar(comp->fontColor_, comp->bgColor_) || IsColorSimilar(comp->iconColor_, comp->bgColor_))) {
+        SC_LOG_INFO(LABEL, "fontColor or iconColor is similar whith backgroundColor.");
+        return false;
+    }
+
+    if (comp->bg_ == SecCompBackground::NO_BG_TYPE &&
+        ((comp->padding_.top != MIN_PADDING_WITHOUT_BG) || (comp->padding_.right != MIN_PADDING_WITHOUT_BG) ||
+        (comp->padding_.bottom != MIN_PADDING_WITHOUT_BG) || (comp->padding_.left != MIN_PADDING_WITHOUT_BG))) {
+        SC_LOG_INFO(LABEL, "padding can not change without background.");
+        return false;
+    }
+
+    return true;
+}
+
 static bool CheckSecCompBase(const SecCompBase* comp)
 {
     if (!CheckRectValid(comp->rect_)) {
@@ -127,7 +159,7 @@ static bool CheckSecCompBase(const SecCompBase* comp)
 
     if ((comp->padding_.top < MIN_PADDING_SIZE) || (comp->padding_.right < MIN_PADDING_SIZE) ||
         (comp->padding_.bottom < MIN_PADDING_SIZE) || (comp->padding_.left < MIN_PADDING_SIZE) ||
-        (comp->textIconPadding_ < MIN_PADDING_SIZE)) {
+        (comp->textIconSpace_ < MIN_PADDING_SIZE)) {
         SC_LOG_ERROR(LABEL, "size is invalid.");
         return false;
     }
@@ -137,49 +169,10 @@ static bool CheckSecCompBase(const SecCompBase* comp)
         SC_LOG_ERROR(LABEL, "bgColor or fontColor or iconColor is too transparent.");
         return false;
     }
-
+    if (!CheckSecCompBaseButton(comp)) {
+        return false;
+    }
     return true;
-}
-
-static bool CheckLocationButton(const LocationButton* comp)
-{
-    if ((comp->text_ == LocationDesc::NO_TEXT) && (comp->icon_ == LocationIcon::NO_ICON)) {
-        SC_LOG_INFO(LABEL, "both text and icon do not exist.");
-        return false;
-    }
-    if ((comp->text_ != LocationDesc::NO_TEXT) && (comp->fontSize_ < MIN_FONT_SIZE)) {
-        SC_LOG_INFO(LABEL, "font size invalid.");
-        return false;
-    }
-    if ((comp->icon_ != LocationIcon::NO_ICON) &&(comp->iconSize_ < MIN_ICON_SIZE)) {
-        SC_LOG_INFO(LABEL, "icon size invalid.");
-        return false;
-    }
-
-    if (comp->bg_ != LocationBackground::NO_BG_TYPE &&
-        (IsColorSimilar(comp->fontColor_, comp->bgColor_) || IsColorSimilar(comp->iconColor_, comp->bgColor_))) {
-        SC_LOG_INFO(LABEL, "fontColor or iconColor is similar whith backgroundColor.");
-        return false;
-    }
-
-    if (comp->bg_ == LocationBackground::NO_BG_TYPE &&
-        ((comp->padding_.top != MIN_PADDING_WITHOUT_BG) || (comp->padding_.right != MIN_PADDING_WITHOUT_BG) ||
-        (comp->padding_.bottom != MIN_PADDING_WITHOUT_BG) || (comp->padding_.left != MIN_PADDING_WITHOUT_BG))) {
-        SC_LOG_INFO(LABEL, "padding can not change without background.");
-        return false;
-    }
-
-    return true;
-}
-
-static bool CheckPasteButton(const PasteButton* comp)
-{
-    return false;
-}
-
-static bool CheckSaveButton(const SaveButton* comp)
-{
-    return false;
 }
 
 bool SecCompInfoHelper::CheckComponentValid(const SecCompBase* comp)
@@ -194,23 +187,7 @@ bool SecCompInfoHelper::CheckComponentValid(const SecCompBase* comp)
         return false;
     }
 
-    bool valid = false;
-    switch (comp->type_) {
-        case LOCATION_COMPONENT:
-            valid = CheckLocationButton(reinterpret_cast<const LocationButton *>(comp));
-            break;
-        case PASTE_COMPONENT:
-            valid = CheckPasteButton(reinterpret_cast<const PasteButton *>(comp));
-            break;
-        case SAVE_COMPONENT:
-            valid = CheckSaveButton(reinterpret_cast<const SaveButton *>(comp));
-            break;
-        default:
-            SC_LOG_ERROR(LABEL, "Parse component type unknown");
-            break;
-    }
-
-    return valid;
+    return true;
 }
 
 int32_t SecCompInfoHelper::RevokeTempPermission(AccessToken::AccessTokenID tokenId,
@@ -220,11 +197,15 @@ int32_t SecCompInfoHelper::RevokeTempPermission(AccessToken::AccessTokenID token
         SC_LOG_ERROR(LABEL, "revoke component is null");
         return SC_SERVICE_ERROR_PERMISSION_OPER_FAIL;
     }
+
     SecCompType type = componentInfo->type_;
     switch (type) {
         case LOCATION_COMPONENT:
-            return AccessToken::AccessTokenKit::RevokePermission(tokenId, "ohos.permission.LOCATION",
+            SecCompPermManager::GetInstance().RevokeLocationPermission(tokenId, "ohos.permission.LOCATION",
                 AccessToken::PermissionFlag::PERMISSION_COMPONENT_SET);
+        case PASTE_COMPONENT:
+            SC_LOG_DEBUG(LABEL, "revoke paste permission");
+            return SC_OK;
         default:
             SC_LOG_ERROR(LABEL, "revoke component type unknown");
             break;
@@ -235,15 +216,22 @@ int32_t SecCompInfoHelper::RevokeTempPermission(AccessToken::AccessTokenID token
 int32_t SecCompInfoHelper::GrantTempPermission(AccessToken::AccessTokenID tokenId,
     const std::shared_ptr<SecCompBase>& componentInfo)
 {
-    if (componentInfo == nullptr) {
+    if ((tokenId <= 0) || (componentInfo == nullptr)) {
         SC_LOG_ERROR(LABEL, "revoke component is null");
         return SC_SERVICE_ERROR_PERMISSION_OPER_FAIL;
     }
+
     SecCompType type = componentInfo->type_;
     switch (type) {
         case LOCATION_COMPONENT:
-            return AccessToken::AccessTokenKit::GrantPermission(tokenId, "ohos.permission.LOCATION",
+            SecCompPermManager::GetInstance().GrantLocationPermission(tokenId, "ohos.permission.LOCATION",
                 AccessToken::PermissionFlag::PERMISSION_COMPONENT_SET);
+        case PASTE_COMPONENT:
+            SC_LOG_DEBUG(LABEL, "grant paste permission");
+            return SC_OK;
+        case SAVE_COMPONENT:
+            SC_LOG_DEBUG(LABEL, "grant save permission");
+            return SecCompPermManager::GetInstance().GrantTempSavePermission(tokenId);
         default:
             SC_LOG_ERROR(LABEL, "Parse component type unknown");
             break;

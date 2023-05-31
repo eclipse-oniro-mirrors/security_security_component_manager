@@ -161,6 +161,27 @@ int32_t SecCompStub::ReportSecurityComponentClickEventInner(MessageParcel& data,
     return SC_OK;
 }
 
+int32_t SecCompStub::ReduceAfterVerifySavePermissionInner(MessageParcel& data, MessageParcel& reply)
+{
+    uint32_t tokenId;
+    if (!data.ReadUint32(tokenId)) {
+        SC_LOG_ERROR(LABEL, "Read component id fail");
+        return SC_SERVICE_ERROR_PARCEL_OPERATE_FAIL;
+    }
+
+    if (tokenId <= 0) {
+        SC_LOG_ERROR(LABEL, "AccessTokenId invalid");
+        return SC_SERVICE_ERROR_VALUE_INVALID;
+    }
+
+    bool res = this->ReduceAfterVerifySavePermission(tokenId);
+    if (!reply.WriteBool(res)) {
+        SC_LOG_ERROR(LABEL, "verify temp save permission result fail");
+        return SC_SERVICE_ERROR_PARCEL_OPERATE_FAIL;
+    }
+    return SC_OK;
+}
+
 SecCompStub::SecCompStub()
 {
     requestFuncMap_[static_cast<uint32_t>(ISecCompService::InterfaceCode::REGISTER_SECURITY_COMPONENT)] =
@@ -171,6 +192,8 @@ SecCompStub::SecCompStub()
         &SecCompStub::UnregisterSecurityComponentInner;
     requestFuncMap_[static_cast<uint32_t>(ISecCompService::InterfaceCode::REPORT_SECURITY_COMPONENT_CLICK_EVENT)] =
         &SecCompStub::ReportSecurityComponentClickEventInner;
+    requestFuncMap_[static_cast<uint32_t>(ISecCompService::InterfaceCode::VERIFY_TEMP_SAVE_PERMISSION)] =
+        &SecCompStub::ReduceAfterVerifySavePermissionInner;
 }
 
 SecCompStub::~SecCompStub()

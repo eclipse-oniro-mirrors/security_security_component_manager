@@ -49,6 +49,11 @@ public:
     {
         return 0;
     };
+
+    bool ReduceAfterVerifySavePermission(AccessToken::AccessTokenID tokenId) override
+    {
+        return true;
+    }
 };
 
 class SecCompStubTest : public testing::Test {

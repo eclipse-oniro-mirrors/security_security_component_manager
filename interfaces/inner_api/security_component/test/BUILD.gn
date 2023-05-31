@@ -28,10 +28,11 @@ ohos_unittest("sec_comp_sdk_test") {
 
   sources = [
     "unittest/src/location_button_test.cpp",
-    "unittest/src/sec_comp_base_test.cpp",
+    "unittest/src/paste_button_test.cpp",
+    "unittest/src/save_button_test.cpp",
     "unittest/src/sec_comp_kit_test.cpp",
   ]
-
+  configs = [ "${sec_comp_root_dir}/config:coverage_flags" ]
   cflags_cc = [ "-DHILOG_ENABLE" ]
 
   deps = [
@@ -40,6 +41,7 @@ ohos_unittest("sec_comp_sdk_test") {
   ]
 
   external_deps = [
+    "access_token:libaccesstoken_sdk",
     "c_utils:utils",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",

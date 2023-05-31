@@ -16,6 +16,7 @@
 #include "sec_comp_manager_test.h"
 #include "sec_comp_log.h"
 #include "location_button.h"
+#include "save_button.h"
 #include "sec_comp_err.h"
 
 using namespace testing::ext;
@@ -31,13 +32,16 @@ static constexpr double TEST_SIZE = 100.0;
 static constexpr uint32_t TEST_INVALID_SIZE = 0;
 static constexpr double TEST_COORDINATE = 100.0;
 static constexpr uint32_t TEST_COLOR = 0xffffff;
-static constexpr uint32_t TEST_COLOR_1 = 0x7fff00;
-static constexpr uint32_t TEST_COLOR_2 = 0xff0000;
-static constexpr uint32_t TEST_COLOR_3 = 0x0000ff;
+static constexpr uint32_t TEST_COLOR_YELLOW = 0x7fff00;
+static constexpr uint32_t TEST_COLOR_RED = 0xff0000;
+static constexpr uint32_t TEST_COLOR_BLUE = 0x0000ff;
 
 static constexpr int32_t TEST_UID_1 = 1;
 static constexpr int32_t TEST_UID_2 = 2;
 static constexpr int32_t TEST_UID_3 = 3;
+
+static constexpr int32_t UNKNOWN_TEXT = -2;
+static constexpr int32_t UNKNOWN_ICON = -2;
 
 static constexpr AccessTokenID TEST_TOKEN_ID = 1;
 static constexpr int32_t TEST_SC_ID_1 = 1;
@@ -56,7 +60,7 @@ static LocationButton BuildInvalidLocationComponent()
     button.padding_.right = TEST_INVALID_SIZE;
     button.padding_.bottom = TEST_INVALID_SIZE;
     button.padding_.left = TEST_INVALID_SIZE;
-    button.textIconPadding_ = TEST_INVALID_SIZE;
+    button.textIconSpace_ = TEST_INVALID_SIZE;
     button.fontColor_.value = TEST_COLOR;
     button.iconColor_.value = TEST_COLOR;
     button.bgColor_.value = TEST_COLOR;
@@ -66,9 +70,9 @@ static LocationButton BuildInvalidLocationComponent()
     button.rect_.y_ = TEST_COORDINATE;
     button.rect_.width_ = TEST_COORDINATE;
     button.rect_.height_ = TEST_COORDINATE;
-    button.text_ = LocationDesc::UNKNOWN_TEXT;
-    button.icon_ = LocationIcon::UNKNOWN_ICON;
-    button.bg_ = LocationBackground::UNKNOWN_BG;
+    button.text_ = UNKNOWN_TEXT;
+    button.icon_ = UNKNOWN_ICON;
+    button.bg_ = SecCompBackground::UNKNOWN_BG;
     return button;
 }
 
@@ -81,19 +85,19 @@ static LocationButton BuildValidLocationComponent()
     button.padding_.right = TEST_SIZE;
     button.padding_.bottom = TEST_SIZE;
     button.padding_.left = TEST_SIZE;
-    button.textIconPadding_ = TEST_SIZE;
-    button.fontColor_.value = TEST_COLOR_1;
-    button.iconColor_.value = TEST_COLOR_2;
-    button.bgColor_.value = TEST_COLOR_3;
+    button.textIconSpace_ = TEST_SIZE;
+    button.fontColor_.value = TEST_COLOR_YELLOW;
+    button.iconColor_.value = TEST_COLOR_RED;
+    button.bgColor_.value = TEST_COLOR_BLUE;
     button.borderWidth_ = TEST_SIZE;
     button.type_ = LOCATION_COMPONENT;
     button.rect_.x_ = TEST_COORDINATE;
     button.rect_.y_ = TEST_COORDINATE;
     button.rect_.width_ = TEST_COORDINATE;
     button.rect_.height_ = TEST_COORDINATE;
-    button.text_ = LocationDesc::SELECT_LOCATION;
-    button.icon_ = LocationIcon::LINE_ICON;
-    button.bg_ = LocationBackground::CIRCLE;
+    button.text_ = static_cast<int32_t>(LocationDesc::SELECT_LOCATION);
+    button.icon_ = static_cast<int32_t>(LocationIcon::LINE_ICON);
+    button.bg_ = SecCompBackground::CIRCLE;
     return button;
 }
 }
@@ -119,7 +123,7 @@ void SecCompManagerTest::TearDown()
  * @tc.name: CreateScId001
  * @tc.desc: Test create sc id
  * @tc.type: FUNC
- * @tc.require:
+ * @tc.require: AR000HO9J7
  */
 HWTEST_F(SecCompManagerTest, CreateScId001, TestSize.Level1)
 {
@@ -134,11 +138,11 @@ HWTEST_F(SecCompManagerTest, CreateScId001, TestSize.Level1)
  * @tc.name: AddProcessComponent001
  * @tc.desc: Test add process component
  * @tc.type: FUNC
- * @tc.require:
+ * @tc.require: AR000HO9J7
  */
 HWTEST_F(SecCompManagerTest, AddProcessComponent001, TestSize.Level1)
 {
-    std::shared_ptr<SecCompBase> compPtr = std::make_shared<SecCompBase>();
+    std::shared_ptr<LocationButton> compPtr = std::make_shared<LocationButton>();
     ASSERT_NE(compPtr, nullptr);
     compPtr->rect_.x_ = TEST_COORDINATE;
     compPtr->rect_.y_ = TEST_COORDINATE;
@@ -153,11 +157,11 @@ HWTEST_F(SecCompManagerTest, AddProcessComponent001, TestSize.Level1)
  * @tc.name: AddSecurityComponentToList001
  * @tc.desc: Test add security component to list
  * @tc.type: FUNC
- * @tc.require:
+ * @tc.require: AR000HO9J7
  */
 HWTEST_F(SecCompManagerTest, AddSecurityComponentToList001, TestSize.Level1)
 {
-    std::shared_ptr<SecCompBase> compPtr = std::make_shared<SecCompBase>();
+    std::shared_ptr<LocationButton> compPtr = std::make_shared<LocationButton>();
     ASSERT_NE(compPtr, nullptr);
     compPtr->rect_.x_ = TEST_COORDINATE;
     compPtr->rect_.y_ = TEST_COORDINATE;
@@ -167,7 +171,7 @@ HWTEST_F(SecCompManagerTest, AddSecurityComponentToList001, TestSize.Level1)
 
     ASSERT_EQ(SecCompManager::GetInstance().AddSecurityComponentToList(1, entity), SC_OK);
 
-    std::shared_ptr<SecCompBase> compPtrNew = std::make_shared<SecCompBase>();
+    std::shared_ptr<LocationButton> compPtrNew = std::make_shared<LocationButton>();
     ASSERT_NE(compPtrNew, nullptr);
     compPtrNew->rect_.x_ = TEST_COORDINATE * 2; // not overlap
     compPtrNew->rect_.y_ = TEST_COORDINATE * 2; // not overlap
@@ -181,14 +185,14 @@ HWTEST_F(SecCompManagerTest, AddSecurityComponentToList001, TestSize.Level1)
  * @tc.name: DeleteSecurityComponentFromList001
  * @tc.desc: Test delete security component
  * @tc.type: FUNC
- * @tc.require:
+ * @tc.require: AR000HO9J7
  */
 HWTEST_F(SecCompManagerTest, DeleteSecurityComponentFromList001, TestSize.Level1)
 {
     ASSERT_EQ(SecCompManager::GetInstance().DeleteSecurityComponentFromList(TEST_UID_1, TEST_SC_ID_1),
         SC_SERVICE_ERROR_COMPONENT_NOT_EXIST);
 
-    std::shared_ptr<SecCompBase> compPtr = std::make_shared<SecCompBase>();
+    std::shared_ptr<LocationButton> compPtr = std::make_shared<LocationButton>();
     ASSERT_NE(compPtr, nullptr);
     compPtr->rect_.x_ = TEST_COORDINATE;
     compPtr->rect_.y_ = TEST_COORDINATE;
@@ -207,13 +211,13 @@ HWTEST_F(SecCompManagerTest, DeleteSecurityComponentFromList001, TestSize.Level1
  * @tc.name: GetSecurityComponentFromList001
  * @tc.desc: Test get security component
  * @tc.type: FUNC
- * @tc.require:
+ * @tc.require: AR000HO9J7
  */
 HWTEST_F(SecCompManagerTest, GetSecurityComponentFromList001, TestSize.Level1)
 {
     ASSERT_EQ(SecCompManager::GetInstance().GetSecurityComponentFromList(TEST_UID_1, TEST_SC_ID_1), nullptr);
 
-    std::shared_ptr<SecCompBase> compPtr = std::make_shared<SecCompBase>();
+    std::shared_ptr<LocationButton> compPtr = std::make_shared<LocationButton>();
     ASSERT_NE(compPtr, nullptr);
     compPtr->rect_.x_ = TEST_COORDINATE;
     compPtr->rect_.y_ = TEST_COORDINATE;
@@ -229,13 +233,13 @@ HWTEST_F(SecCompManagerTest, GetSecurityComponentFromList001, TestSize.Level1)
  * @tc.name: NotifyProcessBackground001
  * @tc.desc: Test notify process background
  * @tc.type: FUNC
- * @tc.require:
+ * @tc.require: AR000HO9J7
  */
 HWTEST_F(SecCompManagerTest, NotifyProcessBackground001, TestSize.Level1)
 {
     SecCompManager::GetInstance().NotifyProcessBackground(TEST_UID_1);
 
-    std::shared_ptr<SecCompBase> compPtr = std::make_shared<SecCompBase>();
+    std::shared_ptr<LocationButton> compPtr = std::make_shared<LocationButton>();
     ASSERT_NE(compPtr, nullptr);
     compPtr->rect_.x_ = TEST_COORDINATE;
     compPtr->rect_.y_ = TEST_COORDINATE;
@@ -257,11 +261,11 @@ HWTEST_F(SecCompManagerTest, NotifyProcessBackground001, TestSize.Level1)
  * @tc.name: NotifyProcessDied001
  * @tc.desc: Test notify process died
  * @tc.type: FUNC
- * @tc.require:
+ * @tc.require: AR000HO9J7
  */
 HWTEST_F(SecCompManagerTest, NotifyProcessDied001, TestSize.Level1)
 {
-    std::shared_ptr<SecCompBase> compPtr = std::make_shared<SecCompBase>();
+    std::shared_ptr<LocationButton> compPtr = std::make_shared<LocationButton>();
     ASSERT_NE(compPtr, nullptr);
     compPtr->rect_.x_ = TEST_COORDINATE;
     compPtr->rect_.y_ = TEST_COORDINATE;
@@ -270,7 +274,7 @@ HWTEST_F(SecCompManagerTest, NotifyProcessDied001, TestSize.Level1)
     SecCompEntity entity(compPtr, TEST_TOKEN_ID, TEST_SC_ID_1);
     ASSERT_EQ(SecCompManager::GetInstance().AddSecurityComponentToList(TEST_UID_1, entity), SC_OK);
 
-    std::shared_ptr<SecCompBase> compPtr2 = std::make_shared<SecCompBase>();
+    std::shared_ptr<LocationButton> compPtr2 = std::make_shared<LocationButton>();
     ASSERT_NE(compPtr2, nullptr);
     compPtr2->rect_.x_ = TEST_COORDINATE * 2; // not overlap
     compPtr2->rect_.y_ = TEST_COORDINATE * 2; // not overlap
@@ -290,7 +294,7 @@ HWTEST_F(SecCompManagerTest, NotifyProcessDied001, TestSize.Level1)
  * @tc.name: RegisterSecurityComponent001
  * @tc.desc: Test register security component
  * @tc.type: FUNC
- * @tc.require:
+ * @tc.require: AR000HO9J7
  */
 HWTEST_F(SecCompManagerTest, RegisterSecurityComponent001, TestSize.Level1)
 {
@@ -317,7 +321,7 @@ HWTEST_F(SecCompManagerTest, RegisterSecurityComponent001, TestSize.Level1)
  * @tc.name: UpdateSecurityComponent001
  * @tc.desc: Test update security component
  * @tc.type: FUNC
- * @tc.require:
+ * @tc.require: AR000HO9J7
  */
 HWTEST_F(SecCompManagerTest, UpdateSecurityComponent001, TestSize.Level1)
 {
@@ -345,7 +349,7 @@ HWTEST_F(SecCompManagerTest, UpdateSecurityComponent001, TestSize.Level1)
  * @tc.name: UnregisterSecurityComponent001
  * @tc.desc: Test unregister security component
  * @tc.type: FUNC
- * @tc.require:
+ * @tc.require: AR000HO9J7
  */
 HWTEST_F(SecCompManagerTest, UnregisterSecurityComponent001, TestSize.Level1)
 {
@@ -362,7 +366,7 @@ HWTEST_F(SecCompManagerTest, UnregisterSecurityComponent001, TestSize.Level1)
  * @tc.name: ReportSecurityComponentClickEvent001
  * @tc.desc: Test report security component click
  * @tc.type: FUNC
- * @tc.require:
+ * @tc.require: AR000HO9J7
  */
 HWTEST_F(SecCompManagerTest, ReportSecurityComponentClickEvent001, TestSize.Level1)
 {

@@ -59,14 +59,14 @@ void SecCompKitTest::TearDown()
  */
 HWTEST_F(SecCompKitTest, ExceptCall001, TestSize.Level1)
 {
-    SecCompBase comp;
+    LocationButton comp;
     comp.fontSize_ = TEST_SIZE;
     comp.iconSize_ = TEST_SIZE;
     comp.padding_.top = TEST_DIMENSION;
     comp.padding_.right = TEST_DIMENSION;
     comp.padding_.bottom = TEST_DIMENSION;
     comp.padding_.left = TEST_DIMENSION;
-    comp.textIconPadding_ = TEST_SIZE;
+    comp.textIconSpace_ = TEST_SIZE;
     comp.bgColor_.value = TEST_COLOR;
     comp.fontColor_.value = TEST_COLOR;
     comp.iconColor_.value = TEST_COLOR;

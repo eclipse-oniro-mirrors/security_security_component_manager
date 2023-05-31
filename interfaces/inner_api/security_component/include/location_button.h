@@ -40,7 +40,7 @@ enum class LocationDesc : int32_t {
     MAX_LABEL_TYPE
 };
 
-enum class LocationIcon {
+enum class LocationIcon : int32_t {
     UNKNOWN_ICON = -2,
     NO_ICON = -1,
     FILLED_ICON = 0,
@@ -48,24 +48,9 @@ enum class LocationIcon {
     MAX_ICON_TYPE
 };
 
-enum class LocationBackground {
-    UNKNOWN_BG = -2,
-    NO_BG_TYPE = -1,
-    CAPSULE = 0,
-    CIRCLE = 1,
-    NORMAL = 2,
-    MAX_BG_TYPE
-};
-
 class LocationButton : public SecCompBase {
 public:
-    LocationDesc text_ = LocationDesc::UNKNOWN_TEXT;
-    LocationIcon icon_ = LocationIcon::UNKNOWN_ICON;
-    LocationBackground bg_ = LocationBackground::UNKNOWN_BG;
-
-    virtual bool FromJson(const nlohmann::json& jsonSrc) override;
-    virtual void ToJson(nlohmann::json& jsonRes) const override;
-    virtual std::string ToJsonStr(void) const;
+    virtual bool IsParamValid() override;
     virtual bool CompareComponentBasicInfo(SecCompBase *other) const override;
 private:
     bool ParseStyle(const nlohmann::json& json, const std::string& tag);

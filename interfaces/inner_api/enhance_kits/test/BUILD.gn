@@ -24,6 +24,7 @@ ohos_unittest("sec_comp_enhance_sdk_test") {
 
   sources = [ "unittest/src/sec_comp_enhance_test.cpp" ]
 
+  configs = [ "${sec_comp_root_dir}/config:coverage_flags" ]
   cflags_cc = [ "-DHILOG_ENABLE" ]
 
   deps = [

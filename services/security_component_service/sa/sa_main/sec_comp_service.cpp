@@ -58,6 +58,10 @@ void SecCompService::OnStart()
         SC_LOG_ERROR(LABEL, "Failed to publish service!");
         return;
     }
+    if (!Initialize()) {
+        SC_LOG_ERROR(LABEL, "Failed to initialize");
+        return;
+    }
     SC_LOG_INFO(LABEL, "Congratulations, SecCompService start successfully!");
 }
 
@@ -199,6 +203,11 @@ int32_t SecCompService::ReportSecurityComponentClickEvent(int32_t scId,
     return SecCompManager::GetInstance().ReportSecurityComponentClickEvent(scId, jsonRes, caller, touchInfo);
 }
 
+bool SecCompService::ReduceAfterVerifySavePermission(AccessToken::AccessTokenID tokenId)
+{
+    return SecCompManager::GetInstance().ReduceAfterVerifySavePermission(tokenId);
+}
+
 int SecCompService::Dump(int fd, const std::vector<std::u16string>& args)
 {
     if (fd < 0) {
@@ -222,6 +231,11 @@ int SecCompService::Dump(int fd, const std::vector<std::u16string>& args)
         dprintf(fd, "%s\n", dumpStr.c_str());
     }
     return ERR_OK;
+}
+
+bool SecCompService::Initialize() const
+{
+    return SecCompManager::GetInstance().Initialize();
 }
 }  // namespace SecurityComponent
 }  // namespace Security

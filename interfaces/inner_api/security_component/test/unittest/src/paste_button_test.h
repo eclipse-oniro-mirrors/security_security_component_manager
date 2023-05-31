@@ -12,28 +12,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef SECURITY_COMPONENT_ENHANCE_KITS_TEST
-#define SECURITY_COMPONENT_ENHANCE_KITS_TEST
+
+#ifndef SEC_COMP_PASTE_BUTTON_TEST_H
+#define SEC_COMP_PASTE_BUTTON_TEST_H
 
 #include <gtest/gtest.h>
-#include "sec_comp_enhance_adapter.h"
-#include "sec_comp_enhance_cfg_parcel.h"
-#include "sec_comp_enhance_kit.h"
+#include "paste_button.h"
 
 namespace OHOS {
 namespace Security {
 namespace SecurityComponent {
-class SecCompEnhanceTest : public testing::Test {
+class PasteButtonTest : public testing::Test {
 public:
     static void SetUpTestCase();
 
     static void TearDownTestCase();
 
-    void SetUp() override;
+    void SetUp();
 
-    void TearDown() override;
+    void TearDown();
 };
 }  // namespace SecurityComponent
 }  // namespace Security
 }  // namespace OHOS
-#endif  // SECURITY_COMPONENT_ENHANCE_KITS_TEST
+#endif  // SEC_COMP_PASTE_BUTTON_TEST_H

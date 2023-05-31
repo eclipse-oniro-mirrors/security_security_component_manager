@@ -27,6 +27,7 @@ static constexpr DimensionT MIN_ICON_SIZE = 12.0f;
 static constexpr DimensionT MIN_PADDING_SIZE = 0.0f;
 static constexpr DimensionT MIN_PADDING_WITHOUT_BG = 4.0f;
 static constexpr uint32_t MAX_EXTRA_SIZE = 0x1000;
+static constexpr int32_t UNKNOWN_TYPE = -2;
 
 struct PaddingSize {
     DimensionT top = DEFAULT_DIMENSION;

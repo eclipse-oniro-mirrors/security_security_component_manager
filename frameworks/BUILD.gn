@@ -37,6 +37,8 @@ ohos_shared_library("libsecurity_component_framework") {
   sources = [
     "common/src/sec_comp_tool.cpp",
     "security_component/src/location_button.cpp",
+    "security_component/src/paste_button.cpp",
+    "security_component/src/save_button.cpp",
     "security_component/src/sec_comp_base.cpp",
     "security_component/src/sec_comp_click_event_parcel.cpp",
   ]

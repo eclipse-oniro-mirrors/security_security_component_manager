@@ -281,6 +281,14 @@ int32_t SecCompManager::ReportSecurityComponentClickEvent(int32_t scId,
     return sc->GrantTempPermission();
 }
 
+bool SecCompManager::ReduceAfterVerifySavePermission(AccessToken::AccessTokenID tokenId)
+{
+    if (SecCompPermManager::GetInstance().RevokeTempSavePermission(tokenId) == SC_OK) {
+        return true;
+    }
+    return false;
+}
+
 void SecCompManager::DumpSecComp(std::string& dumpStr) const
 {
     for (auto iter = componentMap_.begin(); iter != componentMap_.end(); ++iter) {
@@ -292,6 +300,12 @@ void SecCompManager::DumpSecComp(std::string& dumpStr) const
                 ", isGrant:" + std::to_string(compIter->IsGrant()) + ", " + json.dump() + "\n");
         }
     }
+}
+
+bool SecCompManager::Initialize()
+{
+    SC_LOG_DEBUG(LABEL, "Initialize!!");
+    return SecCompPermManager::GetInstance().InitEventHandler();
 }
 }  // namespace SecurityComponent
 }  // namespace Security
