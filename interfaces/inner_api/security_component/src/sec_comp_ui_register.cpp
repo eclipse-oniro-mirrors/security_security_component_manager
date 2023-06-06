@@ -12,28 +12,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef INTERFACES_INNER_API_SECURITY_COMPONENT_KIT_H
-#define INTERFACES_INNER_API_SECURITY_COMPONENT_KIT_H
-
-#include <string>
-#include "accesstoken_kit.h"
-#include "sec_comp_info.h"
 #include "sec_comp_ui_register.h"
+#include "sec_comp_caller_authorization.h"
+#include "sec_comp_log.h"
 
 namespace OHOS {
 namespace Security {
 namespace SecurityComponent {
-class SecCompKit {
+namespace {
+static constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {
+    LOG_CORE, SECURITY_DOMAIN_SECURITY_COMPONENT, "SecCompUiRegister"};
+}  // namespace
 
-public:
-    static int32_t RegisterSecurityComponent(SecCompType type, const std::string& componentInfo, int32_t& scId);
-    static int32_t UpdateSecurityComponent(int32_t scId, const std::string& componentInfo);
-    static int32_t UnregisterSecurityComponent(int32_t scId);
-    static int32_t ReportSecurityComponentClickEvent(int32_t scId,
-        const std::string& componentInfo, const SecCompClickEvent& touchInfo);
-    static bool ReduceAfterVerifySavePermission(AccessToken::AccessTokenID tokenId);
-};
+SecCompUiRegister::SecCompUiRegister(std::vector<uintptr_t>& callerList)
+{
+    SC_LOG_INFO(LABEL, "Init");
+    SecCompCallerAuthorization::GetInstance().RegisterSecCompKitCaller(callerList);
+}
 }  // namespace SecurityComponent
 }  // namespace Security
 }  // namespace OHOS
-#endif  // INTERFACES_INNER_API_SECURITY_COMPONENT_KIT_H
+

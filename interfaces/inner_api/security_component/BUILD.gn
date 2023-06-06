@@ -38,11 +38,13 @@ ohos_shared_library("libsecurity_component_sdk") {
   ]
 
   sources = [
+    "src/sec_comp_caller_authorization.cpp",
     "src/sec_comp_client.cpp",
     "src/sec_comp_death_recipient.cpp",
     "src/sec_comp_kit.cpp",
     "src/sec_comp_load_callback.cpp",
     "src/sec_comp_proxy.cpp",
+    "src/sec_comp_ui_register.cpp"
   ]
 
   deps = [ "${sec_comp_root_dir}/frameworks:libsecurity_component_framework" ]
