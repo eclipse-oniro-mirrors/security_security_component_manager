@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 #include "sec_comp_kit.h"
+#include "sec_comp_caller_authorization.h"
 #include "sec_comp_client.h"
 #include "sec_comp_log.h"
 
@@ -26,6 +27,12 @@ static constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {LOG_CORE, SECURITY_DOMAIN_
 int32_t SecCompKit::RegisterSecurityComponent(SecCompType type,
     const std::string& componentInfo, int32_t& scId)
 {
+    if (!SecCompCallerAuthorization::GetInstance().IsKitCaller(
+        reinterpret_cast<uintptr_t>(__builtin_return_address(0)))) {
+        SC_LOG_ERROR(LABEL, "register security component fail, caller invalid");
+        return SC_SERVICE_ERROR_CALLER_INVALID;
+    }
+
     int32_t res = SecCompClient::GetInstance().RegisterSecurityComponent(type, componentInfo, scId);
     if (res != SC_OK) {
         SC_LOG_ERROR(LABEL, "register security component fail, error: %{public}d", res);
@@ -35,6 +42,12 @@ int32_t SecCompKit::RegisterSecurityComponent(SecCompType type,
 
 int32_t SecCompKit::UpdateSecurityComponent(int32_t scId, const std::string& componentInfo)
 {
+    if (!SecCompCallerAuthorization::GetInstance().IsKitCaller(
+        reinterpret_cast<uintptr_t>(__builtin_return_address(0)))) {
+        SC_LOG_ERROR(LABEL, "update security component fail, caller invalid");
+        return SC_SERVICE_ERROR_CALLER_INVALID;
+    }
+
     int32_t res = SecCompClient::GetInstance().UpdateSecurityComponent(scId, componentInfo);
     if (res != SC_OK) {
         SC_LOG_ERROR(LABEL, "update security component fail, error: %{public}d", res);
@@ -44,6 +57,12 @@ int32_t SecCompKit::UpdateSecurityComponent(int32_t scId, const std::string& com
 
 int32_t SecCompKit::UnregisterSecurityComponent(int32_t scId)
 {
+    if (!SecCompCallerAuthorization::GetInstance().IsKitCaller(
+        reinterpret_cast<uintptr_t>(__builtin_return_address(0)))) {
+        SC_LOG_ERROR(LABEL, "unregister security component fail, caller invalid");
+        return SC_SERVICE_ERROR_CALLER_INVALID;
+    }
+
     int32_t res = SecCompClient::GetInstance().UnregisterSecurityComponent(scId);
     if (res != SC_OK) {
         SC_LOG_ERROR(LABEL, "unregister security component fail, error: %{public}d", res);
@@ -54,6 +73,12 @@ int32_t SecCompKit::UnregisterSecurityComponent(int32_t scId)
 int32_t SecCompKit::ReportSecurityComponentClickEvent(int32_t scId,
     const std::string& componentInfo, const SecCompClickEvent& touchInfo)
 {
+    if (!SecCompCallerAuthorization::GetInstance().IsKitCaller(
+        reinterpret_cast<uintptr_t>(__builtin_return_address(0)))) {
+        SC_LOG_ERROR(LABEL, "report click event fail, caller invalid");
+        return SC_SERVICE_ERROR_CALLER_INVALID;
+    }
+
     int32_t res =
         SecCompClient::GetInstance().ReportSecurityComponentClickEvent(scId, componentInfo, touchInfo);
     if (res != SC_OK) {
