@@ -32,18 +32,36 @@ static constexpr float TEST_SIZE = 100.0;
 static constexpr double TEST_COORDINATE = 100.0;
 static constexpr double TEST_DIMENSION = 100.0;
 static constexpr uint32_t TEST_COLOR = 0xffffffff;
+static constexpr size_t MAX_CALLER_SIZE = 10;
 
-static bool TestInCallerCheckList()
+static void TestInCallerNotCheckList()
 {
     int32_t scId = -1;
     struct SecCompClickEvent touch;
-    if ((SecCompKit::RegisterSecurityComponent(LOCATION_COMPONENT, "", scId) == SC_SERVICE_ERROR_CALLER_INVALID) ||
-        (SecCompKit::UpdateSecurityComponent(scId, "") == SC_SERVICE_ERROR_CALLER_INVALID) ||
-        (SecCompKit::ReportSecurityComponentClickEvent(scId, "", touch) == SC_SERVICE_ERROR_CALLER_INVALID) ||
-        (SecCompKit::UnregisterSecurityComponent(scId) == SC_SERVICE_ERROR_CALLER_INVALID)) {
-        return false;
-    }
-    return true;
+    int registerRes = SecCompKit::RegisterSecurityComponent(LOCATION_COMPONENT, "", scId);
+    int updateRes = SecCompKit::UpdateSecurityComponent(scId, "");
+    int reportRes = SecCompKit::ReportSecurityComponentClickEvent(scId, "", touch);
+    int unregistRes = SecCompKit::UnregisterSecurityComponent(scId);
+
+    EXPECT_EQ(registerRes, SC_SERVICE_ERROR_CALLER_INVALID);
+    EXPECT_EQ(updateRes, SC_SERVICE_ERROR_CALLER_INVALID);
+    EXPECT_EQ(reportRes, SC_SERVICE_ERROR_CALLER_INVALID);
+    EXPECT_EQ(unregistRes, SC_SERVICE_ERROR_CALLER_INVALID);
+}
+
+static void TestInCallerCheckList()
+{
+    int32_t scId = -1;
+    struct SecCompClickEvent touch;
+    int registerRes = SecCompKit::RegisterSecurityComponent(LOCATION_COMPONENT, "", scId);
+    int updateRes = SecCompKit::UpdateSecurityComponent(scId, "");
+    int reportRes = SecCompKit::ReportSecurityComponentClickEvent(scId, "", touch);
+    int unregistRes = SecCompKit::UnregisterSecurityComponent(scId);
+
+    EXPECT_NE(registerRes, SC_SERVICE_ERROR_CALLER_INVALID);
+    EXPECT_NE(updateRes, SC_SERVICE_ERROR_CALLER_INVALID);
+    EXPECT_NE(reportRes, SC_SERVICE_ERROR_CALLER_INVALID);
+    EXPECT_NE(unregistRes, SC_SERVICE_ERROR_CALLER_INVALID);
 }
 }  // namespace
 
@@ -65,21 +83,6 @@ void SecCompKitTest::SetUp()
 void SecCompKitTest::TearDown()
 {
     SC_LOG_INFO(LABEL, "TearDown.");
-}
-
-namespace {
-static bool TestInCallerNotCheckList()
-{
-    int32_t scId = -1;
-    struct SecCompClickEvent touch;
-    if ((SecCompKit::RegisterSecurityComponent(LOCATION_COMPONENT, "", scId) != SC_SERVICE_ERROR_CALLER_INVALID) ||
-        (SecCompKit::UpdateSecurityComponent(scId, "") != SC_SERVICE_ERROR_CALLER_INVALID) ||
-        (SecCompKit::ReportSecurityComponentClickEvent(scId, "", touch) != SC_SERVICE_ERROR_CALLER_INVALID) ||
-        (SecCompKit::UnregisterSecurityComponent(scId) != SC_SERVICE_ERROR_CALLER_INVALID)) {
-        return false;
-    }
-    return true;
-}
 }
 
 /**
@@ -127,9 +130,9 @@ HWTEST_F(SecCompKitTest, ExceptCall001, TestSize.Level1)
 
 /**
  * @tc.name: ExceptCall001
- * @tc.desc: do kit except call.
+ * @tc.desc: test caller check.
  * @tc.type: FUNC
- * @tc.require: AR000HO9IN
+ * @tc.require: AR000HO9JS
  */
 HWTEST_F(SecCompKitTest, TestCallerCheck001, TestSize.Level1)
 {
@@ -140,5 +143,36 @@ HWTEST_F(SecCompKitTest, TestCallerCheck001, TestSize.Level1)
     TestInCallerCheckList();
     TestInCallerNotCheckList();
 
+    // prohibit init caller list repeately
+    std::vector<uintptr_t> callerList1 = {
+        reinterpret_cast<uintptr_t>(TestInCallerNotCheckList),
+    };
+    SecCompUiRegister registerCallback1(callerList1);
+    TestInCallerNotCheckList();
     SecCompCallerAuthorization::GetInstance().kitCallerList_.clear();
+    SecCompCallerAuthorization::GetInstance().isInit_ = false;
 }
+
+/**
+ * @tc.name: ExceptCall002
+ * @tc.desc: test invalid caller register.
+ * @tc.type: FUNC
+ * @tc.require: AR000HO9JS
+ */
+HWTEST_F(SecCompKitTest, TestCallerCheck002, TestSize.Level1)
+{
+    std::vector<uintptr_t> callerList;
+    SecCompUiRegister registerCallback(callerList);
+    TestInCallerNotCheckList();
+    SecCompCallerAuthorization::GetInstance().kitCallerList_.clear();
+    SecCompCallerAuthorization::GetInstance().isInit_ = false;
+
+    for (size_t i = 0; i < MAX_CALLER_SIZE + 1; i++) {
+        callerList.emplace_back(reinterpret_cast<uintptr_t>(TestInCallerNotCheckList));
+    }
+    SecCompUiRegister registerCallback2(callerList);
+    TestInCallerNotCheckList();
+    SecCompCallerAuthorization::GetInstance().kitCallerList_.clear();
+    SecCompCallerAuthorization::GetInstance().isInit_ = false;
+}
+
