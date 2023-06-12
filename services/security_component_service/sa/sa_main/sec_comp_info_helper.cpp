@@ -201,7 +201,7 @@ int32_t SecCompInfoHelper::RevokeTempPermission(AccessToken::AccessTokenID token
     SecCompType type = componentInfo->type_;
     switch (type) {
         case LOCATION_COMPONENT:
-            SecCompPermManager::GetInstance().RevokeLocationPermission(tokenId, "ohos.permission.LOCATION",
+            return SecCompPermManager::GetInstance().RevokeLocationPermission(tokenId, "ohos.permission.LOCATION",
                 AccessToken::PermissionFlag::PERMISSION_COMPONENT_SET);
         case PASTE_COMPONENT:
             SC_LOG_DEBUG(LABEL, "revoke paste permission");
@@ -224,7 +224,7 @@ int32_t SecCompInfoHelper::GrantTempPermission(AccessToken::AccessTokenID tokenI
     SecCompType type = componentInfo->type_;
     switch (type) {
         case LOCATION_COMPONENT:
-            SecCompPermManager::GetInstance().GrantLocationPermission(tokenId, "ohos.permission.LOCATION",
+            return SecCompPermManager::GetInstance().GrantLocationPermission(tokenId, "ohos.permission.LOCATION",
                 AccessToken::PermissionFlag::PERMISSION_COMPONENT_SET);
         case PASTE_COMPONENT:
             SC_LOG_DEBUG(LABEL, "grant paste permission");
