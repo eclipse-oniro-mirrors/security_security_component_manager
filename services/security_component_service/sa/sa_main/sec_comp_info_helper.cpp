@@ -201,8 +201,16 @@ int32_t SecCompInfoHelper::RevokeTempPermission(AccessToken::AccessTokenID token
     SecCompType type = componentInfo->type_;
     switch (type) {
         case LOCATION_COMPONENT:
-            return SecCompPermManager::GetInstance().RevokeLocationPermission(tokenId, "ohos.permission.LOCATION",
-                AccessToken::PermissionFlag::PERMISSION_COMPONENT_SET);
+            {
+                int32_t locationRes = SecCompPermManager::GetInstance().RevokeLocationPermission(tokenId,
+                    "ohos.permission.LOCATION", AccessToken::PermissionFlag::PERMISSION_COMPONENT_SET);
+                int32_t approxLocationRes = SecCompPermManager::GetInstance().RevokeLocationPermission(tokenId,
+                    "ohos.permission.APPROXIMATELY_LOCATION", AccessToken::PermissionFlag::PERMISSION_COMPONENT_SET);
+                if ((locationRes != SC_OK) || (approxLocationRes != SC_OK)) {
+                    return SC_SERVICE_ERROR_PERMISSION_OPER_FAIL;
+                }
+                return SC_OK;
+            }
         case PASTE_COMPONENT:
             SC_LOG_DEBUG(LABEL, "revoke paste permission");
             return SC_OK;
@@ -224,8 +232,21 @@ int32_t SecCompInfoHelper::GrantTempPermission(AccessToken::AccessTokenID tokenI
     SecCompType type = componentInfo->type_;
     switch (type) {
         case LOCATION_COMPONENT:
-            return SecCompPermManager::GetInstance().GrantLocationPermission(tokenId, "ohos.permission.LOCATION",
-                AccessToken::PermissionFlag::PERMISSION_COMPONENT_SET);
+            {
+                int32_t res = SecCompPermManager::GetInstance().GrantLocationPermission(tokenId,
+                    "ohos.permission.APPROXIMATELY_LOCATION", AccessToken::PermissionFlag::PERMISSION_COMPONENT_SET);
+                if (res != SC_OK) {
+                    return SC_SERVICE_ERROR_PERMISSION_OPER_FAIL;
+                }
+                res = SecCompPermManager::GetInstance().GrantLocationPermission(tokenId, "ohos.permission.LOCATION",
+                    AccessToken::PermissionFlag::PERMISSION_COMPONENT_SET);
+                if (res != SC_OK) {
+                    SecCompPermManager::GetInstance().RevokeLocationPermission(tokenId,
+                        "ohos.permission.APPROXIMATELY_LOCATION", AccessToken::PermissionFlag::PERMISSION_COMPONENT_SET);
+                    return SC_SERVICE_ERROR_PERMISSION_OPER_FAIL;
+                }
+                return SC_OK;
+            }
         case PASTE_COMPONENT:
             SC_LOG_DEBUG(LABEL, "grant paste permission");
             return SC_OK;

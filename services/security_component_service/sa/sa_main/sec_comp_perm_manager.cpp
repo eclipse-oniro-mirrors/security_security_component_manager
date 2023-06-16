@@ -69,15 +69,19 @@ bool SecCompPermManager::RevokeSavePermissionTask(const std::string& taskName)
 int32_t SecCompPermManager::GrantLocationPermission(AccessToken::AccessTokenID tokenId,
     const std::string& permissionName, int flag)
 {
-    return AccessToken::AccessTokenKit::GrantPermission(tokenId, "ohos.permission.LOCATION",
+    int32_t res = AccessToken::AccessTokenKit::GrantPermission(tokenId, permissionName,
         AccessToken::PermissionFlag::PERMISSION_COMPONENT_SET);
+    SC_LOG_INFO(LABEL, "grant permission: %{public}s, tokenId:%{public}d", permissionName.c_str(), tokenId);
+    return res;
 }
 
 int32_t SecCompPermManager::RevokeLocationPermission(AccessToken::AccessTokenID tokenId,
     const std::string& permissionName, int flag)
 {
-    return AccessToken::AccessTokenKit::RevokePermission(tokenId, "ohos.permission.LOCATION",
+    int32_t res =  AccessToken::AccessTokenKit::RevokePermission(tokenId, permissionName,
         AccessToken::PermissionFlag::PERMISSION_COMPONENT_SET);
+    SC_LOG_INFO(LABEL, "revoke permission: %{public}s, tokenId:%{public}d", permissionName.c_str(), tokenId);
+    return res;
 }
 
 int32_t SecCompPermManager::GrantTempSavePermission(AccessToken::AccessTokenID tokenId)
