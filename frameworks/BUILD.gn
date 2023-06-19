@@ -48,7 +48,7 @@ ohos_shared_library("libsecurity_component_framework") {
 
   external_deps = [
     "c_utils:utils",
-    "hiviewdfx_hilog_native:libhilog",
+    "hilog:libhilog",
   ]
 
   cflags_cc = [ "-DHILOG_ENABLE" ]
@@ -78,7 +78,7 @@ ohos_shared_library("libsecurity_component_enhance_adapter") {
 
   external_deps = [
     "c_utils:utils",
-    "hiviewdfx_hilog_native:libhilog",
+    "hilog:libhilog",
   ]
 
   cflags_cc = [ "-DHILOG_ENABLE" ]

@@ -64,7 +64,7 @@ ohos_unittest("sec_comp_service_test") {
     "c_utils:utils",
     "eventhandler:libeventhandler",
     "graphic_standard:librender_service_client",
-    "hiviewdfx_hilog_native:libhilog",
+    "hilog:libhilog",
     "ipc:ipc_core",
     "window_manager:libdm",
   ]

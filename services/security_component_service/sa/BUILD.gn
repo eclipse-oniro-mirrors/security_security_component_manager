@@ -74,7 +74,7 @@ ohos_shared_library("security_component_service") {
     "c_utils:utils",
     "eventhandler:libeventhandler",
     "graphic_standard:librender_service_client",
-    "hiviewdfx_hilog_native:libhilog",
+    "hilog:libhilog",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
