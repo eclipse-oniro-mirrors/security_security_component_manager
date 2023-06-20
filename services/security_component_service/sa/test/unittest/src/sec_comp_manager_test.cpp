@@ -70,6 +70,10 @@ static LocationButton BuildInvalidLocationComponent()
     button.rect_.y_ = TEST_COORDINATE;
     button.rect_.width_ = TEST_COORDINATE;
     button.rect_.height_ = TEST_COORDINATE;
+    button.windowRect_.x_ = TEST_COORDINATE;
+    button.windowRect_.y_ = TEST_COORDINATE;
+    button.windowRect_.width_ = TEST_COORDINATE;
+    button.windowRect_.height_ = TEST_COORDINATE;
     button.text_ = UNKNOWN_TEXT;
     button.icon_ = UNKNOWN_ICON;
     button.bg_ = SecCompBackground::UNKNOWN_BG;
@@ -95,6 +99,10 @@ static LocationButton BuildValidLocationComponent()
     button.rect_.y_ = TEST_COORDINATE;
     button.rect_.width_ = TEST_COORDINATE;
     button.rect_.height_ = TEST_COORDINATE;
+    button.windowRect_.x_ = TEST_COORDINATE;
+    button.windowRect_.y_ = TEST_COORDINATE;
+    button.windowRect_.width_ = TEST_COORDINATE;
+    button.windowRect_.height_ = TEST_COORDINATE;
     button.text_ = static_cast<int32_t>(LocationDesc::SELECT_LOCATION);
     button.icon_ = static_cast<int32_t>(LocationIcon::LINE_ICON);
     button.bg_ = SecCompBackground::CIRCLE;

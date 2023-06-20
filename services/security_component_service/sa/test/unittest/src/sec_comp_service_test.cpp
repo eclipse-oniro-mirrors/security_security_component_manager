@@ -64,6 +64,10 @@ static std::string BuildLocationComponentInfo()
     button.rect_.y_ = TEST_COORDINATE;
     button.rect_.width_ = TEST_COORDINATE;
     button.rect_.height_ = TEST_COORDINATE;
+    button.windowRect_.x_ = TEST_COORDINATE;
+    button.windowRect_.y_ = TEST_COORDINATE;
+    button.windowRect_.width_ = TEST_COORDINATE;
+    button.windowRect_.height_ = TEST_COORDINATE;
     button.text_ = static_cast<int32_t>(LocationDesc::SELECT_LOCATION);
     button.icon_ = static_cast<int32_t>(LocationIcon::LINE_ICON);
     button.bg_ = SecCompBackground::CIRCLE;
@@ -92,6 +96,10 @@ static std::string BuildSaveComponentInfo()
     button.rect_.y_ = TEST_COORDINATE;
     button.rect_.width_ = TEST_COORDINATE;
     button.rect_.height_ = TEST_COORDINATE;
+    button.windowRect_.x_ = TEST_COORDINATE;
+    button.windowRect_.y_ = TEST_COORDINATE;
+    button.windowRect_.width_ = TEST_COORDINATE;
+    button.windowRect_.height_ = TEST_COORDINATE;
     button.text_ = static_cast<int32_t>(SaveDesc::DOWNLOAD);
     button.icon_ = static_cast<int32_t>(SaveIcon::LINE_ICON);
     button.bg_ = SecCompBackground::CIRCLE;

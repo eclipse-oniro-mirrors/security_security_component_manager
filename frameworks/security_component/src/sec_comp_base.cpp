@@ -28,6 +28,7 @@ static const std::string JSON_RECT_X = "x";
 static const std::string JSON_RECT_Y = "y";
 static const std::string JSON_RECT_WIDTH = "width";
 static const std::string JSON_RECT_HEIGHT = "height";
+static const std::string JSON_WINDOW_RECT = "windowRect";
 
 static const std::string JSON_SIZE_TAG = "size";
 static const std::string JSON_FONT_SIZE_TAG = "fontSize";
@@ -179,7 +180,7 @@ bool SecCompBase::ParseParent(const nlohmann::json& json, const std::string& tag
     return ParseBool(jsonParent, JSON_PARENT_EFFECT_TAG, parentEffect_);
 }
 
-bool SecCompBase::ParseRect(const nlohmann::json& json, const std::string& tag)
+bool SecCompBase::ParseRect(const nlohmann::json& json, const std::string& tag, SecCompRect& rect)
 {
     if ((json.find(tag) == json.end()) || !json.at(tag).is_object()) {
         SC_LOG_ERROR(LABEL, "has not %{public}s.", tag.c_str());
@@ -187,19 +188,19 @@ bool SecCompBase::ParseRect(const nlohmann::json& json, const std::string& tag)
     }
 
     auto jsonSize = json.at(tag);
-    if (!ParseDimension(jsonSize, JSON_RECT_X, rect_.x_)) {
+    if (!ParseDimension(jsonSize, JSON_RECT_X, rect.x_)) {
         return false;
     }
 
-    if (!ParseDimension(jsonSize, JSON_RECT_Y, rect_.y_)) {
+    if (!ParseDimension(jsonSize, JSON_RECT_Y, rect.y_)) {
         return false;
     }
 
-    if (!ParseDimension(jsonSize, JSON_RECT_WIDTH, rect_.width_)) {
+    if (!ParseDimension(jsonSize, JSON_RECT_WIDTH, rect.width_)) {
         return false;
     }
 
-    if (!ParseDimension(jsonSize, JSON_RECT_HEIGHT, rect_.height_)) {
+    if (!ParseDimension(jsonSize, JSON_RECT_HEIGHT, rect.height_)) {
         return false;
     }
 
@@ -220,7 +221,10 @@ bool SecCompBase::FromJson(const nlohmann::json& jsonSrc)
     }
     type_ = static_cast<SecCompType>(value);
 
-    if (!ParseRect(jsonSrc, JSON_RECT)) {
+    if (!ParseRect(jsonSrc, JSON_RECT, rect_)) {
+        return false;
+    }
+    if (!ParseRect(jsonSrc, JSON_WINDOW_RECT, windowRect_)) {
         return false;
     }
     if (!ParseSize(jsonSrc, JSON_SIZE_TAG)) {
@@ -248,11 +252,17 @@ bool SecCompBase::FromJson(const nlohmann::json& jsonSrc)
 void SecCompBase::ToJson(nlohmann::json& jsonRes) const
 {
     jsonRes[JSON_SC_TYPE] = type_;
-    jsonRes[JSON_RECT] =  nlohmann::json {
+    jsonRes[JSON_RECT] = nlohmann::json {
         {JSON_RECT_X, rect_.x_},
         {JSON_RECT_Y, rect_.y_},
         {JSON_RECT_WIDTH, rect_.width_},
         {JSON_RECT_HEIGHT, rect_.height_}
+    };
+    jsonRes[JSON_WINDOW_RECT] = nlohmann::json {
+        {JSON_RECT_X, windowRect_.x_},
+        {JSON_RECT_Y, windowRect_.y_},
+        {JSON_RECT_WIDTH, windowRect_.width_},
+        {JSON_RECT_HEIGHT, windowRect_.height_}
     };
     nlohmann::json jsonPadding = nlohmann::json {
         { JSON_PADDING_TOP_TAG, padding_.top },

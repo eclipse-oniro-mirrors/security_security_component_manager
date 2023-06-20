@@ -36,6 +36,7 @@ static const std::string JSON_ICON_TAG = "icon";
 static const std::string JSON_BG_TAG = "bg";
 
 static const std::string JSON_RECT = "rect";
+static const std::string JSON_WINDOW_RECT = "windowRect";
 static const std::string JSON_SC_TYPE = "type";
 static const std::string JSON_RECT_X = "x";
 static const std::string JSON_RECT_Y = "y";
@@ -106,6 +107,12 @@ static void BuildLocationComponentInfo(nlohmann::json& jsonComponent)
         {JSON_RECT_Y, g_testHeight },
         {JSON_RECT_WIDTH, g_testWidth },
         {JSON_RECT_HEIGHT, g_testHeight }
+    };
+    jsonComponent[JSON_WINDOW_RECT] = nlohmann::json {
+        { JSON_RECT_X, g_testWidth },
+        { JSON_RECT_Y, g_testHeight },
+        { JSON_RECT_WIDTH, g_testWidth },
+        { JSON_RECT_HEIGHT, g_testHeight }
     };
     nlohmann::json jsonPadding = nlohmann::json {
         { JSON_PADDING_TOP_TAG, TEST_DIMENSION },
@@ -708,6 +715,94 @@ HWTEST_F(SecCompInfoHelperTest, ParseComponent014, TestSize.Level1)
     };
     comp = SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent);
     ASSERT_FALSE(comp->GetValid());
+}
+
+/**
+ * @tc.name: ParseComponent015
+ * @tc.desc: Test parse component info with invalid rect
+ * @tc.type: FUNC
+ * @tc.require: AR000HO9J7
+ */
+HWTEST_F(SecCompInfoHelperTest, ParseComponent015, TestSize.Level1)
+{
+    nlohmann::json jsonComponent;
+    BuildLocationComponentInfo(jsonComponent);
+    jsonComponent[JSON_RECT] = nlohmann::json {
+        { JSON_RECT_X, g_testWidth },
+        { JSON_RECT_Y, g_testHeight },
+        { JSON_RECT_WIDTH, TEST_INVALID_DIMENSION },
+        { JSON_RECT_HEIGHT, g_testHeight }
+    };
+    SecCompBase* comp = SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent);
+    ASSERT_NE(comp, nullptr);
+    EXPECT_FALSE(comp->GetValid());
+    delete comp;
+
+    jsonComponent[JSON_RECT] = nlohmann::json {
+        { JSON_RECT_X, g_testWidth },
+        { JSON_RECT_Y, g_testHeight },
+        { JSON_RECT_WIDTH, g_testWidth },
+        { JSON_RECT_HEIGHT, TEST_INVALID_DIMENSION }
+    };
+    comp = SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent);
+    ASSERT_NE(comp, nullptr);
+    EXPECT_FALSE(comp->GetValid());
+    delete comp;
+}
+
+/**
+ * @tc.name: ParseComponent016
+ * @tc.desc: Test parse component info with windowRect invalid
+ * @tc.type: FUNC
+ * @tc.require: AR000HO9J7
+ */
+HWTEST_F(SecCompInfoHelperTest, ParseComponent016, TestSize.Level1)
+{
+    nlohmann::json jsonComponent;
+    BuildLocationComponentInfo(jsonComponent);
+    jsonComponent[JSON_WINDOW_RECT] = nlohmann::json {
+        { JSON_RECT_X, g_testWidth },
+        { JSON_RECT_Y, g_testHeight + 1 },
+        { JSON_RECT_WIDTH, g_testWidth },
+        { JSON_RECT_HEIGHT, g_testHeight }
+    };
+    SecCompBase* comp = SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent);
+    ASSERT_NE(comp, nullptr);
+    EXPECT_FALSE(comp->GetValid());
+    delete comp;
+
+    jsonComponent[JSON_WINDOW_RECT] = nlohmann::json {
+        { JSON_RECT_X, g_testWidth + 1 },
+        { JSON_RECT_Y, g_testHeight },
+        { JSON_RECT_WIDTH, g_testWidth },
+        { JSON_RECT_HEIGHT, g_testHeight }
+    };
+    comp = SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent);
+    ASSERT_NE(comp, nullptr);
+    EXPECT_FALSE(comp->GetValid());
+    delete comp;
+
+    jsonComponent[JSON_WINDOW_RECT] = nlohmann::json {
+        { JSON_RECT_X, g_testWidth },
+        { JSON_RECT_Y, g_testHeight },
+        { JSON_RECT_WIDTH, g_testWidth - 1 },
+        { JSON_RECT_HEIGHT, g_testHeight }
+    };
+    comp = SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent);
+    ASSERT_NE(comp, nullptr);
+    EXPECT_FALSE(comp->GetValid());
+    delete comp;
+
+    jsonComponent[JSON_WINDOW_RECT] = nlohmann::json {
+        { JSON_RECT_X, g_testWidth },
+        { JSON_RECT_Y, g_testHeight },
+        { JSON_RECT_WIDTH, g_testWidth },
+        { JSON_RECT_HEIGHT, g_testHeight - 1 }
+    };
+    comp = SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent);
+    ASSERT_NE(comp, nullptr);
+    EXPECT_FALSE(comp->GetValid());
+    delete comp;
 }
 
 /**
