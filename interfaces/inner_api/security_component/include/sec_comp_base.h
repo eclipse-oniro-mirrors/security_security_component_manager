@@ -67,6 +67,7 @@ public:
 
     SecCompType type_ = UNKNOWN_SC_TYPE;
     SecCompRect rect_;
+    SecCompRect windowRect_;
     bool isValid_ = false;
 
     int32_t text_ = UNKNOWN_TYPE;
@@ -83,7 +84,7 @@ private:
     bool ParseBorders(const nlohmann::json& json, const std::string& tag);
     bool ParseSize(const nlohmann::json& json, const std::string& tag);
     bool ParseParent(const nlohmann::json& json, const std::string& tag);
-    bool ParseRect(const nlohmann::json& json, const std::string& tag);
+    bool ParseRect(const nlohmann::json& json, const std::string& tag, SecCompRect& rect);
     bool ParseStyle(const nlohmann::json& json, const std::string& tag);
 };
 }  // namespace SecurityComponent

@@ -31,6 +31,7 @@ static const std::string JSON_ICON_TAG = "icon";
 static const std::string JSON_BG_TAG = "bg";
 
 static const std::string JSON_RECT = "rect";
+static const std::string JSON_WINDOW_RECT = "windowRect";
 static const std::string JSON_SC_TYPE = "type";
 static const std::string JSON_RECT_X = "x";
 static const std::string JSON_RECT_Y = "y";
@@ -74,7 +75,13 @@ static constexpr int32_t UNKNOWN_ICON = -2;
 static void BuildLocationComponentInfo(nlohmann::json& jsonComponent)
 {
     jsonComponent[JSON_SC_TYPE] = LOCATION_COMPONENT;
-    jsonComponent[JSON_RECT] =  nlohmann::json {
+    jsonComponent[JSON_RECT] = nlohmann::json {
+        {JSON_RECT_X, TEST_COORDINATE },
+        {JSON_RECT_Y, TEST_COORDINATE },
+        {JSON_RECT_WIDTH, TEST_COORDINATE },
+        {JSON_RECT_HEIGHT, TEST_COORDINATE }
+    };
+    jsonComponent[JSON_WINDOW_RECT] = nlohmann::json {
         {JSON_RECT_X, TEST_COORDINATE },
         {JSON_RECT_Y, TEST_COORDINATE },
         {JSON_RECT_WIDTH, TEST_COORDINATE },

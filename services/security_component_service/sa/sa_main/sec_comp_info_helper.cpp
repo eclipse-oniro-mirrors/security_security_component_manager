@@ -84,12 +84,17 @@ static bool GetScreenSize(double& width, double& height)
     return true;
 }
 
-static bool CheckRectValid(const SecCompRect& rect)
+static bool CheckRectValid(const SecCompRect& rect, const SecCompRect& windowRect)
 {
     double curScreenWidth = 0.0F;
     double curScreenHeight = 0.0F;
     if (!GetScreenSize(curScreenWidth, curScreenHeight)) {
         SC_LOG_ERROR(LABEL, "Get screen size is invalid");
+        return false;
+    }
+
+    if (GreatOrEqual(0.0, rect.width_) || GreatOrEqual(0.0, rect.height_)) {
+        SC_LOG_ERROR(LABEL, "width or height is <= 0");
         return false;
     }
 
@@ -102,6 +107,12 @@ static bool CheckRectValid(const SecCompRect& rect)
     if (GreatOrEqual((rect.x_ + rect.width_), curScreenWidth) ||
         GreatOrEqual((rect.y_ + rect.height_), curScreenHeight)) {
         SC_LOG_ERROR(LABEL, "rect is out of screen");
+        return false;
+    }
+
+    if (GreatNotEqual(windowRect.x_, rect.x_) || GreatNotEqual(windowRect.y_, rect.y_) ||
+        GreatNotEqual(rect.width_, windowRect.width_) || GreatNotEqual(rect.height_, windowRect.height_)) {
+        SC_LOG_ERROR(LABEL, "rect is out of window");
         return false;
     }
 
@@ -147,7 +158,7 @@ static bool CheckSecCompBaseButton(const SecCompBase* comp)
 
 static bool CheckSecCompBase(const SecCompBase* comp)
 {
-    if (!CheckRectValid(comp->rect_)) {
+    if (!CheckRectValid(comp->rect_, comp->windowRect_)) {
         SC_LOG_INFO(LABEL, "check component rect failed.");
         return false;
     }
