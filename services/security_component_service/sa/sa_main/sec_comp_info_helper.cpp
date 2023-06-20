@@ -241,8 +241,9 @@ int32_t SecCompInfoHelper::GrantTempPermission(AccessToken::AccessTokenID tokenI
                 res = SecCompPermManager::GetInstance().GrantLocationPermission(tokenId, "ohos.permission.LOCATION",
                     AccessToken::PermissionFlag::PERMISSION_COMPONENT_SET);
                 if (res != SC_OK) {
-                    SecCompPermManager::GetInstance().RevokeLocationPermission(tokenId,
-                        "ohos.permission.APPROXIMATELY_LOCATION", AccessToken::PermissionFlag::PERMISSION_COMPONENT_SET);
+                    SecCompPermManager::GetInstance().RevokeLocationPermission(
+                        tokenId, "ohos.permission.APPROXIMATELY_LOCATION",
+                        AccessToken::PermissionFlag::PERMISSION_COMPONENT_SET);
                     return SC_SERVICE_ERROR_PERMISSION_OPER_FAIL;
                 }
                 return SC_OK;
