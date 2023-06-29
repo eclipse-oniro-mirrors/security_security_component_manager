@@ -129,10 +129,6 @@ bool SecCompPermManager::InitEventHandler()
     }
 
     secHandler_ = std::make_shared<SecEventHandler>(secRunner_);
-    if (secHandler_ == nullptr) {
-        SC_LOG_ERROR(LABEL, "failed to create secHandler_.");
-        return false;
-    }
     return true;
 }
 

@@ -169,7 +169,7 @@ int32_t SecCompStub::ReduceAfterVerifySavePermissionInner(MessageParcel& data, M
         return SC_SERVICE_ERROR_PARCEL_OPERATE_FAIL;
     }
 
-    if (tokenId <= 0) {
+    if (tokenId == 0) {
         SC_LOG_ERROR(LABEL, "AccessTokenId invalid");
         return SC_SERVICE_ERROR_VALUE_INVALID;
     }
