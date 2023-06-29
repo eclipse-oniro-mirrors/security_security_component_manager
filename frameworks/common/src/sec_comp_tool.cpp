@@ -99,7 +99,7 @@ static inline double GetHsvDisZ(const HsvColor& hsv, double h)
     return h * (1 - hsv.v);
 }
 
-static double HsvDistance(HsvColor& hsv1, HsvColor& hsv2)
+static double HsvDistance(const HsvColor& hsv1, const HsvColor& hsv2)
 {
     double rDef = DEFAULT_R;
     double angle = THIRTY_ANGLE;
