@@ -17,7 +17,6 @@
 
 #include <gtest/gtest.h>
 #include "sec_comp_enhance_adapter.h"
-#include "sec_comp_enhance_cfg_parcel.h"
 #include "sec_comp_enhance_kit.h"
 
 namespace OHOS {

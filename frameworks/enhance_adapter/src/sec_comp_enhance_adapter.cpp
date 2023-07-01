@@ -64,45 +64,18 @@ void SecCompEnhanceAdapter::InitEnhanceHandler(EnhanceInterfaceType type)
     }
 }
 
-int32_t SecCompEnhanceAdapter::MarshallEnhanceCfg(SecCompEnhanceCfgBase* cfg, Parcel& out)
+int32_t SecCompEnhanceAdapter::SetEnhanceCfg(uint8_t* cfg, uint32_t cfgLen)
 {
     if (!isEnhanceInputHandlerInit) {
         InitEnhanceHandler(SEC_COMP_ENHANCE_INPUT_INTERFACE);
     }
     if (inputHandler != nullptr) {
-        if (!inputHandler->MarshallEnhanceCfg(cfg, out)) {
-            return SC_ENHANCE_ERROR_OPER_FAIL;
-        } else {
-            return SC_OK;
-        }
+        return inputHandler->SetEnhanceCfg(cfg, cfgLen);
     }
     return SC_ENHANCE_ERROR_NOT_EXIST_ENHANCE;
 }
 
-int32_t SecCompEnhanceAdapter::UnmarshallEnhanceCfg(Parcel& in, SecCompEnhanceCfgBase*& result)
-{
-    if (!isEnhanceInputHandlerInit) {
-        InitEnhanceHandler(SEC_COMP_ENHANCE_INPUT_INTERFACE);
-    }
-    if (inputHandler != nullptr) {
-        result = inputHandler->UnmarshallEnhanceCfg(in);
-        return SC_OK;
-    }
-    return SC_ENHANCE_ERROR_NOT_EXIST_ENHANCE;
-}
-
-int32_t SecCompEnhanceAdapter::SetEnhanceCfg(SecCompEnhanceCfgBase* cfg)
-{
-    if (!isEnhanceInputHandlerInit) {
-        InitEnhanceHandler(SEC_COMP_ENHANCE_INPUT_INTERFACE);
-    }
-    if (inputHandler != nullptr) {
-        return inputHandler->SetEnhanceCfg(cfg);
-    }
-    return SC_ENHANCE_ERROR_NOT_EXIST_ENHANCE;
-}
-
-int32_t SecCompEnhanceAdapter::GetPointerEventEnhanceData(void *data, uint32_t dataLen,
+int32_t SecCompEnhanceAdapter::GetPointerEventEnhanceData(void* data, uint32_t dataLen,
     uint8_t* enhanceData, uint32_t& enHancedataLen)
 {
     if (!isEnhanceInputHandlerInit) {
@@ -110,6 +83,17 @@ int32_t SecCompEnhanceAdapter::GetPointerEventEnhanceData(void *data, uint32_t d
     }
     if (inputHandler != nullptr) {
         return inputHandler->GetPointerEventEnhanceData(data, dataLen, enhanceData, enHancedataLen);
+    }
+    return SC_ENHANCE_ERROR_NOT_EXIST_ENHANCE;
+}
+
+int32_t SecCompEnhanceAdapter::CheckExtraInfo(const SecCompClickEvent& touchInfo)
+{
+    if (!isEnhanceSrvHandlerInit) {
+        InitEnhanceHandler(SEC_COMP_ENHANCE_SRV_INTERFACE);
+    }
+    if (srvHandler != nullptr) {
+        return srvHandler->CheckExtraInfo(touchInfo);
     }
     return SC_ENHANCE_ERROR_NOT_EXIST_ENHANCE;
 }

@@ -55,6 +55,7 @@ ohos_shared_library("libsecurity_component_sdk") {
     "access_token:libaccesstoken_sdk",
     "c_utils:utils",
     "hilog:libhilog",
+    "hisysevent:libhisysevent",
     "ipc:ipc_core",
     "samgr:samgr_proxy",
   ]

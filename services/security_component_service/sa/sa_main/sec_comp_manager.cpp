@@ -15,7 +15,9 @@
 
 #include "sec_comp_manager.h"
 
+#include "hisysevent.h"
 #include "i_sec_comp_service.h"
+#include "ipc_skeleton.h"
 #include "iservice_registry.h"
 #include "sec_comp_enhance_adapter.h"
 #include "sec_comp_err.h"
@@ -207,6 +209,9 @@ int32_t SecCompManager::RegisterSecurityComponent(SecCompType type,
     std::shared_ptr<SecCompBase> component(componentPtr);
     if (component == nullptr) {
         SC_LOG_ERROR(LABEL, "Parse component info invalid");
+        HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "COMPONENT_INFO_CHECK_FAILED",
+            HiviewDFX::HiSysEvent::EventType::SECURITY, "CALLER_UID", IPCSkeleton::GetCallingUid(),
+            "CALLER_PID", IPCSkeleton::GetCallingPid(), "SC_ID", scId, "CALL_SCENE", "REGITSTER", "SC_TYPE", type);
         return SC_SERVICE_ERROR_COMPONENT_INFO_INVALID;
     }
 
@@ -236,6 +241,9 @@ int32_t SecCompManager::UpdateSecurityComponent(int32_t scId, const nlohmann::js
     std::shared_ptr<SecCompBase> reportComponentInfo(report);
     if (reportComponentInfo == nullptr) {
         SC_LOG_ERROR(LABEL, "Update component info invalid");
+        HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "COMPONENT_INFO_CHECK_FAILED",
+            HiviewDFX::HiSysEvent::EventType::SECURITY, "CALLER_UID", IPCSkeleton::GetCallingUid(),
+            "CALLER_PID", IPCSkeleton::GetCallingPid(), "SC_ID", scId, "CALL_SCENE", "CLICK", "SC_TYPE", sc->GetType());
         return SC_SERVICE_ERROR_COMPONENT_INFO_INVALID;
     }
     sc->SetComponentInfo(reportComponentInfo);
@@ -269,16 +277,37 @@ int32_t SecCompManager::ReportSecurityComponentClickEvent(int32_t scId,
     std::shared_ptr<SecCompBase> reportComponentInfo(report);
     if ((reportComponentInfo == nullptr) || !reportComponentInfo->GetValid()) {
         SC_LOG_ERROR(LABEL, "report component info invalid");
+        HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "COMPONENT_INFO_CHECK_FAILED",
+            HiviewDFX::HiSysEvent::EventType::SECURITY, "CALLER_UID", IPCSkeleton::GetCallingUid(),
+            "CALLER_PID", IPCSkeleton::GetCallingPid(), "SC_ID", scId, "CALL_SCENE", "CLICK", "SC_TYPE", sc->GetType());
         return SC_SERVICE_ERROR_COMPONENT_INFO_INVALID;
     }
 
+    if (SecCompEnhanceAdapter::CheckExtraInfo(touchInfo) != SC_OK) {
+        SC_LOG_ERROR(LABEL, "check extra info failed, HMAC is invalid");
+        HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "CHALLENGE_CHECK_FAILED",
+            HiviewDFX::HiSysEvent::EventType::SECURITY, "CALLER_UID", IPCSkeleton::GetCallingUid(),
+            "CALLER_PID", IPCSkeleton::GetCallingPid(), "SC_ID", scId, "SC_TYPE", sc->GetType(), "CALL_SCENE", "CLICK");
+        return SC_SERVICE_ERROR_CLICK_EVENT_INVALID;
+    }
     sc->SetComponentInfo(reportComponentInfo);
     if (!sc->CheckTouchInfo(touchInfo)) {
         SC_LOG_ERROR(LABEL, "touchInfo is invalid");
+        HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "CLICK_INFO_CHECK_FAILED",
+            HiviewDFX::HiSysEvent::EventType::SECURITY, "CALLER_UID", IPCSkeleton::GetCallingUid(),
+            "CALLER_PID", IPCSkeleton::GetCallingPid(), "SC_ID", scId, "SC_TYPE", sc->GetType());
         return SC_SERVICE_ERROR_CLICK_EVENT_INVALID;
     }
-
-    return sc->GrantTempPermission();
+    int res = sc->GrantTempPermission();
+    if (res != SC_OK) {
+        HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "TEMP_GRANT_FAILED",
+            HiviewDFX::HiSysEvent::EventType::FAULT, "CALLER_UID", IPCSkeleton::GetCallingUid(),
+            "CALLER_PID", IPCSkeleton::GetCallingPid(), "SC_ID", scId, "SC_TYPE", sc->GetType());
+    }
+    HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "TEMP_GRANT_SUCCESS",
+        HiviewDFX::HiSysEvent::EventType::BEHAVIOR, "CALLER_UID", IPCSkeleton::GetCallingUid(),
+        "CALLER_PID", IPCSkeleton::GetCallingPid(), "SC_ID", scId, "SC_TYPE", sc->GetType());
+    return res;
 }
 
 bool SecCompManager::ReduceAfterVerifySavePermission(AccessToken::AccessTokenID tokenId)

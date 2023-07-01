@@ -16,6 +16,7 @@
 #define SECURITY_COMPONENT_ENHANCE_ADAPTER_H
 #include <mutex>
 #include "parcel.h"
+#include "sec_comp_info.h"
 
 namespace OHOS {
 namespace Security {
@@ -30,10 +31,8 @@ class SecCompEnhanceCfgBase {
 
 class SecCompEnhanceInputInterface {
 public:
-    virtual bool MarshallEnhanceCfg(SecCompEnhanceCfgBase* cfg, Parcel& out) = 0;
-    virtual SecCompEnhanceCfgBase* UnmarshallEnhanceCfg(Parcel& in) = 0;
-    virtual int32_t SetEnhanceCfg(SecCompEnhanceCfgBase* cfg) = 0;
-    virtual int32_t GetPointerEventEnhanceData(void *data, uint32_t dataLen,
+    virtual int32_t SetEnhanceCfg(uint8_t* cfg, uint32_t cfgLen) = 0;
+    virtual int32_t GetPointerEventEnhanceData(void* data, uint32_t dataLen,
         uint8_t* enhanceData, uint32_t& enHancedataLen) = 0;
 };
 
@@ -41,15 +40,15 @@ class SecCompEnhanceServiceInterface {
 public:
     virtual int32_t EnableInputEnhance() = 0;
     virtual int32_t DisableInputEnhance() = 0;
+    virtual int32_t CheckExtraInfo(const SecCompClickEvent& touchInfo) = 0;
 };
 
 struct SecCompEnhanceAdapter {
     static void InitEnhanceHandler(EnhanceInterfaceType type);
-    static int32_t MarshallEnhanceCfg(SecCompEnhanceCfgBase* cfg, Parcel& out);
-    static int32_t UnmarshallEnhanceCfg(Parcel& in, SecCompEnhanceCfgBase*& result);
-    static int32_t SetEnhanceCfg(SecCompEnhanceCfgBase* cfg);
-    static int32_t GetPointerEventEnhanceData(void *data, uint32_t dataLen,
+    static int32_t SetEnhanceCfg(uint8_t* cfg, uint32_t cfgLen);
+    static int32_t GetPointerEventEnhanceData(void* data, uint32_t dataLen,
         uint8_t* enhanceData, uint32_t& enHancedataLen);
+    static int32_t CheckExtraInfo(const SecCompClickEvent& touchInfo);
 
     static int32_t EnableInputEnhance();
     static int32_t DisableInputEnhance();

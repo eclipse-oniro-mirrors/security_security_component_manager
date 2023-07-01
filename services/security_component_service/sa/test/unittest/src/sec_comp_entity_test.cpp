@@ -30,6 +30,7 @@ static constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {
     LOG_CORE, SECURITY_DOMAIN_SECURITY_COMPONENT, "SecCompEntityTest"};
 static constexpr double TEST_COORDINATE = 100.0;
 static constexpr double TEST_DIFF_COORDINATE = 200.0;
+static constexpr uint64_t TIME_CONVERSION_UNIT = 1000;
 }
 
 void SecCompEntityTest::SetUpTestCase()
@@ -144,11 +145,13 @@ HWTEST_F(SecCompEntityTest, CheckTouchInfo001, TestSize.Level1)
     entity_->componentInfo_->rect_.y_ = TEST_DIFF_COORDINATE;
     entity_->componentInfo_->rect_.width_ = TEST_DIFF_COORDINATE;
     entity_->componentInfo_->rect_.height_ = TEST_DIFF_COORDINATE;
-    touch.timestamp = static_cast<uint64_t>(std::chrono::high_resolution_clock::now().time_since_epoch().count());
+    touch.timestamp = static_cast<uint64_t>(
+        std::chrono::high_resolution_clock::now().time_since_epoch().count()) / TIME_CONVERSION_UNIT;
     ASSERT_FALSE(entity_->CheckTouchInfo(touch));
 
     entity_->componentInfo_->rect_.x_ = TEST_COORDINATE;
     entity_->componentInfo_->rect_.y_ = TEST_COORDINATE;
-    touch.timestamp = static_cast<uint64_t>(std::chrono::high_resolution_clock::now().time_since_epoch().count());
+    touch.timestamp = static_cast<uint64_t>(
+        std::chrono::high_resolution_clock::now().time_since_epoch().count()) / TIME_CONVERSION_UNIT;
     ASSERT_TRUE(entity_->CheckTouchInfo(touch));
 }

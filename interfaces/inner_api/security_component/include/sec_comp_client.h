@@ -50,7 +50,7 @@ private:
     void WaitForSecCompSa();
     void GetSecCompSa();
     void LoadSecCompSa();
-    sptr<ISecCompService> GetProxy();
+    sptr<ISecCompService> GetProxy(bool doLoadSa);
     void GetProxyFromRemoteObject(const sptr<IRemoteObject>& remoteObject);
 
     std::mutex cvLock_;
