@@ -17,6 +17,7 @@
 
 #include <unistd.h>
 #include "hisysevent.h"
+#include "hitrace_meter.h"
 #include "ipc_skeleton.h"
 #include "iservice_registry.h"
 #include "sec_comp_err.h"
@@ -47,28 +48,34 @@ SecCompService::~SecCompService()
 
 void SecCompService::OnStart()
 {
+    StartTrace(HITRACE_TAG_ACCESS_CONTROL, "SecurityComponentOnStart");
     if (state_ == ServiceRunningState::STATE_RUNNING) {
         SC_LOG_INFO(LABEL, "SecCompService has already started!");
+        FinishTrace(HITRACE_TAG_ACCESS_CONTROL);
         return;
     }
     SC_LOG_INFO(LABEL, "SecCompService is starting");
     if (!RegisterAppStateObserver()) {
         SC_LOG_ERROR(LABEL, "Failed to register app state observer!");
+        FinishTrace(HITRACE_TAG_ACCESS_CONTROL);
         return;
     }
     state_ = ServiceRunningState::STATE_RUNNING;
     bool ret = Publish(this);
     if (!ret) {
         SC_LOG_ERROR(LABEL, "Failed to publish service!");
+        FinishTrace(HITRACE_TAG_ACCESS_CONTROL);
         return;
     }
     if (!Initialize()) {
         SC_LOG_ERROR(LABEL, "Failed to initialize");
+        FinishTrace(HITRACE_TAG_ACCESS_CONTROL);
         return;
     }
     HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "SERVICE_INIT_SUCCESS",
         HiviewDFX::HiSysEvent::EventType::BEHAVIOR, "PID", getpid());
     SC_LOG_INFO(LABEL, "Congratulations, SecCompService start successfully!");
+    FinishTrace(HITRACE_TAG_ACCESS_CONTROL);
 }
 
 void SecCompService::OnStop()
@@ -150,19 +157,24 @@ bool SecCompService::GetCallerInfo(SecCompCallerInfo& caller)
 int32_t SecCompService::RegisterSecurityComponent(SecCompType type,
     const std::string& componentInfo, int32_t& scId)
 {
+    StartTrace(HITRACE_TAG_ACCESS_CONTROL, "SecurityComponentRegister");
     SecCompCallerInfo caller;
     if (!GetCallerInfo(caller)) {
         SC_LOG_ERROR(LABEL, "Check caller failed");
+        FinishTrace(HITRACE_TAG_ACCESS_CONTROL);
         return SC_SERVICE_ERROR_VALUE_INVALID;
     }
 
     nlohmann::json jsonRes = nlohmann::json::parse(componentInfo, nullptr, false);
     if (jsonRes.is_discarded()) {
         SC_LOG_ERROR(LABEL, "component info invalid %{public}s", componentInfo.c_str());
+        FinishTrace(HITRACE_TAG_ACCESS_CONTROL);
         return SC_SERVICE_ERROR_VALUE_INVALID;
     }
 
-    return SecCompManager::GetInstance().RegisterSecurityComponent(type, jsonRes, caller, scId);
+    int32_t res = SecCompManager::GetInstance().RegisterSecurityComponent(type, jsonRes, caller, scId);
+    FinishTrace(HITRACE_TAG_ACCESS_CONTROL);
+    return res;
 }
 
 int32_t SecCompService::UpdateSecurityComponent(int32_t scId, const std::string& componentInfo)
@@ -195,18 +207,23 @@ int32_t SecCompService::UnregisterSecurityComponent(int32_t scId)
 int32_t SecCompService::ReportSecurityComponentClickEvent(int32_t scId,
     const std::string& componentInfo, const SecCompClickEvent& touchInfo)
 {
+    StartTrace(HITRACE_TAG_ACCESS_CONTROL, "SecurityComponentClick");
     SecCompCallerInfo caller;
     if (!GetCallerInfo(caller)) {
         SC_LOG_ERROR(LABEL, "Check caller failed");
+        FinishTrace(HITRACE_TAG_ACCESS_CONTROL);
         return SC_SERVICE_ERROR_VALUE_INVALID;
     }
 
     nlohmann::json jsonRes = nlohmann::json::parse(componentInfo, nullptr, false);
     if (jsonRes.is_discarded()) {
         SC_LOG_ERROR(LABEL, "component info invalid %{public}s", componentInfo.c_str());
+        FinishTrace(HITRACE_TAG_ACCESS_CONTROL);
         return SC_SERVICE_ERROR_VALUE_INVALID;
     }
-    return SecCompManager::GetInstance().ReportSecurityComponentClickEvent(scId, jsonRes, caller, touchInfo);
+    int32_t res = SecCompManager::GetInstance().ReportSecurityComponentClickEvent(scId, jsonRes, caller, touchInfo);
+    FinishTrace(HITRACE_TAG_ACCESS_CONTROL);
+    return res;
 }
 
 bool SecCompService::ReduceAfterVerifySavePermission(AccessToken::AccessTokenID tokenId)

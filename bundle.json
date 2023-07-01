@@ -30,6 +30,7 @@
         "eventhandler",
         "hilog",
         "hisysevent",
+        "hitrace",
         "graphic_standard",
         "ipc",
         "safwk",

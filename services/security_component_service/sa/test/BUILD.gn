@@ -66,6 +66,7 @@ ohos_unittest("sec_comp_service_test") {
     "graphic_standard:librender_service_client",
     "hilog:libhilog",
     "hisysevent:libhisysevent",
+    "hitrace:hitrace_meter",
     "ipc:ipc_core",
     "window_manager:libdm",
   ]
@@ -115,6 +116,7 @@ ohos_unittest("sec_comp_service_mock_test") {
     "graphic_standard:librender_service_client",
     "hilog:libhilog",
     "hisysevent:libhisysevent",
+    "hitrace:hitrace_meter",
     "ipc:ipc_core",
     "window_manager:libdm",
   ]
