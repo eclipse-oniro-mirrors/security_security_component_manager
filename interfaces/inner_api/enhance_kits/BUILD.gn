@@ -38,7 +38,6 @@ ohos_shared_library("libsecurity_component_enhance_sdk") {
   ]
 
   sources = [
-    "src/sec_comp_enhance_cfg_parcel.cpp",
     "src/sec_comp_enhance_kit.cpp",
   ]
 

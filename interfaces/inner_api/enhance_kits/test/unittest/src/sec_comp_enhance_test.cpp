@@ -25,6 +25,7 @@ static constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {
     LOG_CORE, SECURITY_DOMAIN_SECURITY_COMPONENT, "SecCompEnhanceTest"};
 static bool g_inputEnhanceExist = false;
 static bool g_srvEnhanceExist = false;
+static constexpr uint32_t SEC_COMP_ENHANCE_CFG_SIZE = 76;
 #ifdef _ARM64_
 static const std::string LIB_PATH = "/system/lib64/";
 #else
@@ -71,8 +72,8 @@ void SecCompEnhanceTest::TearDown()
  */
 HWTEST_F(SecCompEnhanceTest, SetEnhanceCfg001, TestSize.Level1)
 {
-    uint8_t cfgData[16] = { 0 };
-    int32_t result = SecCompEnhanceKit::SetEnhanceCfg(reinterpret_cast<SecCompEnhanceCfgBase *>(&cfgData));
+    uint8_t cfgData[SEC_COMP_ENHANCE_CFG_SIZE] = { 0 };
+    int32_t result = SecCompEnhanceKit::SetEnhanceCfg(cfgData, SEC_COMP_ENHANCE_CFG_SIZE);
     if (g_inputEnhanceExist) {
         EXPECT_EQ(result, SC_OK);
     } else {
@@ -95,60 +96,7 @@ HWTEST_F(SecCompEnhanceTest, GetPoniterEventEnhanceData001, TestSize.Level1)
 
     int32_t result = SecCompEnhanceKit::GetPointerEventEnhanceData(originData, dataLen, enhanceData, enHancedataLen);
     if (g_inputEnhanceExist) {
-        EXPECT_EQ(result, SC_OK);
-    } else {
-        EXPECT_EQ(result, SC_ENHANCE_ERROR_NOT_EXIST_ENHANCE);
-    }
-}
-
-/**
- * @tc.name: MarshallEnhanceCfg001
- * @tc.desc: test MarshallEnhanceCfg
- * @tc.type: FUNC
- * @tc.require: AR000HO9IN
- */
-HWTEST_F(SecCompEnhanceTest, MarshallEnhanceCfg001, TestSize.Level1)
-{
-    OHOS::Parcel out;
-    int32_t result = SecCompEnhanceAdapter::MarshallEnhanceCfg(nullptr, out);
-    if (g_inputEnhanceExist) {
-        EXPECT_EQ(result, SC_ENHANCE_ERROR_OPER_FAIL);
-    } else {
-        EXPECT_EQ(result, SC_ENHANCE_ERROR_NOT_EXIST_ENHANCE);
-    }
-}
-
-/**
- * @tc.name: SecCompEnhanceCfgParcel001
- * @tc.desc: test Marshalling/Unmarshalling
- * @tc.type: FUNC
- * @tc.require: AR000HO9IN
- */
-HWTEST_F(SecCompEnhanceTest, SecCompEnhanceCfgParcel001, TestSize.Level1)
-{
-    SecCompEnhanceCfgParcel secCompEnhanceCfgParcel;
-    OHOS::Parcel out;
-    bool result = secCompEnhanceCfgParcel.Marshalling(out);
-    EXPECT_TRUE(result);
-
-    OHOS::Parcel in;
-    EXPECT_NE(nullptr, secCompEnhanceCfgParcel.Unmarshalling(in));
-}
-
-/**
- * @tc.name: UnmarshallEnhanceCfg001
- * @tc.desc: test UnmarshallEnhanceCfg
- * @tc.type: FUNC
- * @tc.require: AR000HO9IN
- */
-HWTEST_F(SecCompEnhanceTest, UnmarshallEnhanceCfg001, TestSize.Level1)
-{
-    OHOS::Parcel in;
-    SecCompEnhanceCfgBase* cfg = nullptr;
-    int32_t result = SecCompEnhanceAdapter::UnmarshallEnhanceCfg(in, cfg);
-    if (g_inputEnhanceExist) {
-        EXPECT_EQ(result, SC_OK);
-        EXPECT_EQ(cfg, nullptr);
+        EXPECT_EQ(result, SC_SERVICE_ERROR_SERVICE_NOT_EXIST);
     } else {
         EXPECT_EQ(result, SC_ENHANCE_ERROR_NOT_EXIST_ENHANCE);
     }

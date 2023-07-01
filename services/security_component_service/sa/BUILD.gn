@@ -75,6 +75,7 @@ ohos_shared_library("security_component_service") {
     "eventhandler:libeventhandler",
     "graphic_standard:librender_service_client",
     "hilog:libhilog",
+    "hisysevent:libhisysevent",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",

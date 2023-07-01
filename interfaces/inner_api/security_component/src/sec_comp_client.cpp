@@ -51,7 +51,7 @@ SecCompClient::~SecCompClient()
 int32_t SecCompClient::RegisterSecurityComponent(SecCompType type,
     const std::string& componentInfo, int32_t& scId)
 {
-    auto proxy = GetProxy();
+    auto proxy = GetProxy(true);
     if (proxy == nullptr) {
         SC_LOG_ERROR(LABEL, "Proxy is null");
         return SC_SERVICE_ERROR_VALUE_INVALID;
@@ -62,7 +62,7 @@ int32_t SecCompClient::RegisterSecurityComponent(SecCompType type,
 
 int32_t SecCompClient::UpdateSecurityComponent(int32_t scId, const std::string& componentInfo)
 {
-    auto proxy = GetProxy();
+    auto proxy = GetProxy(true);
     if (proxy == nullptr) {
         SC_LOG_ERROR(LABEL, "Proxy is null");
         return SC_SERVICE_ERROR_VALUE_INVALID;
@@ -73,7 +73,7 @@ int32_t SecCompClient::UpdateSecurityComponent(int32_t scId, const std::string& 
 
 int32_t SecCompClient::UnregisterSecurityComponent(int32_t scId)
 {
-    auto proxy = GetProxy();
+    auto proxy = GetProxy(true);
     if (proxy == nullptr) {
         SC_LOG_ERROR(LABEL, "Proxy is null");
         return SC_SERVICE_ERROR_VALUE_INVALID;
@@ -85,7 +85,7 @@ int32_t SecCompClient::UnregisterSecurityComponent(int32_t scId)
 int32_t SecCompClient::ReportSecurityComponentClickEvent(int32_t scId,
     const std::string& componentInfo, const SecCompClickEvent& touchInfo)
 {
-    auto proxy = GetProxy();
+    auto proxy = GetProxy(true);
     if (proxy == nullptr) {
         SC_LOG_ERROR(LABEL, "Proxy is null");
         return SC_SERVICE_ERROR_VALUE_INVALID;
@@ -96,7 +96,7 @@ int32_t SecCompClient::ReportSecurityComponentClickEvent(int32_t scId,
 
 bool SecCompClient::ReduceAfterVerifySavePermission(AccessToken::AccessTokenID tokenId)
 {
-    auto proxy = GetProxy();
+    auto proxy = GetProxy(false);
     if (proxy == nullptr) {
         SC_LOG_ERROR(LABEL, "Proxy is null");
         return false;
@@ -217,13 +217,15 @@ void SecCompClient::GetProxyFromRemoteObject(const sptr<IRemoteObject>& remoteOb
     return;
 }
 
-sptr<ISecCompService> SecCompClient::GetProxy()
+sptr<ISecCompService> SecCompClient::GetProxy(bool doLoadSa)
 {
     std::unique_lock<std::mutex> lock(proxyMutex_);
     if (proxy_ != nullptr) {
         return proxy_;
     }
-    LoadSecCompSa();
+    if (doLoadSa) {
+        LoadSecCompSa();
+    }
     return proxy_;
 }
 }  // namespace SecurityComponent

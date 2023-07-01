@@ -13,6 +13,8 @@
  * limitations under the License.
  */
 #include "sec_comp_kit.h"
+#include "hisysevent.h"
+#include "ipc_skeleton.h"
 #include "sec_comp_caller_authorization.h"
 #include "sec_comp_client.h"
 #include "sec_comp_log.h"
@@ -30,6 +32,9 @@ int32_t SecCompKit::RegisterSecurityComponent(SecCompType type,
     if (!SecCompCallerAuthorization::GetInstance().IsKitCaller(
         reinterpret_cast<uintptr_t>(__builtin_return_address(0)))) {
         SC_LOG_ERROR(LABEL, "register security component fail, caller invalid");
+        HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "CALLER_CHECK_FAILED",
+            HiviewDFX::HiSysEvent::EventType::SECURITY, "CALLER_UID", IPCSkeleton::GetCallingUid(),
+            "CALLER_PID", IPCSkeleton::GetCallingPid(), "CALL_SCENE", "REGITSTER");
         return SC_SERVICE_ERROR_CALLER_INVALID;
     }
 
@@ -37,6 +42,9 @@ int32_t SecCompKit::RegisterSecurityComponent(SecCompType type,
     if (res != SC_OK) {
         SC_LOG_ERROR(LABEL, "register security component fail, error: %{public}d", res);
     }
+    HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "REGISTER_SUCCESS",
+        HiviewDFX::HiSysEvent::EventType::BEHAVIOR, "CALLER_UID", IPCSkeleton::GetCallingUid(),
+        "CALLER_PID", IPCSkeleton::GetCallingPid(), "SC_ID", scId, "SC_TYPE", type);
     return res;
 }
 
@@ -45,6 +53,9 @@ int32_t SecCompKit::UpdateSecurityComponent(int32_t scId, const std::string& com
     if (!SecCompCallerAuthorization::GetInstance().IsKitCaller(
         reinterpret_cast<uintptr_t>(__builtin_return_address(0)))) {
         SC_LOG_ERROR(LABEL, "update security component fail, caller invalid");
+        HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "CALLER_CHECK_FAILED",
+            HiviewDFX::HiSysEvent::EventType::SECURITY, "CALLER_UID", IPCSkeleton::GetCallingUid(),
+            "CALLER_PID", IPCSkeleton::GetCallingPid(), "CALL_SCENE", "CLICK");
         return SC_SERVICE_ERROR_CALLER_INVALID;
     }
 
@@ -60,6 +71,9 @@ int32_t SecCompKit::UnregisterSecurityComponent(int32_t scId)
     if (!SecCompCallerAuthorization::GetInstance().IsKitCaller(
         reinterpret_cast<uintptr_t>(__builtin_return_address(0)))) {
         SC_LOG_ERROR(LABEL, "unregister security component fail, caller invalid");
+        HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "CALLER_CHECK_FAILED",
+            HiviewDFX::HiSysEvent::EventType::SECURITY, "CALLER_UID", IPCSkeleton::GetCallingUid(),
+            "CALLER_PID", IPCSkeleton::GetCallingPid(), "CALL_SCENE", "UNREGISTER");
         return SC_SERVICE_ERROR_CALLER_INVALID;
     }
 
@@ -67,6 +81,9 @@ int32_t SecCompKit::UnregisterSecurityComponent(int32_t scId)
     if (res != SC_OK) {
         SC_LOG_ERROR(LABEL, "unregister security component fail, error: %{public}d", res);
     }
+    HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "UNREGISTER_SUCCESS",
+        HiviewDFX::HiSysEvent::EventType::BEHAVIOR, "CALLER_UID", IPCSkeleton::GetCallingUid(),
+        "CALLER_PID", IPCSkeleton::GetCallingPid(), "SC_ID", scId);
     return res;
 }
 
@@ -76,6 +93,9 @@ int32_t SecCompKit::ReportSecurityComponentClickEvent(int32_t scId,
     if (!SecCompCallerAuthorization::GetInstance().IsKitCaller(
         reinterpret_cast<uintptr_t>(__builtin_return_address(0)))) {
         SC_LOG_ERROR(LABEL, "report click event fail, caller invalid");
+        HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "CALLER_CHECK_FAILED",
+            HiviewDFX::HiSysEvent::EventType::SECURITY, "CALLER_UID", IPCSkeleton::GetCallingUid(),
+            "CALLER_PID", IPCSkeleton::GetCallingPid(), "CALL_SCENE", "CLICK");
         return SC_SERVICE_ERROR_CALLER_INVALID;
     }
 

@@ -14,6 +14,9 @@
  */
 
 #include "sec_comp_service.h"
+
+#include <unistd.h>
+#include "hisysevent.h"
 #include "ipc_skeleton.h"
 #include "iservice_registry.h"
 #include "sec_comp_err.h"
@@ -26,6 +29,7 @@ namespace Security {
 namespace SecurityComponent {
 namespace {
 constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {LOG_CORE, SECURITY_DOMAIN_SECURITY_COMPONENT, "SecCompService"};
+static const int32_t ROOT_UID = 0;
 }
 
 REGISTER_SYSTEM_ABILITY_BY_ID(SecCompService, SA_ID_SECURITY_COMPONENT_SERVICE, true);
@@ -62,6 +66,8 @@ void SecCompService::OnStart()
         SC_LOG_ERROR(LABEL, "Failed to initialize");
         return;
     }
+    HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "SERVICE_INIT_SUCCESS",
+        HiviewDFX::HiSysEvent::EventType::BEHAVIOR, "PID", getpid());
     SC_LOG_INFO(LABEL, "Congratulations, SecCompService start successfully!");
 }
 
@@ -127,11 +133,11 @@ bool SecCompService::GetCallerInfo(SecCompCallerInfo& caller)
     AccessToken::AccessTokenID tokenId = IPCSkeleton::GetCallingTokenID();
     int32_t pid = IPCSkeleton::GetCallingPid();
     int32_t uid = IPCSkeleton::GetCallingUid();
-    if (AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId) != AccessToken::TOKEN_HAP) {
+    if ((uid != ROOT_UID) && (AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId) != AccessToken::TOKEN_HAP)) {
         SC_LOG_ERROR(LABEL, "Get caller tokenId invalid");
         return false;
     }
-    if (!appStateObserver_->IsProcessForeground(uid)) {
+    if ((uid != ROOT_UID) && (!appStateObserver_->IsProcessForeground(uid))) {
         SC_LOG_ERROR(LABEL, "caller uid is not in foreground");
         return false;
     }

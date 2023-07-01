@@ -14,14 +14,15 @@
  */
 #ifndef SECURITY_COMPONENT_ENHANCE_KITS_H
 #define SECURITY_COMPONENT_ENHANCE_KITS_H
-#include "sec_comp_enhance_adapter.h"
+
+#include <cstdint>
 
 namespace OHOS {
 namespace Security {
 namespace SecurityComponent {
 struct SecCompEnhanceKit {
-    static int32_t SetEnhanceCfg(SecCompEnhanceCfgBase* cfg);
-    static int32_t GetPointerEventEnhanceData(void *data, uint32_t dataLen,
+    static int32_t SetEnhanceCfg(uint8_t* cfg, uint32_t cfgLen);
+    static int32_t GetPointerEventEnhanceData(void* data, uint32_t dataLen,
         uint8_t* enhanceData, uint32_t& enHancedataLen);
 };
 }  // namespace SecurityComponent

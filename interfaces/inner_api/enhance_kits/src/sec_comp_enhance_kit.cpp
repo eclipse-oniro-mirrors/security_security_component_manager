@@ -13,16 +13,17 @@
  * limitations under the License.
  */
 #include "sec_comp_enhance_kit.h"
+#include "sec_comp_enhance_adapter.h"
 
 namespace OHOS {
 namespace Security {
 namespace SecurityComponent {
-int32_t SecCompEnhanceKit::SetEnhanceCfg(SecCompEnhanceCfgBase* cfg)
+int32_t SecCompEnhanceKit::SetEnhanceCfg(uint8_t* cfg, uint32_t cfgLen)
 {
-    return SecCompEnhanceAdapter::SetEnhanceCfg(cfg);
+    return SecCompEnhanceAdapter::SetEnhanceCfg(cfg, cfgLen);
 }
 
-int32_t SecCompEnhanceKit::GetPointerEventEnhanceData(void *data, uint32_t dataLen,
+int32_t SecCompEnhanceKit::GetPointerEventEnhanceData(void* data, uint32_t dataLen,
     uint8_t* enhanceData, uint32_t& enHancedataLen)
 {
     return SecCompEnhanceAdapter::GetPointerEventEnhanceData(data, dataLen, enhanceData, enHancedataLen);

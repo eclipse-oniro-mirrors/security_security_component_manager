@@ -44,6 +44,7 @@ ohos_unittest("sec_comp_sdk_test") {
     "access_token:libaccesstoken_sdk",
     "c_utils:utils",
     "hilog:libhilog",
+    "hisysevent:libhisysevent",
     "ipc:ipc_core",
   ]
 }

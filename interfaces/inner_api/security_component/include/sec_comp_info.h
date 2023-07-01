@@ -114,6 +114,12 @@ struct SecCompClickEvent {
     uint64_t timestamp;
     ExtraInfo extraInfo;
 };
+
+struct SecCompPointEvent {
+    double touchX;
+    double touchY;
+    uint64_t timestamp;
+};
 }  // namespace SecurityComponent
 }  // namespace Security
 }  // namespace OHOS

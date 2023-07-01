@@ -23,7 +23,8 @@ namespace Security {
 namespace SecurityComponent {
 namespace {
 constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {LOG_CORE, SECURITY_DOMAIN_SECURITY_COMPONENT, "SecCompEntity"};
-static constexpr uint64_t MAX_TOUCH_INTERVAL = 1000000000L; // 1000ms
+static constexpr uint64_t MAX_TOUCH_INTERVAL = 1000000L; // 1000ms
+static constexpr uint64_t TIME_CONVERSION_UNIT = 1000;
 }
 
 int32_t SecCompEntity::RevokeTempPermission()
@@ -49,9 +50,11 @@ bool SecCompEntity::CompareComponentBasicInfo(SecCompBase* other) const
 
 bool SecCompEntity::CheckTouchInfo(const SecCompClickEvent& touchInfo) const
 {
-    auto current = static_cast<uint64_t>(std::chrono::high_resolution_clock::now().time_since_epoch().count());
+    auto current = static_cast<uint64_t>(
+        std::chrono::high_resolution_clock::now().time_since_epoch().count()) / TIME_CONVERSION_UNIT;
     if (touchInfo.timestamp < current - MAX_TOUCH_INTERVAL || touchInfo.timestamp > current) {
-        SC_LOG_ERROR(LABEL, "touch timestamp invalid");
+        SC_LOG_ERROR(LABEL, "touch timestamp invalid touchInfo. timestamp: %{public}lu, current: %{public}lu",
+            touchInfo.timestamp, current);
         return false;
     }
 

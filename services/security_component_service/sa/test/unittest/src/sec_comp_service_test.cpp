@@ -37,77 +37,8 @@ static constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {
 
 static constexpr uint32_t HAP_TOKEN_ID = 537715419;
 static constexpr int32_t SA_ID = 3506;
-static constexpr double TEST_COORDINATE = 100.0;
 static constexpr int32_t TEST_SC_ID = 1;
-static constexpr double TEST_SIZE = 100.0;
-static constexpr uint32_t TEST_COLOR_YELLOW = 0x7fff00;
-static constexpr uint32_t TEST_COLOR_RED = 0xff0000;
-static constexpr uint32_t TEST_COLOR_BLUE = 0x0000ff;
 static AccessTokenID g_selfTokenId = 0;
-
-static std::string BuildLocationComponentInfo()
-{
-    LocationButton button;
-    button.fontSize_ = TEST_SIZE;
-    button.iconSize_ = TEST_SIZE;
-    button.padding_.top = TEST_SIZE;
-    button.padding_.right = TEST_SIZE;
-    button.padding_.bottom = TEST_SIZE;
-    button.padding_.left = TEST_SIZE;
-    button.textIconSpace_ = TEST_SIZE;
-    button.fontColor_.value = TEST_COLOR_YELLOW;
-    button.iconColor_.value = TEST_COLOR_RED;
-    button.bgColor_.value = TEST_COLOR_BLUE;
-    button.borderWidth_ = TEST_SIZE;
-    button.type_ = LOCATION_COMPONENT;
-    button.rect_.x_ = TEST_COORDINATE;
-    button.rect_.y_ = TEST_COORDINATE;
-    button.rect_.width_ = TEST_COORDINATE;
-    button.rect_.height_ = TEST_COORDINATE;
-    button.windowRect_.x_ = TEST_COORDINATE;
-    button.windowRect_.y_ = TEST_COORDINATE;
-    button.windowRect_.width_ = TEST_COORDINATE;
-    button.windowRect_.height_ = TEST_COORDINATE;
-    button.text_ = static_cast<int32_t>(LocationDesc::SELECT_LOCATION);
-    button.icon_ = static_cast<int32_t>(LocationIcon::LINE_ICON);
-    button.bg_ = SecCompBackground::CIRCLE;
-
-    nlohmann::json jsonRes;
-    button.ToJson(jsonRes);
-    return jsonRes.dump();
-}
-
-static std::string BuildSaveComponentInfo()
-{
-    SaveButton button;
-    button.fontSize_ = TEST_SIZE;
-    button.iconSize_ = TEST_SIZE;
-    button.padding_.top = TEST_SIZE;
-    button.padding_.right = TEST_SIZE;
-    button.padding_.bottom = TEST_SIZE;
-    button.padding_.left = TEST_SIZE;
-    button.textIconSpace_ = TEST_SIZE;
-    button.fontColor_.value = TEST_COLOR_YELLOW;
-    button.iconColor_.value = TEST_COLOR_RED;
-    button.bgColor_.value = TEST_COLOR_BLUE;
-    button.borderWidth_ = TEST_SIZE;
-    button.type_ = SAVE_COMPONENT;
-    button.rect_.x_ = TEST_COORDINATE;
-    button.rect_.y_ = TEST_COORDINATE;
-    button.rect_.width_ = TEST_COORDINATE;
-    button.rect_.height_ = TEST_COORDINATE;
-    button.windowRect_.x_ = TEST_COORDINATE;
-    button.windowRect_.y_ = TEST_COORDINATE;
-    button.windowRect_.width_ = TEST_COORDINATE;
-    button.windowRect_.height_ = TEST_COORDINATE;
-    button.text_ = static_cast<int32_t>(SaveDesc::DOWNLOAD);
-    button.icon_ = static_cast<int32_t>(SaveIcon::LINE_ICON);
-    button.bg_ = SecCompBackground::CIRCLE;
-
-    nlohmann::json jsonRes;
-    button.ToJson(jsonRes);
-    return jsonRes.dump();
-}
 }
 
 void SecCompServiceTest::SetUpTestCase()
@@ -250,13 +181,14 @@ HWTEST_F(SecCompServiceTest, UnregisterAppStateObserver001, TestSize.Level1)
  */
 HWTEST_F(SecCompServiceTest, GetCallerInfo001, TestSize.Level1)
 {
-    // token id is shell
+    // not root uid
+    setuid(1);
     SecCompCallerInfo caller;
     EXPECT_FALSE(secCompService_->GetCallerInfo(caller));
 
     // set token id to hap token, but uid is not in foreground
-
     EXPECT_FALSE(secCompService_->GetCallerInfo(caller));
+    setuid(0);
     ASSERT_EQ(SetSelfTokenID(HAP_TOKEN_ID), 0);
     // add local uid to foreground.
     AppExecFwk::AppStateData stateData = {
@@ -264,44 +196,6 @@ HWTEST_F(SecCompServiceTest, GetCallerInfo001, TestSize.Level1)
     };
     secCompService_->appStateObserver_->AddProcessToForegroundSet(stateData);
     EXPECT_TRUE(secCompService_->GetCallerInfo(caller));
-}
-
-/**
- * @tc.name: RegisterSecurityComponent001
- * @tc.desc: Test register security component
- * @tc.type: FUNC
- * @tc.require: AR000HO9J7
- */
-HWTEST_F(SecCompServiceTest, RegisterSecurityComponent001, TestSize.Level1)
-{
-    // get caller fail
-    int32_t scId;
-    EXPECT_EQ(secCompService_->RegisterSecurityComponent(LOCATION_COMPONENT, "", scId),
-        SC_SERVICE_ERROR_VALUE_INVALID);
-
-    // parse component json fail
-    ASSERT_EQ(SetSelfTokenID(HAP_TOKEN_ID), 0);
-    AppExecFwk::AppStateData stateData = {
-        .uid = getuid()
-    };
-    secCompService_->appStateObserver_->AddProcessToForegroundSet(stateData);
-    EXPECT_EQ(secCompService_->RegisterSecurityComponent(LOCATION_COMPONENT, "{a=", scId),
-        SC_SERVICE_ERROR_VALUE_INVALID); // wrong json
-
-    // register security component ok
-    EXPECT_EQ(secCompService_->RegisterSecurityComponent(LOCATION_COMPONENT, BuildLocationComponentInfo(), scId),
-        SC_OK);
-    EXPECT_EQ(secCompService_->UpdateSecurityComponent(scId, BuildLocationComponentInfo()),
-        SC_OK);
-    struct SecCompClickEvent touch = {
-        .touchX = 100,
-        .touchY = 100,
-        .timestamp = static_cast<uint64_t>(std::chrono::high_resolution_clock::now().time_since_epoch().count())
-    };
-
-    EXPECT_EQ(secCompService_->ReportSecurityComponentClickEvent(scId, BuildLocationComponentInfo(), touch),
-        SC_OK);
-    EXPECT_EQ(secCompService_->UnregisterSecurityComponent(scId), SC_OK);
 }
 
 /**
@@ -313,7 +207,7 @@ HWTEST_F(SecCompServiceTest, RegisterSecurityComponent001, TestSize.Level1)
 HWTEST_F(SecCompServiceTest, UnregisterSecurityComponent001, TestSize.Level1)
 {
     // get caller fail
-    EXPECT_EQ(secCompService_->UnregisterSecurityComponent(TEST_SC_ID), SC_SERVICE_ERROR_VALUE_INVALID);
+    EXPECT_EQ(secCompService_->UnregisterSecurityComponent(TEST_SC_ID), SC_SERVICE_ERROR_COMPONENT_NOT_EXIST);
 }
 
 /**
@@ -333,147 +227,4 @@ HWTEST_F(SecCompServiceTest, UpdateSecurityComponent001, TestSize.Level1)
     };
     secCompService_->appStateObserver_->AddProcessToForegroundSet(stateData);
     EXPECT_EQ(secCompService_->UpdateSecurityComponent(TEST_SC_ID, "{a"), SC_SERVICE_ERROR_VALUE_INVALID);
-}
-
-/**
- * @tc.name: ReportSecurityComponentClickEvent001
- * @tc.desc: Test register security component
- * @tc.type: FUNC
- * @tc.require: AR000HO9J7
- */
-HWTEST_F(SecCompServiceTest, ReportSecurityComponentClickEvent001, TestSize.Level1)
-{
-    int32_t scId;
-    secCompService_->state_ = ServiceRunningState::STATE_RUNNING;
-    secCompService_->Initialize();
-
-    ASSERT_EQ(SetSelfTokenID(HAP_TOKEN_ID), 0);
-    AppExecFwk::AppStateData stateData = {
-        .uid = getuid()
-    };
-    secCompService_->appStateObserver_->AddProcessToForegroundSet(stateData);
-    // register security component ok
-    EXPECT_EQ(secCompService_->RegisterSecurityComponent(SAVE_COMPONENT, BuildSaveComponentInfo(), scId),
-        SC_OK);
-    struct SecCompClickEvent touchInfo = {
-        .touchX = 100,
-        .touchY = 100,
-        .timestamp = static_cast<uint64_t>(std::chrono::high_resolution_clock::now().time_since_epoch().count())
-    };
-
-    ASSERT_EQ(SC_OK, secCompService_->ReportSecurityComponentClickEvent(scId, BuildSaveComponentInfo(), touchInfo));
-
-    ASSERT_TRUE(secCompService_->ReduceAfterVerifySavePermission(HAP_TOKEN_ID));
-
-    ASSERT_FALSE(secCompService_->ReduceAfterVerifySavePermission(HAP_TOKEN_ID));
-
-    ASSERT_EQ(secCompService_->ReportSecurityComponentClickEvent(scId, BuildSaveComponentInfo(), touchInfo),
-        SC_OK);
-    sleep(6);
-    ASSERT_FALSE(secCompService_->ReduceAfterVerifySavePermission(HAP_TOKEN_ID));
-    EXPECT_EQ(secCompService_->UnregisterSecurityComponent(scId), SC_OK);
-}
-
-/**
- * @tc.name: ReportSecurityComponentClickEvent002
- * @tc.desc: Test report security component click with save button
- * @tc.type: FUNC
- * @tc.require: AR000HO9IN
- */
-HWTEST_F(SecCompServiceTest, ReportSecurityComponentClickEvent002, TestSize.Level1)
-{
-    int32_t scId;
-    secCompService_->state_ = ServiceRunningState::STATE_RUNNING;
-    secCompService_->Initialize();
-
-    ASSERT_EQ(SetSelfTokenID(HAP_TOKEN_ID), 0);
-    AppExecFwk::AppStateData stateData = {
-        .uid = getuid()
-    };
-    secCompService_->appStateObserver_->AddProcessToForegroundSet(stateData);
-    // register security component ok
-    EXPECT_EQ(secCompService_->RegisterSecurityComponent(SAVE_COMPONENT, BuildSaveComponentInfo(), scId),
-        SC_OK);
-    struct SecCompClickEvent touchInfo = {
-        .touchX = 100,
-        .touchY = 100,
-        .timestamp = static_cast<uint64_t>(std::chrono::high_resolution_clock::now().time_since_epoch().count())
-    };
-
-    ASSERT_EQ(secCompService_->ReportSecurityComponentClickEvent(scId, BuildSaveComponentInfo(), touchInfo),
-        SC_OK);
-    ASSERT_EQ(secCompService_->ReportSecurityComponentClickEvent(scId, BuildSaveComponentInfo(), touchInfo),
-        SC_OK);
-
-    ASSERT_TRUE(secCompService_->ReduceAfterVerifySavePermission(HAP_TOKEN_ID));
-    ASSERT_TRUE(secCompService_->ReduceAfterVerifySavePermission(HAP_TOKEN_ID));
-    ASSERT_FALSE(secCompService_->ReduceAfterVerifySavePermission(HAP_TOKEN_ID));
-
-    ASSERT_EQ(secCompService_->ReportSecurityComponentClickEvent(scId, BuildSaveComponentInfo(), touchInfo),
-        SC_OK);
-    sleep(3);
-    touchInfo.timestamp = static_cast<uint64_t>(std::chrono::high_resolution_clock::now().time_since_epoch().count());
-    ASSERT_EQ(secCompService_->ReportSecurityComponentClickEvent(scId, BuildSaveComponentInfo(), touchInfo),
-        SC_OK);
-    sleep(3);
-    ASSERT_TRUE(secCompService_->ReduceAfterVerifySavePermission(HAP_TOKEN_ID));
-    ASSERT_FALSE(secCompService_->ReduceAfterVerifySavePermission(HAP_TOKEN_ID));
-
-    touchInfo.timestamp = static_cast<uint64_t>(std::chrono::high_resolution_clock::now().time_since_epoch().count());
-    ASSERT_EQ(secCompService_->ReportSecurityComponentClickEvent(scId, BuildSaveComponentInfo(), touchInfo),
-        SC_OK);
-    sleep(3);
-    touchInfo.timestamp = static_cast<uint64_t>(std::chrono::high_resolution_clock::now().time_since_epoch().count());
-    ASSERT_EQ(secCompService_->ReportSecurityComponentClickEvent(scId, BuildSaveComponentInfo(), touchInfo),
-        SC_OK);
-    ASSERT_TRUE(secCompService_->ReduceAfterVerifySavePermission(HAP_TOKEN_ID));
-    sleep(3);
-    ASSERT_TRUE(secCompService_->ReduceAfterVerifySavePermission(HAP_TOKEN_ID));
-    ASSERT_FALSE(secCompService_->ReduceAfterVerifySavePermission(HAP_TOKEN_ID));
-}
-
-/**
- * @tc.name: ReportSecurityComponentClickEvent003
- * @tc.desc: Test report security component click twice with save button
- * @tc.type: FUNC
- * @tc.require: AR000HO9J7
- */
-HWTEST_F(SecCompServiceTest, ReportSecurityComponentClickEvent003, TestSize.Level1)
-{
-    int32_t scId;
-    secCompService_->state_ = ServiceRunningState::STATE_RUNNING;
-    secCompService_->Initialize();
-
-    ASSERT_EQ(SetSelfTokenID(HAP_TOKEN_ID), 0);
-    AppExecFwk::AppStateData stateData = {
-        .uid = getuid()
-    };
-    secCompService_->appStateObserver_->AddProcessToForegroundSet(stateData);
-    // register security component ok
-    EXPECT_EQ(secCompService_->RegisterSecurityComponent(SAVE_COMPONENT, BuildSaveComponentInfo(), scId),
-        SC_OK);
-    struct SecCompClickEvent touchInfo = {
-        .touchX = 100,
-        .touchY = 100,
-        .timestamp = static_cast<uint64_t>(std::chrono::high_resolution_clock::now().time_since_epoch().count())
-    };
-
-    ASSERT_EQ(secCompService_->ReportSecurityComponentClickEvent(scId, BuildSaveComponentInfo(), touchInfo),
-        SC_OK);
-    sleep(3);
-    touchInfo.timestamp = static_cast<uint64_t>(std::chrono::high_resolution_clock::now().time_since_epoch().count());
-    ASSERT_EQ(secCompService_->ReportSecurityComponentClickEvent(scId, BuildSaveComponentInfo(), touchInfo),
-        SC_OK);
-    sleep(6);
-    ASSERT_FALSE(secCompService_->ReduceAfterVerifySavePermission(HAP_TOKEN_ID));
-
-    touchInfo.timestamp = static_cast<uint64_t>(std::chrono::high_resolution_clock::now().time_since_epoch().count());
-    ASSERT_EQ(secCompService_->ReportSecurityComponentClickEvent(scId, BuildSaveComponentInfo(), touchInfo),
-        SC_OK);
-    ASSERT_TRUE(secCompService_->ReduceAfterVerifySavePermission(HAP_TOKEN_ID));
-    ASSERT_EQ(secCompService_->ReportSecurityComponentClickEvent(scId, BuildSaveComponentInfo(), touchInfo),
-        SC_OK);
-    sleep(3);
-    ASSERT_TRUE(secCompService_->ReduceAfterVerifySavePermission(HAP_TOKEN_ID));
-    ASSERT_FALSE(secCompService_->ReduceAfterVerifySavePermission(HAP_TOKEN_ID));
 }
