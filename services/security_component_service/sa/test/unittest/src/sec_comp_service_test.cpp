@@ -39,6 +39,44 @@ static constexpr uint32_t HAP_TOKEN_ID = 537715419;
 static constexpr int32_t SA_ID = 3506;
 static constexpr int32_t TEST_SC_ID = 1;
 static AccessTokenID g_selfTokenId = 0;
+static constexpr double TEST_COORDINATE = 100.0;
+static constexpr double TEST_SIZE = 100.0;
+static constexpr uint32_t TEST_COLOR_YELLOW = 0x7fff00;
+static constexpr uint32_t TEST_COLOR_RED = 0xff0000;
+static constexpr uint32_t TEST_COLOR_BLUE = 0x0000ff;
+static constexpr uint64_t TIME_CONVERSION_UNIT = 1000;
+
+static std::string BuildLocationComponentInfo()
+{
+    LocationButton button;
+    button.fontSize_ = TEST_SIZE;
+    button.iconSize_ = TEST_SIZE;
+    button.padding_.top = TEST_SIZE;
+    button.padding_.right = TEST_SIZE;
+    button.padding_.bottom = TEST_SIZE;
+    button.padding_.left = TEST_SIZE;
+    button.textIconSpace_ = TEST_SIZE;
+    button.fontColor_.value = TEST_COLOR_YELLOW;
+    button.iconColor_.value = TEST_COLOR_RED;
+    button.bgColor_.value = TEST_COLOR_BLUE;
+    button.borderWidth_ = TEST_SIZE;
+    button.type_ = LOCATION_COMPONENT;
+    button.rect_.x_ = TEST_COORDINATE;
+    button.rect_.y_ = TEST_COORDINATE;
+    button.rect_.width_ = TEST_COORDINATE;
+    button.rect_.height_ = TEST_COORDINATE;
+    button.windowRect_.x_ = TEST_COORDINATE;
+    button.windowRect_.y_ = TEST_COORDINATE;
+    button.windowRect_.width_ = TEST_COORDINATE;
+    button.windowRect_.height_ = TEST_COORDINATE;
+    button.text_ = static_cast<int32_t>(LocationDesc::SELECT_LOCATION);
+    button.icon_ = static_cast<int32_t>(LocationIcon::LINE_ICON);
+    button.bg_ = SecCompBackground::CIRCLE;
+
+    nlohmann::json jsonRes;
+    button.ToJson(jsonRes);
+    return jsonRes.dump();
+}
 }
 
 void SecCompServiceTest::SetUpTestCase()
@@ -227,4 +265,41 @@ HWTEST_F(SecCompServiceTest, UpdateSecurityComponent001, TestSize.Level1)
     };
     secCompService_->appStateObserver_->AddProcessToForegroundSet(stateData);
     EXPECT_EQ(secCompService_->UpdateSecurityComponent(TEST_SC_ID, "{a"), SC_SERVICE_ERROR_VALUE_INVALID);
+}
+
+/**
+ * @tc.name: ReportSecurityComponentClickEvent001
+ * @tc.desc: Test report security component
+ * @tc.type: FUNC
+ * @tc.require: AR000HO9J7
+ */
+HWTEST_F(SecCompServiceTest, ReportSecurityComponentClickEvent001, TestSize.Level1)
+{
+    // get caller fail
+    int32_t scId;
+    EXPECT_EQ(secCompService_->RegisterSecurityComponent(LOCATION_COMPONENT, "", scId),
+        SC_SERVICE_ERROR_VALUE_INVALID);
+
+    // parse component json fail
+    ASSERT_EQ(SetSelfTokenID(HAP_TOKEN_ID), 0);
+    AppExecFwk::AppStateData stateData = {
+        .uid = getuid()
+    };
+    secCompService_->appStateObserver_->AddProcessToForegroundSet(stateData);
+
+    // register security component ok
+    EXPECT_EQ(secCompService_->RegisterSecurityComponent(LOCATION_COMPONENT, BuildLocationComponentInfo(), scId),
+        SC_OK);
+    uint8_t data[16] = { 0 };
+    struct SecCompClickEvent touch = {
+        .touchX = 100,
+        .touchY = 100,
+        .timestamp = static_cast<uint64_t>(
+            std::chrono::high_resolution_clock::now().time_since_epoch().count()) / TIME_CONVERSION_UNIT,
+        .extraInfo.data = data,
+        .extraInfo.dataSize = 16,
+    };
+    EXPECT_EQ(secCompService_->ReportSecurityComponentClickEvent(scId, BuildLocationComponentInfo(), touch),
+        SC_SERVICE_ERROR_CLICK_EVENT_INVALID);
+    EXPECT_EQ(secCompService_->UnregisterSecurityComponent(scId), SC_OK);
 }
