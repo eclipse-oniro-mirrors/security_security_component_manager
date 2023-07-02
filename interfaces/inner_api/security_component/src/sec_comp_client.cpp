@@ -96,7 +96,7 @@ int32_t SecCompClient::ReportSecurityComponentClickEvent(int32_t scId,
 
 bool SecCompClient::ReduceAfterVerifySavePermission(AccessToken::AccessTokenID tokenId)
 {
-    auto proxy = GetProxy(false);
+    auto proxy = GetProxy(true);
     if (proxy == nullptr) {
         SC_LOG_ERROR(LABEL, "Proxy is null");
         return false;
