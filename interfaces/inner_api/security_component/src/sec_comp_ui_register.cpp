@@ -24,10 +24,13 @@ static constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {
     LOG_CORE, SECURITY_DOMAIN_SECURITY_COMPONENT, "SecCompUiRegister"};
 }  // namespace
 
-SecCompUiRegister::SecCompUiRegister(std::vector<uintptr_t>& callerList)
+ISecCompProbe* SecCompUiRegister::callbackProbe = nullptr;
+
+SecCompUiRegister::SecCompUiRegister(std::vector<uintptr_t>& callerList, ISecCompProbe* probe)
 {
     SC_LOG_INFO(LABEL, "Init");
     SecCompCallerAuthorization::GetInstance().RegisterSecCompKitCaller(callerList);
+    callbackProbe = probe;
 }
 }  // namespace SecurityComponent
 }  // namespace Security

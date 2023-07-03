@@ -12,21 +12,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef SECURITY_COMPONENT_ENHANCE_KITS_H
-#define SECURITY_COMPONENT_ENHANCE_KITS_H
 
-#include <cstdint>
+#ifndef SECURITY_COMPONENT_DELAY_EXIT_TASK_H
+#define SECURITY_COMPONENT_DELAY_EXIT_TASK_H
+#include <memory>
+#include <string>
+
+#include "nocopyable.h"
+#include "sec_event_handler.h"
 
 namespace OHOS {
 namespace Security {
 namespace SecurityComponent {
-struct SecCompEnhanceKit {
-    static void InitClientEnhance();
-    static int32_t SetEnhanceCfg(uint8_t* cfg, uint32_t cfgLen);
-    static int32_t GetPointerEventEnhanceData(void* data, uint32_t dataLen,
-        uint8_t* enhanceData, uint32_t& enHancedataLen);
+class DelayExitTask {
+public:
+    static DelayExitTask& GetInstance();
+    virtual ~DelayExitTask() = default;
+
+    void Init(std::shared_ptr<SecEventHandler>& secHandler);
+    void Start();
+    void Stop();
+private:
+    DelayExitTask();
+    std::shared_ptr<SecEventHandler> secHandler_;
+
+    DISALLOW_COPY_AND_MOVE(DelayExitTask);
 };
 }  // namespace SecurityComponent
 }  // namespace Security
 }  // namespace OHOS
-#endif  // SECURITY_COMPONENT_ENHANCE_KITS_H
+#endif  // SECURITY_COMPONENT_DELAY_EXIT_TASK_H
+

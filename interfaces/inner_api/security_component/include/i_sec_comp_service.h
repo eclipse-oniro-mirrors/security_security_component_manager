@@ -37,6 +37,7 @@ public:
     virtual int32_t ReportSecurityComponentClickEvent(int32_t scId, const std::string& componentInfo,
         const SecCompClickEvent& touchInfo) = 0;
     virtual bool ReduceAfterVerifySavePermission(AccessToken::AccessTokenID tokenId) = 0;
+    virtual sptr<IRemoteObject> GetEnhanceRemoteObject() = 0;
 };
 }  // namespace SecurityComponent
 }  // namespace Security

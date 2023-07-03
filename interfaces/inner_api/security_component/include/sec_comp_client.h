@@ -36,6 +36,7 @@ public:
     int32_t ReportSecurityComponentClickEvent(int32_t scId,
         const std::string& componentInfo, const SecCompClickEvent& touchInfo);
     bool ReduceAfterVerifySavePermission(AccessToken::AccessTokenID tokenId);
+    sptr<IRemoteObject> GetEnhanceRemoteObject(bool doLoadSa);
 
     void FinishStartSASuccess(const sptr<IRemoteObject>& remoteObject);
     void FinishStartSAFail();
@@ -46,6 +47,7 @@ private:
     virtual ~SecCompClient();
     DISALLOW_COPY_AND_MOVE(SecCompClient);
 
+    bool TryToGetSecCompSa();
     bool StartLoadSecCompSa();
     void WaitForSecCompSa();
     void GetSecCompSa();

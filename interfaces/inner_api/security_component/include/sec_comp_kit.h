@@ -17,6 +17,7 @@
 
 #include <string>
 #include "accesstoken_kit.h"
+#include "iremote_object.h"
 #include "sec_comp_info.h"
 #include "sec_comp_ui_register.h"
 
@@ -26,12 +27,13 @@ namespace SecurityComponent {
 class SecCompKit {
 
 public:
-    static int32_t RegisterSecurityComponent(SecCompType type, const std::string& componentInfo, int32_t& scId);
-    static int32_t UpdateSecurityComponent(int32_t scId, const std::string& componentInfo);
+    static int32_t RegisterSecurityComponent(SecCompType type, std::string& componentInfo, int32_t& scId);
+    static int32_t UpdateSecurityComponent(int32_t scId, std::string& componentInfo);
     static int32_t UnregisterSecurityComponent(int32_t scId);
     static int32_t ReportSecurityComponentClickEvent(int32_t scId,
-        const std::string& componentInfo, const SecCompClickEvent& touchInfo);
+        std::string& componentInfo, const SecCompClickEvent& touchInfo);
     static bool ReduceAfterVerifySavePermission(AccessToken::AccessTokenID tokenId);
+    static sptr<IRemoteObject> GetEnhanceRemoteObject(bool isLoad);
 };
 }  // namespace SecurityComponent
 }  // namespace Security

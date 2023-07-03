@@ -31,13 +31,17 @@ static const std::string LIB_PATH = "/system/lib/";
 #endif
 static const std::string ENHANCE_INPUT_INTERFACE_LIB = LIB_PATH + "libsec_comp_input_enhance.z.so";
 static const std::string ENHANCE_SRV_INTERFACE_LIB = LIB_PATH + "libsec_comp_service_enhance.z.so";
+static const std::string ENHANCE_CLIENT_INTERFACE_LIB = LIB_PATH + "libsec_comp_client_enhance.z.so";
 }
 
-SecCompEnhanceInputInterface* SecCompEnhanceAdapter::inputHandler = nullptr;
+SecCompInputEnhanceInterface* SecCompEnhanceAdapter::inputHandler = nullptr;
 bool SecCompEnhanceAdapter::isEnhanceInputHandlerInit = false;
 
-SecCompEnhanceServiceInterface* SecCompEnhanceAdapter::srvHandler = nullptr;
+SecCompSrvEnhanceInterface* SecCompEnhanceAdapter::srvHandler = nullptr;
 bool SecCompEnhanceAdapter::isEnhanceSrvHandlerInit = false;
+
+SecCompClientEnhanceInterface* SecCompEnhanceAdapter::clientHandler = nullptr;
+bool SecCompEnhanceAdapter::isEnhanceClientHandlerInit = false;
 
 std::mutex SecCompEnhanceAdapter::initMtx;
 
@@ -54,13 +58,15 @@ void SecCompEnhanceAdapter::InitEnhanceHandler(EnhanceInterfaceType type)
             libPath = ENHANCE_SRV_INTERFACE_LIB;
             isEnhanceSrvHandlerInit = true;
             break;
+        case SEC_COMP_ENHANCE_CLIENT_INTERFACE:
+            libPath = ENHANCE_CLIENT_INTERFACE_LIB;
+            isEnhanceClientHandlerInit = true;
+            break;
         default:
             break;
     }
     if (dlopen(libPath.c_str(), RTLD_LAZY) == nullptr) {
-        SC_LOG_ERROR(LABEL, "init enhance lib %{public}s failed", libPath.c_str());
-    } else {
-        SC_LOG_INFO(LABEL, "init enhance lib %{public}s ok", libPath.c_str());
+        SC_LOG_ERROR(LABEL, "init enhance lib %{public}s failed, error %{public}s", libPath.c_str(), dlerror());
     }
 }
 
@@ -98,6 +104,56 @@ int32_t SecCompEnhanceAdapter::CheckExtraInfo(const SecCompClickEvent& touchInfo
     return SC_ENHANCE_ERROR_NOT_EXIST_ENHANCE;
 }
 
+bool SecCompEnhanceAdapter::EnhanceDataPreprocess(std::string& componentInfo)
+{
+    if (!isEnhanceClientHandlerInit) {
+        InitEnhanceHandler(SEC_COMP_ENHANCE_CLIENT_INTERFACE);
+    }
+
+    uintptr_t enhanceCallerAddr = reinterpret_cast<uintptr_t>(__builtin_return_address(0));
+    if (clientHandler != nullptr) {
+        return clientHandler->EnhanceDataPreprocess(enhanceCallerAddr, componentInfo);
+    }
+    return true;
+}
+
+bool SecCompEnhanceAdapter::EnhanceDataPreprocess(int32_t scId, std::string& componentInfo)
+{
+    if (!isEnhanceClientHandlerInit) {
+        InitEnhanceHandler(SEC_COMP_ENHANCE_CLIENT_INTERFACE);
+    }
+
+    uintptr_t enhanceCallerAddr = reinterpret_cast<uintptr_t>(__builtin_return_address(0));
+    if (clientHandler != nullptr) {
+        return clientHandler->EnhanceDataPreprocess(enhanceCallerAddr, scId, componentInfo);
+    }
+    return true;
+}
+
+void SecCompEnhanceAdapter::RegisterScIdEnhance(int32_t scId)
+{
+    if (!isEnhanceClientHandlerInit) {
+        InitEnhanceHandler(SEC_COMP_ENHANCE_CLIENT_INTERFACE);
+    }
+
+    uintptr_t enhanceCallerAddr = reinterpret_cast<uintptr_t>(__builtin_return_address(0));
+    if (clientHandler != nullptr) {
+        clientHandler->RegisterScIdEnhance(enhanceCallerAddr, scId);
+    }
+}
+
+void SecCompEnhanceAdapter::UnregisterScIdEnhance(int32_t scId)
+{
+    if (!isEnhanceClientHandlerInit) {
+        InitEnhanceHandler(SEC_COMP_ENHANCE_CLIENT_INTERFACE);
+    }
+
+    uintptr_t enhanceCallerAddr = reinterpret_cast<uintptr_t>(__builtin_return_address(0));
+    if (clientHandler != nullptr) {
+        clientHandler->UnregisterScIdEnhance(enhanceCallerAddr, scId);
+    }
+}
+
 int32_t SecCompEnhanceAdapter::EnableInputEnhance()
 {
     if (!isEnhanceSrvHandlerInit) {
@@ -118,6 +174,60 @@ int32_t SecCompEnhanceAdapter::DisableInputEnhance()
         return srvHandler->DisableInputEnhance();
     }
     return SC_ENHANCE_ERROR_NOT_EXIST_ENHANCE;
+}
+
+void SecCompEnhanceAdapter::StartEnhanceService()
+{
+    if (!isEnhanceSrvHandlerInit) {
+        InitEnhanceHandler(SEC_COMP_ENHANCE_SRV_INTERFACE);
+    }
+    if (srvHandler != nullptr) {
+        srvHandler->StartEnhanceService();
+    }
+}
+
+void SecCompEnhanceAdapter::ExistEnhanceService()
+{
+    if (!isEnhanceSrvHandlerInit) {
+        InitEnhanceHandler(SEC_COMP_ENHANCE_SRV_INTERFACE);
+    }
+    if (srvHandler != nullptr) {
+        srvHandler->ExitEnhanceService();
+    }
+}
+
+void SecCompEnhanceAdapter::NotifyProcessDied(int32_t pid)
+{
+    if (!isEnhanceSrvHandlerInit) {
+        InitEnhanceHandler(SEC_COMP_ENHANCE_SRV_INTERFACE);
+    }
+    if (srvHandler != nullptr) {
+        srvHandler->NotifyProcessDied(pid);
+    }
+}
+
+int32_t SecCompEnhanceAdapter::CheckComponentInfoEnhnace(int32_t pid,
+    std::shared_ptr<SecCompBase>& compInfo, const nlohmann::json& jsonComponent)
+{
+    if (!isEnhanceSrvHandlerInit) {
+        InitEnhanceHandler(SEC_COMP_ENHANCE_SRV_INTERFACE);
+    }
+    if (srvHandler != nullptr) {
+        return srvHandler->CheckComponentInfoEnhnace(pid, compInfo, jsonComponent);
+    }
+    return SC_OK;
+}
+
+sptr<IRemoteObject> SecCompEnhanceAdapter::GetEnhanceRemoteObject()
+{
+    if (!isEnhanceSrvHandlerInit) {
+        InitEnhanceHandler(SEC_COMP_ENHANCE_SRV_INTERFACE);
+    }
+    if (srvHandler != nullptr) {
+        auto service = srvHandler->GetEnhanceRemoteObject();
+        return service;
+    }
+    return nullptr;
 }
 }  // namespace SecurityComponent
 }  // namespace Security

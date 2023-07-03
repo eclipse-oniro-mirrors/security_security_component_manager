@@ -58,7 +58,8 @@ int32_t SecCompProxy::RegisterSecurityComponent(SecCompType type,
         return SC_SERVICE_ERROR_IPC_REQUEST_FAIL;
     }
     int32_t requestResult = remote->SendRequest(
-        static_cast<uint32_t>(SecurityComponentServiceInterfaceCode::REGISTER_SECURITY_COMPONENT), data, reply, option);
+        static_cast<uint32_t>(SecurityComponentServiceInterfaceCode::REGISTER_SECURITY_COMPONENT),
+        data, reply, option);
     if (requestResult != SC_OK) {
         SC_LOG_ERROR(LABEL, "Request fail, result: %{public}d", requestResult);
         return requestResult;
@@ -234,6 +235,35 @@ bool SecCompProxy::ReduceAfterVerifySavePermission(AccessToken::AccessTokenID to
         return false;
     }
     return res;
+}
+
+sptr<IRemoteObject> SecCompProxy::GetEnhanceRemoteObject()
+{
+    MessageParcel data;
+    if (!data.WriteInterfaceToken(SecCompProxy::GetDescriptor())) {
+        SC_LOG_ERROR(LABEL, "Write descriptor fail");
+        return nullptr;
+    }
+
+    MessageParcel reply;
+    MessageOption option(MessageOption::TF_SYNC);
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        SC_LOG_ERROR(LABEL, "Remote service is null");
+        return nullptr;
+    }
+    int32_t requestResult = remote->SendRequest(
+        static_cast<uint32_t>(SecurityComponentServiceInterfaceCode::GET_SECURITY_COMPONENT_ENHANCE_OBJECT),
+        data, reply, option);
+    if (requestResult != SC_OK) {
+        SC_LOG_ERROR(LABEL, "Request fail, result: %{public}d", requestResult);
+        return nullptr;
+    }
+    sptr<IRemoteObject> callback = reply.ReadRemoteObject();
+    if (callback == nullptr) {
+        SC_LOG_ERROR(LABEL, "Read remote object fail");
+    }
+    return callback;
 }
 }  // namespace SecurityComponent
 }  // namespace Security

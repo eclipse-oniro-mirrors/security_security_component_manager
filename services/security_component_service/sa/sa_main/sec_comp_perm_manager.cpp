@@ -120,15 +120,9 @@ int32_t SecCompPermManager::RevokeTempSavePermission(AccessToken::AccessTokenID 
     return SC_OK;
 }
 
-bool SecCompPermManager::InitEventHandler()
+bool SecCompPermManager::InitEventHandler(std::shared_ptr<SecEventHandler>& secHandler)
 {
-    secRunner_ = AppExecFwk::EventRunner::Create(true);
-    if (!secRunner_) {
-        SC_LOG_ERROR(LABEL, "failed to create a recvRunner.");
-        return false;
-    }
-
-    secHandler_ = std::make_shared<SecEventHandler>(secRunner_);
+    secHandler_ = secHandler;
     return true;
 }
 

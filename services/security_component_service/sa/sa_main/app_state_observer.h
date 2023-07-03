@@ -16,6 +16,7 @@
 #ifndef SECURITY_COMPONENT_SA_APP_STATE_OBSERVER_APP_STATE_OBSERVER_H
 #define SECURITY_COMPONENT_SA_APP_STATE_OBSERVER_APP_STATE_OBSERVER_H
 
+#include <set>
 #include <vector>
 #include "app_mgr_interface.h"
 #include "application_state_observer_stub.h"
@@ -38,8 +39,8 @@ public:
 
     void OnProcessStateChanged(const AppExecFwk::ProcessData &processData) override;
     void OnProcessDied(const AppExecFwk::ProcessData& processData) override;
-    bool IsProcessForeground(int32_t uid);
-    void AddProcessToForegroundSet(int32_t uid, const SecCompProcessData& data);
+    bool IsProcessForeground(int32_t pid, int32_t uid);
+    void AddProcessToForegroundSet(int32_t pid, const SecCompProcessData& data);
     void AddProcessToForegroundSet(const AppExecFwk::ProcessData &processData);
     void AddProcessToForegroundSet(const AppExecFwk::AppStateData& stateData);
     void DumpProcess(std::string& dumpStr);

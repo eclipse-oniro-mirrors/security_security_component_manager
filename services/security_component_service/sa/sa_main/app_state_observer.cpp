@@ -32,23 +32,33 @@ AppStateObserver::~AppStateObserver()
 {
 }
 
-bool AppStateObserver::IsProcessForeground(int32_t uid)
+bool AppStateObserver::IsProcessForeground(int32_t pid, int32_t uid)
 {
     Utils::UniqueReadGuard<Utils::RWLock> infoGuard(this->fgProcLock_);
     for (auto iter = foregrandProcList_.begin(); iter != foregrandProcList_.end(); ++iter) {
-        if (uid == iter->uid) {
+        if (pid == iter->pid) {
+            return true;
+        }
+
+        if ((iter->pid == -1) && (uid == iter->uid)) {
+            iter->pid = pid;
             return true;
         }
     }
     return false;
 }
 
-void AppStateObserver::AddProcessToForegroundSet(int32_t uid, const SecCompProcessData& data)
+void AppStateObserver::AddProcessToForegroundSet(int32_t pid, const SecCompProcessData& data)
 {
     Utils::UniqueWriteGuard<Utils::RWLock> infoGuard(this->fgProcLock_);
     for (auto iter = foregrandProcList_.begin(); iter != foregrandProcList_.end(); ++iter) {
-        if (uid == iter->uid) {
-            SC_LOG_INFO(LABEL, "uid %{public}d is already in foreground", uid);
+        if (pid == -1) {
+            if (iter->uid == data.uid) {
+                SC_LOG_INFO(LABEL, "uid %{public}d is already in foreground", data.uid);
+                return;
+            }
+        } else if (pid == iter->pid) {
+            SC_LOG_INFO(LABEL, "pid %{public}d is already in foreground", pid);
             return;
         }
     }
@@ -62,7 +72,7 @@ void AppStateObserver::AddProcessToForegroundSet(const AppExecFwk::AppStateData&
         .pid = stateData.pid,
         .uid = stateData.uid
     };
-    AddProcessToForegroundSet(stateData.uid, proc);
+    AddProcessToForegroundSet(stateData.pid, proc);
 }
 
 void AppStateObserver::AddProcessToForegroundSet(const AppExecFwk::ProcessData &processData)
@@ -72,14 +82,14 @@ void AppStateObserver::AddProcessToForegroundSet(const AppExecFwk::ProcessData &
         .pid = processData.pid,
         .uid = processData.uid
     };
-    AddProcessToForegroundSet(processData.uid, proc);
+    AddProcessToForegroundSet(processData.pid, proc);
 }
 
 void AppStateObserver::RemoveProcessFromForegroundSet(const AppExecFwk::ProcessData &processData)
 {
     Utils::UniqueWriteGuard<Utils::RWLock> infoGuard(this->fgProcLock_);
     for (auto iter = foregrandProcList_.begin(); iter != foregrandProcList_.end(); ++iter) {
-        if (processData.uid == iter->uid) {
+        if (processData.pid == iter->pid) {
             foregrandProcList_.erase(iter);
             return;
         }
@@ -90,19 +100,19 @@ void AppStateObserver::OnProcessStateChanged(const AppExecFwk::ProcessData &proc
 {
     if (processData.state == AppExecFwk::AppProcessState::APP_STATE_FOREGROUND) {
         AddProcessToForegroundSet(processData);
-        SecCompManager::GetInstance().NotifyProcessForeground(processData.uid);
+        SecCompManager::GetInstance().NotifyProcessForeground(processData.pid);
     } else if (processData.state == AppExecFwk::AppProcessState::APP_STATE_BACKGROUND) {
         RemoveProcessFromForegroundSet(processData);
-        SecCompManager::GetInstance().NotifyProcessBackground(processData.uid);
+        SecCompManager::GetInstance().NotifyProcessBackground(processData.pid);
     }
 }
 
 void AppStateObserver::OnProcessDied(const AppExecFwk::ProcessData& processData)
 {
-    SC_LOG_INFO(LABEL, "OnProcessDied die %{public}s uid %{public}d",
-        processData.bundleName.c_str(), processData.uid);
+    SC_LOG_INFO(LABEL, "OnProcessDied die %{public}s pid %{public}d",
+        processData.bundleName.c_str(), processData.pid);
     RemoveProcessFromForegroundSet(processData);
-    SecCompManager::GetInstance().NotifyProcessDied(processData.uid);
+    SecCompManager::GetInstance().NotifyProcessDied(processData.pid);
 }
 
 void AppStateObserver::DumpProcess(std::string& dumpStr)

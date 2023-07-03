@@ -17,14 +17,16 @@
 
 #include <vector>
 #include <unistd.h>
+#include "i_sec_comp_probe.h"
 
 namespace OHOS {
 namespace Security {
 namespace SecurityComponent {
 class SecCompUiRegister {
 public:
-    SecCompUiRegister(std::vector<uintptr_t>& callerList);
+    SecCompUiRegister(std::vector<uintptr_t>& callerList, ISecCompProbe* probe);
     virtual ~SecCompUiRegister() = default;
+    static ISecCompProbe* callbackProbe;
 };
 }  // namespace SecurityComponent
 }  // namespace Security

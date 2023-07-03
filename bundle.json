@@ -51,6 +51,7 @@
           "name": "//base/security/security_component/interfaces/inner_api/security_component:libsecurity_component_sdk",
           "header": {
             "header_files": [
+              "i_sec_comp_probe.h",
               "sec_comp_kit.h"
             ],
             "header_base": "//base/security/security_component/interfaces/inner_api/security_component/include"

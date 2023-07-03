@@ -96,13 +96,24 @@ int32_t SecCompClient::ReportSecurityComponentClickEvent(int32_t scId,
 
 bool SecCompClient::ReduceAfterVerifySavePermission(AccessToken::AccessTokenID tokenId)
 {
-    auto proxy = GetProxy(true);
+    auto proxy = GetProxy(false);
     if (proxy == nullptr) {
         SC_LOG_ERROR(LABEL, "Proxy is null");
         return false;
     }
 
     return proxy->ReduceAfterVerifySavePermission(tokenId);
+}
+
+sptr<IRemoteObject> SecCompClient::GetEnhanceRemoteObject(bool doLoadSa)
+{
+    auto proxy = GetProxy(doLoadSa);
+    if (proxy == nullptr) {
+        SC_LOG_INFO(LABEL, "Proxy is null");
+        return nullptr;
+    }
+
+    return proxy->GetEnhanceRemoteObject();
 }
 
 bool SecCompClient::StartLoadSecCompSa()
@@ -116,7 +127,6 @@ bool SecCompClient::StartLoadSecCompSa()
         SC_LOG_ERROR(LABEL, "GetSystemAbilityManager return null");
         return false;
     }
-
     sptr<SecCompLoadCallback> ptrSecCompLoadCallback =
         new (std::nothrow) SecCompLoadCallback();
     if (ptrSecCompLoadCallback == nullptr) {
@@ -131,6 +141,23 @@ bool SecCompClient::StartLoadSecCompSa()
         return false;
     }
     SC_LOG_INFO(LABEL, "Notify samgr load sa %{public}d success", SA_ID_SECURITY_COMPONENT_SERVICE);
+    return true;
+}
+
+bool SecCompClient::TryToGetSecCompSa()
+{
+    auto sam = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (sam == nullptr) {
+        SC_LOG_ERROR(LABEL, "GetSystemAbilityManager return null");
+        return false;
+    }
+
+    auto secCompSa = sam->CheckSystemAbility(SA_ID_SECURITY_COMPONENT_SERVICE);
+    if (secCompSa == nullptr) {
+        SC_LOG_INFO(LABEL, "Get secComp sa return null");
+        return false;
+    }
+    GetProxyFromRemoteObject(secCompSa);
     return true;
 }
 
@@ -223,9 +250,11 @@ sptr<ISecCompService> SecCompClient::GetProxy(bool doLoadSa)
     if (proxy_ != nullptr) {
         return proxy_;
     }
-    if (doLoadSa) {
-        LoadSecCompSa();
+    if (TryToGetSecCompSa() || !doLoadSa) {
+        return proxy_;
     }
+
+    LoadSecCompSa();
     return proxy_;
 }
 }  // namespace SecurityComponent
