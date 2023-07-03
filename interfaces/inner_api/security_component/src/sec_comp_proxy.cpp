@@ -58,7 +58,7 @@ int32_t SecCompProxy::RegisterSecurityComponent(SecCompType type,
         return SC_SERVICE_ERROR_IPC_REQUEST_FAIL;
     }
     int32_t requestResult = remote->SendRequest(
-        static_cast<uint32_t>(ISecCompService::InterfaceCode::REGISTER_SECURITY_COMPONENT), data, reply, option);
+        static_cast<uint32_t>(SecurityComponentServiceInterfaceCode::REGISTER_SECURITY_COMPONENT), data, reply, option);
     if (requestResult != SC_OK) {
         SC_LOG_ERROR(LABEL, "Request fail, result: %{public}d", requestResult);
         return requestResult;
@@ -101,7 +101,7 @@ int32_t SecCompProxy::UpdateSecurityComponent(int32_t scId, const std::string& c
         return SC_SERVICE_ERROR_IPC_REQUEST_FAIL;
     }
     int32_t requestResult = remote->SendRequest(
-        static_cast<uint32_t>(ISecCompService::InterfaceCode::UPDATE_SECURITY_COMPONENT), data, reply, option);
+        static_cast<uint32_t>(SecurityComponentServiceInterfaceCode::UPDATE_SECURITY_COMPONENT), data, reply, option);
     if (requestResult != SC_OK) {
         SC_LOG_ERROR(LABEL, "Request fail, result: %{public}d", requestResult);
         return requestResult;
@@ -135,7 +135,8 @@ int32_t SecCompProxy::UnregisterSecurityComponent(int32_t scId)
         return SC_SERVICE_ERROR_IPC_REQUEST_FAIL;
     }
     int32_t requestResult = remote->SendRequest(
-        static_cast<uint32_t>(ISecCompService::InterfaceCode::UNREGISTER_SECURITY_COMPONENT), data, reply, option);
+        static_cast<uint32_t>(SecurityComponentServiceInterfaceCode::UNREGISTER_SECURITY_COMPONENT),
+        data, reply, option);
     if (requestResult != SC_OK) {
         SC_LOG_ERROR(LABEL, "Request fail, result: %{public}d", requestResult);
         return requestResult;
@@ -186,7 +187,7 @@ int32_t SecCompProxy::ReportSecurityComponentClickEvent(int32_t scId,
         return SC_SERVICE_ERROR_IPC_REQUEST_FAIL;
     }
     int32_t requestResult = remote->SendRequest(
-        static_cast<uint32_t>(ISecCompService::InterfaceCode::REPORT_SECURITY_COMPONENT_CLICK_EVENT),
+        static_cast<uint32_t>(SecurityComponentServiceInterfaceCode::REPORT_SECURITY_COMPONENT_CLICK_EVENT),
         data, reply, option);
     if (requestResult != SC_OK) {
         SC_LOG_ERROR(LABEL, "Request fail, result: %{public}d", requestResult);
@@ -221,7 +222,7 @@ bool SecCompProxy::ReduceAfterVerifySavePermission(AccessToken::AccessTokenID to
         return false;
     }
     int32_t requestResult = remote->SendRequest(
-        static_cast<uint32_t>(ISecCompService::InterfaceCode::VERIFY_TEMP_SAVE_PERMISSION),
+        static_cast<uint32_t>(SecurityComponentServiceInterfaceCode::VERIFY_TEMP_SAVE_PERMISSION),
         data, reply, option);
     if (requestResult != SC_OK) {
         SC_LOG_ERROR(LABEL, "Request fail, result: %{public}d", requestResult);
