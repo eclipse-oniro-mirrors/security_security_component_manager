@@ -26,6 +26,8 @@ static constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {
 
 static constexpr int32_t TEST_UID = 1;
 static constexpr int32_t TEST_UID_2 = 2;
+static constexpr int32_t TEST_PID = 1;
+static constexpr int32_t TEST_PID_2 = 2;
 }
 
 void AppStateObserverTest::SetUpTestCase()
@@ -58,12 +60,13 @@ void AppStateObserverTest::TearDown()
  */
 HWTEST_F(AppStateObserverTest, IsProcessForeground001, TestSize.Level1)
 {
-    ASSERT_FALSE(observer_->IsProcessForeground(TEST_UID));
+    ASSERT_FALSE(observer_->IsProcessForeground(TEST_PID, TEST_UID));
     AppExecFwk::AppStateData stateData = {
-        .uid = TEST_UID
+        .pid = TEST_PID,
+        .uid = TEST_UID,
     };
     observer_->AddProcessToForegroundSet(stateData);
-    ASSERT_TRUE(observer_->IsProcessForeground(TEST_UID));
+    ASSERT_TRUE(observer_->IsProcessForeground(TEST_PID, TEST_UID));
 }
 
 /**
@@ -75,18 +78,20 @@ HWTEST_F(AppStateObserverTest, IsProcessForeground001, TestSize.Level1)
 HWTEST_F(AppStateObserverTest, AddProcessToForegroundSet001, TestSize.Level1)
 {
     AppExecFwk::AppStateData stateData = {
-        .uid = TEST_UID
+        .pid = TEST_PID,
+        .uid = TEST_UID,
     };
     observer_->AddProcessToForegroundSet(stateData);
     observer_->AddProcessToForegroundSet(stateData);
-    ASSERT_TRUE(observer_->IsProcessForeground(TEST_UID));
+    ASSERT_TRUE(observer_->IsProcessForeground(TEST_PID, TEST_UID));
 
     AppExecFwk::ProcessData procData = {
-        .uid = TEST_UID_2
+        .pid = TEST_PID_2,
+        .uid = TEST_UID_2,
     };
     observer_->AddProcessToForegroundSet(procData);
     observer_->AddProcessToForegroundSet(procData);
-    ASSERT_TRUE(observer_->IsProcessForeground(TEST_UID_2));
+    ASSERT_TRUE(observer_->IsProcessForeground(TEST_PID_2, TEST_UID_2));
 }
 
 /**
@@ -98,13 +103,14 @@ HWTEST_F(AppStateObserverTest, AddProcessToForegroundSet001, TestSize.Level1)
 HWTEST_F(AppStateObserverTest, RemoveProcessFromForegroundSet001, TestSize.Level1)
 {
     AppExecFwk::ProcessData procData = {
-        .uid = TEST_UID
+        .pid = TEST_PID,
+        .uid = TEST_UID,
     };
     observer_->AddProcessToForegroundSet(procData);
-    ASSERT_TRUE(observer_->IsProcessForeground(TEST_UID));
+    ASSERT_TRUE(observer_->IsProcessForeground(TEST_PID, TEST_UID));
     observer_->RemoveProcessFromForegroundSet(procData);
     observer_->RemoveProcessFromForegroundSet(procData);
-    ASSERT_FALSE(observer_->IsProcessForeground(TEST_UID));
+    ASSERT_FALSE(observer_->IsProcessForeground(TEST_PID, TEST_UID));
 }
 
 /**
@@ -116,13 +122,14 @@ HWTEST_F(AppStateObserverTest, RemoveProcessFromForegroundSet001, TestSize.Level
 HWTEST_F(AppStateObserverTest, RemoveProcessFromForegroundSet002, TestSize.Level1)
 {
     AppExecFwk::ProcessData procData = {
-        .uid = TEST_UID
+        .pid = TEST_PID,
+        .uid = TEST_UID,
     };
     observer_->AddProcessToForegroundSet(procData);
-    ASSERT_TRUE(observer_->IsProcessForeground(TEST_UID));
-    procData.uid = TEST_UID_2;
+    ASSERT_TRUE(observer_->IsProcessForeground(TEST_PID, TEST_UID));
+    procData.pid = TEST_PID_2;
     observer_->RemoveProcessFromForegroundSet(procData);
-    ASSERT_TRUE(observer_->IsProcessForeground(TEST_UID));
+    ASSERT_TRUE(observer_->IsProcessForeground(TEST_PID, TEST_UID));
 }
 
 /**
@@ -139,14 +146,14 @@ HWTEST_F(AppStateObserverTest, OnProcessStateChanged001, TestSize.Level1)
     ASSERT_EQ(observer_->foregrandProcList_.size(), static_cast<size_t>(0));
 
     processData.state = AppExecFwk::AppProcessState::APP_STATE_FOREGROUND;
-    processData.uid = TEST_UID;
+    processData.pid = TEST_PID;
     observer_->OnProcessStateChanged(processData);
-    ASSERT_TRUE(observer_->IsProcessForeground(TEST_UID));
+    ASSERT_TRUE(observer_->IsProcessForeground(TEST_PID, TEST_UID));
 
     processData.state = AppExecFwk::AppProcessState::APP_STATE_BACKGROUND;
-    processData.uid = TEST_UID;
+    processData.pid = TEST_PID;
     observer_->OnProcessStateChanged(processData);
-    ASSERT_FALSE(observer_->IsProcessForeground(TEST_UID));
+    ASSERT_FALSE(observer_->IsProcessForeground(TEST_PID, TEST_UID));
 }
 
 /**
@@ -159,17 +166,17 @@ HWTEST_F(AppStateObserverTest, OnProcessDied001, TestSize.Level1)
 {
     AppExecFwk::ProcessData processData;
     processData.state = AppExecFwk::AppProcessState::APP_STATE_FOREGROUND;
-    processData.uid = TEST_UID;
+    processData.pid = TEST_PID;
     observer_->OnProcessStateChanged(processData);
-    ASSERT_TRUE(observer_->IsProcessForeground(TEST_UID));
+    ASSERT_TRUE(observer_->IsProcessForeground(TEST_PID, TEST_UID));
 
     // if last process died, the sec_comp service will exit.
-    processData.uid = TEST_UID_2;
+    processData.pid = TEST_PID_2;
     observer_->OnProcessStateChanged(processData);
-    ASSERT_TRUE(observer_->IsProcessForeground(TEST_UID_2));
+    ASSERT_TRUE(observer_->IsProcessForeground(TEST_PID_2, TEST_UID_2));
 
     // notify process 1 died
-    processData.uid = TEST_UID;
+    processData.pid = TEST_PID;
     observer_->OnProcessDied(processData);
-    ASSERT_FALSE(observer_->IsProcessForeground(TEST_UID));
+    ASSERT_FALSE(observer_->IsProcessForeground(TEST_PID, TEST_UID));
 }

@@ -54,6 +54,11 @@ public:
     {
         return true;
     }
+
+    sptr<IRemoteObject> GetEnhanceRemoteObject() override
+    {
+        return nullptr;
+    }
 };
 
 class SecCompStubTest : public testing::Test {

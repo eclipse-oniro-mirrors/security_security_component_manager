@@ -15,6 +15,7 @@
 
 #include "sec_comp_manager.h"
 
+#include "delay_exit_task.h"
 #include "hisysevent.h"
 #include "i_sec_comp_service.h"
 #include "ipc_skeleton.h"
@@ -68,24 +69,24 @@ int32_t SecCompManager::AddProcessComponent(std::vector<SecCompEntity>& componen
     return SC_OK;
 }
 
-int32_t SecCompManager::AddSecurityComponentToList(int32_t uid, const SecCompEntity& newEntity)
+int32_t SecCompManager::AddSecurityComponentToList(int32_t pid, const SecCompEntity& newEntity)
 {
     OHOS::Utils::UniqueWriteGuard<OHOS::Utils::RWLock> lk(this->componentInfoLock_);
-    auto iter = componentMap_.find(uid);
+    auto iter = componentMap_.find(pid);
     if (iter != componentMap_.end()) {
         return AddProcessComponent(iter->second, newEntity);
     }
 
     std::vector<SecCompEntity> newComponentList;
     AddProcessComponent(newComponentList, newEntity);
-    componentMap_[uid] = newComponentList;
+    componentMap_[pid] = newComponentList;
     return SC_OK;
 }
 
-int32_t SecCompManager::DeleteSecurityComponentFromList(int32_t uid, int32_t scId)
+int32_t SecCompManager::DeleteSecurityComponentFromList(int32_t pid, int32_t scId)
 {
     OHOS::Utils::UniqueWriteGuard<OHOS::Utils::RWLock> lk(this->componentInfoLock_);
-    auto iter = componentMap_.find(uid);
+    auto iter = componentMap_.find(pid);
     if (iter == componentMap_.end()) {
         SC_LOG_ERROR(LABEL, "Can not find registered process");
         return SC_SERVICE_ERROR_COMPONENT_NOT_EXIST;
@@ -94,6 +95,7 @@ int32_t SecCompManager::DeleteSecurityComponentFromList(int32_t uid, int32_t scI
     for (auto it = list.begin(); it != list.end(); ++it) {
         if (it->GetScId() == scId) {
             it->RevokeTempPermission();
+            SC_LOG_INFO(LABEL, "scValidCount %{public}d before delete", scValidCount_);
             if (it->GetEffective()) {
                 scValidCount_--;
             }
@@ -106,9 +108,62 @@ int32_t SecCompManager::DeleteSecurityComponentFromList(int32_t uid, int32_t scI
     return SC_SERVICE_ERROR_COMPONENT_NOT_EXIST;
 }
 
-SecCompEntity* SecCompManager::GetSecurityComponentFromList(int32_t uid, int32_t scId)
+bool SecCompManager::IsInMaliciousAppList(int32_t pid)
 {
-    auto iter = componentMap_.find(uid);
+    std::lock_guard<std::mutex> lock(maliciousMtx_);
+    return (maliciousAppList_.find(pid) != maliciousAppList_.end());
+}
+
+void SecCompManager::AddAppToMaliciousAppList(int32_t pid)
+{
+    std::lock_guard<std::mutex> lock(maliciousMtx_);
+    maliciousAppList_.insert(pid);
+}
+
+void SecCompManager::RemoveAppFromMaliciousAppList(int32_t pid)
+{
+    std::lock_guard<std::mutex> lock(maliciousMtx_);
+    maliciousAppList_.erase(pid);
+}
+
+bool SecCompManager::IsMaliciousAppListEmpty()
+{
+    std::lock_guard<std::mutex> lock(maliciousMtx_);
+    return (maliciousAppList_.size() == 0);
+}
+
+static std::string TransformCallBackResult(enum SCErrCode error)
+{
+    std::string errMsg = "";
+    switch (error) {
+        case SC_ENHANCE_ERROR_NOT_EXIST_ENHANCE:
+            errMsg = "enhance do not exist";
+            break;
+        case SC_ENHANCE_ERROR_VALUE_INVALID:
+            errMsg = "value is invalid";
+            break;
+        case SC_ENHANCE_ERROR_CALLBACK_NOT_EXIST:
+            errMsg = "callback do not exist";
+            break;
+        case SC_ENHANCE_ERROR_CALLBACK_OPER_FAIL:
+            errMsg = "callback operate fail";
+            break;
+        case SC_SERVICE_ERROR_COMPONENT_INFO_INVALID:
+            errMsg = "component info invalid";
+            break;
+        case SC_ENHANCE_ERROR_CALLBACK_CHECK_FAIL:
+            errMsg = "callback check fail";
+            break;
+        default:
+            errMsg = "unknown error";
+            break;
+    }
+    return errMsg;
+}
+
+SecCompEntity* SecCompManager::GetSecurityComponentFromList(int32_t pid, int32_t scId)
+{
+    auto iter = componentMap_.find(pid);
     if (iter == componentMap_.end()) {
         return nullptr;
     }
@@ -121,15 +176,15 @@ SecCompEntity* SecCompManager::GetSecurityComponentFromList(int32_t uid, int32_t
     return nullptr;
 }
 
-void SecCompManager::NotifyProcessForeground(int32_t uid)
+void SecCompManager::NotifyProcessForeground(int32_t pid)
 {
     OHOS::Utils::UniqueWriteGuard<OHOS::Utils::RWLock> lk(this->componentInfoLock_);
-    auto iter = componentMap_.find(uid);
+    auto iter = componentMap_.find(pid);
     if (iter == componentMap_.end()) {
         return;
     }
 
-    SC_LOG_INFO(LABEL, "App uid %{public}d to foreground", uid);
+    SC_LOG_INFO(LABEL, "App pid %{public}d to foreground", pid);
     std::vector<SecCompEntity>& list = iter->second;
     for (auto it = list.begin(); it != list.end(); ++it) {
         it->SetEffective(true);
@@ -140,15 +195,15 @@ void SecCompManager::NotifyProcessForeground(int32_t uid)
     }
 }
 
-void SecCompManager::NotifyProcessBackground(int32_t uid)
+void SecCompManager::NotifyProcessBackground(int32_t pid)
 {
     OHOS::Utils::UniqueWriteGuard<OHOS::Utils::RWLock> lk(this->componentInfoLock_);
-    auto iter = componentMap_.find(uid);
+    auto iter = componentMap_.find(pid);
     if (iter == componentMap_.end()) {
         return;
     }
 
-    SC_LOG_INFO(LABEL, "App uid %{public}d to background", uid);
+    SC_LOG_INFO(LABEL, "App pid %{public}d to background", pid);
     std::vector<SecCompEntity>& list = iter->second;
     for (auto it = list.begin(); it != list.end(); ++it) {
         it->RevokeTempPermission();
@@ -160,14 +215,17 @@ void SecCompManager::NotifyProcessBackground(int32_t uid)
     }
 }
 
-void SecCompManager::NotifyProcessDied(int32_t uid)
+void SecCompManager::NotifyProcessDied(int32_t pid)
 {
+    // notify enhance process died.
+    SecCompEnhanceAdapter::NotifyProcessDied(pid);
+
     OHOS::Utils::UniqueWriteGuard<OHOS::Utils::RWLock> lk(this->componentInfoLock_);
-    auto iter = componentMap_.find(uid);
+    auto iter = componentMap_.find(pid);
     if (iter == componentMap_.end()) {
         return;
     }
-    SC_LOG_INFO(LABEL, "App uid %{public}d died", uid);
+    SC_LOG_INFO(LABEL, "App pid %{public}d died", pid);
     std::vector<SecCompEntity>& list = iter->second;
     for (auto it = list.begin(); it != list.end(); ++it) {
         it->RevokeTempPermission();
@@ -176,18 +234,23 @@ void SecCompManager::NotifyProcessDied(int32_t uid)
         }
     }
     list.clear();
+
     if (scValidCount_ <= 0) {
         SecCompEnhanceAdapter::DisableInputEnhance();
     }
-    componentMap_.erase(uid);
-    ExitSaAfterAllProcessDie();
+    componentMap_.erase(pid);
+    RemoveAppFromMaliciousAppList(pid);
+    DelayExitTask::GetInstance().Start();
 }
 
-void SecCompManager::ExitSaAfterAllProcessDie()
+void SecCompManager::ExitSaProcess()
 {
-    if (!componentMap_.empty()) {
+    if (!componentMap_.empty() || !IsMaliciousAppListEmpty()) {
+        SC_LOG_INFO(LABEL, "Apps using security component still exist, no exit sa");
         return;
     }
+    SecCompEnhanceAdapter::ExistEnhanceService();
+
     SC_LOG_INFO(LABEL, "All processes using security component died, start sa exit");
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (systemAbilityMgr == nullptr) {
@@ -205,6 +268,13 @@ void SecCompManager::ExitSaAfterAllProcessDie()
 int32_t SecCompManager::RegisterSecurityComponent(SecCompType type,
     const nlohmann::json& jsonComponent, const SecCompCallerInfo& caller, int32_t& scId)
 {
+    DelayExitTask::GetInstance().Stop();
+
+    if (IsInMaliciousAppList(caller.pid)) {
+        SC_LOG_ERROR(LABEL, "app is in MaliciousAppList, never allow it");
+        return SC_ENHANCE_ERROR_IN_MALICIOUS_LIST;
+    }
+
     SecCompBase* componentPtr = SecCompInfoHelper::ParseComponent(type, jsonComponent);
     std::shared_ptr<SecCompBase> component(componentPtr);
     if (component == nullptr) {
@@ -215,10 +285,22 @@ int32_t SecCompManager::RegisterSecurityComponent(SecCompType type,
         return SC_SERVICE_ERROR_COMPONENT_INFO_INVALID;
     }
 
+    int32_t enhanceRes =
+        SecCompEnhanceAdapter::CheckComponentInfoEnhnace(caller.pid, component, jsonComponent);
+    if (enhanceRes != SC_OK) {
+        HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "CALLBACK_FAILED",
+            HiviewDFX::HiSysEvent::EventType::SECURITY, "CALLER_UID", IPCSkeleton::GetCallingUid(),
+            "CALLER_PID", IPCSkeleton::GetCallingPid(), "SC_TYPE", type,
+            "CALL_SCENE", "REGITSTER", "REASON", TransformCallBackResult(static_cast<enum SCErrCode>(enhanceRes)));
+        SC_LOG_ERROR(LABEL, "enhance check failed");
+        AddAppToMaliciousAppList(caller.pid);
+        return SC_SERVICE_ERROR_COMPONENT_INFO_INVALID;
+    }
+
     int32_t registerId = CreateScId();
     SecCompEntity entity(component, caller.tokenId, registerId);
     entity.SetEffective(true);
-    int32_t ret = AddSecurityComponentToList(caller.uid, entity);
+    int32_t ret = AddSecurityComponentToList(caller.pid, entity);
     if (ret == SC_OK) {
         scId = registerId;
     } else {
@@ -231,8 +313,13 @@ int32_t SecCompManager::RegisterSecurityComponent(SecCompType type,
 int32_t SecCompManager::UpdateSecurityComponent(int32_t scId, const nlohmann::json& jsonComponent,
     const SecCompCallerInfo& caller)
 {
+    if (IsInMaliciousAppList(caller.pid)) {
+        SC_LOG_ERROR(LABEL, "app is in MaliciousAppList, never allow it");
+        return SC_ENHANCE_ERROR_IN_MALICIOUS_LIST;
+    }
+
     OHOS::Utils::UniqueWriteGuard<OHOS::Utils::RWLock> lk(this->componentInfoLock_);
-    SecCompEntity* sc = GetSecurityComponentFromList(caller.uid, scId);
+    SecCompEntity* sc = GetSecurityComponentFromList(caller.pid, scId);
     if (sc == nullptr) {
         SC_LOG_ERROR(LABEL, "Can not find target component");
         return SC_SERVICE_ERROR_COMPONENT_NOT_EXIST;
@@ -243,9 +330,24 @@ int32_t SecCompManager::UpdateSecurityComponent(int32_t scId, const nlohmann::js
         SC_LOG_ERROR(LABEL, "Update component info invalid");
         HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "COMPONENT_INFO_CHECK_FAILED",
             HiviewDFX::HiSysEvent::EventType::SECURITY, "CALLER_UID", IPCSkeleton::GetCallingUid(),
-            "CALLER_PID", IPCSkeleton::GetCallingPid(), "SC_ID", scId, "CALL_SCENE", "CLICK", "SC_TYPE", sc->GetType());
+            "CALLER_PID", IPCSkeleton::GetCallingPid(), "SC_ID", scId, "CALL_SCENE", "UPDATE",
+            "SC_TYPE", sc->GetType());
         return SC_SERVICE_ERROR_COMPONENT_INFO_INVALID;
     }
+
+    int32_t enhanceRes =
+        SecCompEnhanceAdapter::CheckComponentInfoEnhnace(caller.pid, reportComponentInfo, jsonComponent);
+    if (enhanceRes != SC_OK) {
+        HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "CALLBACK_FAILED",
+            HiviewDFX::HiSysEvent::EventType::SECURITY, "CALLER_UID", IPCSkeleton::GetCallingUid(),
+            "CALLER_PID", IPCSkeleton::GetCallingPid(), "SC_TYPE", sc->GetType(),
+            "CALL_SCENE", "UPDATE", "REASON", TransformCallBackResult(static_cast<enum SCErrCode>(enhanceRes)));
+
+        SC_LOG_ERROR(LABEL, "enhance check failed");
+        AddAppToMaliciousAppList(caller.pid);
+        return SC_SERVICE_ERROR_COMPONENT_INFO_INVALID;
+    }
+
     sc->SetComponentInfo(reportComponentInfo);
     return SC_OK;
 }
@@ -256,41 +358,73 @@ int32_t SecCompManager::UnregisterSecurityComponent(int32_t scId, const SecCompC
         SC_LOG_ERROR(LABEL, "ScId is invalid");
         return SC_SERVICE_ERROR_VALUE_INVALID;
     }
-    int32_t res = DeleteSecurityComponentFromList(caller.uid, scId);
+    int32_t res = DeleteSecurityComponentFromList(caller.pid, scId);
     if (scValidCount_ <= 0) {
         SecCompEnhanceAdapter::DisableInputEnhance();
     }
     return res;
 }
 
-int32_t SecCompManager::ReportSecurityComponentClickEvent(int32_t scId,
-    const nlohmann::json& jsonComponent, const SecCompCallerInfo& caller, const SecCompClickEvent& touchInfo)
+int32_t SecCompManager::CheckClickSecurityComponentInfo(SecCompEntity* sc, int32_t scId,
+    const nlohmann::json& jsonComponent,  const SecCompCallerInfo& caller)
 {
-    OHOS::Utils::UniqueReadGuard<OHOS::Utils::RWLock> lk(this->componentInfoLock_);
-    SecCompEntity* sc = GetSecurityComponentFromList(caller.uid, scId);
-    if (sc == nullptr) {
-        SC_LOG_ERROR(LABEL, "Can not find target component");
-        return SC_SERVICE_ERROR_COMPONENT_NOT_EXIST;
-    }
-
     SecCompBase* report = SecCompInfoHelper::ParseComponent(sc->GetType(), jsonComponent);
     std::shared_ptr<SecCompBase> reportComponentInfo(report);
     if ((reportComponentInfo == nullptr) || !reportComponentInfo->GetValid()) {
         SC_LOG_ERROR(LABEL, "report component info invalid");
         HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "COMPONENT_INFO_CHECK_FAILED",
             HiviewDFX::HiSysEvent::EventType::SECURITY, "CALLER_UID", IPCSkeleton::GetCallingUid(),
-            "CALLER_PID", IPCSkeleton::GetCallingPid(), "SC_ID", scId, "CALL_SCENE", "CLICK", "SC_TYPE", sc->GetType());
+            "CALLER_PID", IPCSkeleton::GetCallingPid(), "SC_ID", scId, "CALL_SCENE", "CLICK", "SC_TYPE",
+            sc->GetType());
         return SC_SERVICE_ERROR_COMPONENT_INFO_INVALID;
+    }
+
+    int32_t enhanceRes =
+        SecCompEnhanceAdapter::CheckComponentInfoEnhnace(caller.pid, reportComponentInfo, jsonComponent);
+    if (enhanceRes != SC_OK) {
+        HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "CALLBACK_FAILED",
+            HiviewDFX::HiSysEvent::EventType::SECURITY, "CALLER_UID", IPCSkeleton::GetCallingUid(),
+            "CALLER_PID", IPCSkeleton::GetCallingPid(), "SC_TYPE", sc->GetType(),
+            "CALL_SCENE", "CLICK", "REASON", TransformCallBackResult(static_cast<enum SCErrCode>(enhanceRes)));
+
+        SC_LOG_ERROR(LABEL, "enhance check failed");
+        AddAppToMaliciousAppList(caller.pid);
+        return SC_SERVICE_ERROR_COMPONENT_INFO_INVALID;
+    }
+
+    sc->SetComponentInfo(reportComponentInfo);
+    return SC_OK;
+}
+
+int32_t SecCompManager::ReportSecurityComponentClickEvent(int32_t scId,
+    const nlohmann::json& jsonComponent, const SecCompCallerInfo& caller, const SecCompClickEvent& touchInfo)
+{
+    if (IsInMaliciousAppList(caller.pid)) {
+        SC_LOG_ERROR(LABEL, "app is in MaliciousAppList, never allow it");
+        return SC_ENHANCE_ERROR_IN_MALICIOUS_LIST;
+    }
+
+    OHOS::Utils::UniqueReadGuard<OHOS::Utils::RWLock> lk(this->componentInfoLock_);
+    SecCompEntity* sc = GetSecurityComponentFromList(caller.pid, scId);
+    if (sc == nullptr) {
+        SC_LOG_ERROR(LABEL, "Can not find target component");
+        return SC_SERVICE_ERROR_COMPONENT_NOT_EXIST;
+    }
+    int32_t res = CheckClickSecurityComponentInfo(sc, scId, jsonComponent, caller);
+    if (res != SC_OK) {
+        return res;
     }
 
     if (SecCompEnhanceAdapter::CheckExtraInfo(touchInfo) != SC_OK) {
         SC_LOG_ERROR(LABEL, "check extra info failed, HMAC is invalid");
         HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "CHALLENGE_CHECK_FAILED",
             HiviewDFX::HiSysEvent::EventType::SECURITY, "CALLER_UID", IPCSkeleton::GetCallingUid(),
-            "CALLER_PID", IPCSkeleton::GetCallingPid(), "SC_ID", scId, "SC_TYPE", sc->GetType(), "CALL_SCENE", "CLICK");
+            "CALLER_PID", IPCSkeleton::GetCallingPid(), "SC_ID", scId, "SC_TYPE", sc->GetType(), "CALL_SCENE",
+            "CLICK");
+        AddAppToMaliciousAppList(caller.pid);
         return SC_SERVICE_ERROR_CLICK_EVENT_INVALID;
     }
-    sc->SetComponentInfo(reportComponentInfo);
+
     if (!sc->CheckTouchInfo(touchInfo)) {
         SC_LOG_ERROR(LABEL, "touchInfo is invalid");
         HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "CLICK_INFO_CHECK_FAILED",
@@ -298,7 +432,7 @@ int32_t SecCompManager::ReportSecurityComponentClickEvent(int32_t scId,
             "CALLER_PID", IPCSkeleton::GetCallingPid(), "SC_ID", scId, "SC_TYPE", sc->GetType());
         return SC_SERVICE_ERROR_CLICK_EVENT_INVALID;
     }
-    int res = sc->GrantTempPermission();
+    res = sc->GrantTempPermission();
     if (res != SC_OK) {
         HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "TEMP_GRANT_FAILED",
             HiviewDFX::HiSysEvent::EventType::FAULT, "CALLER_UID", IPCSkeleton::GetCallingUid(),
@@ -321,7 +455,7 @@ bool SecCompManager::ReduceAfterVerifySavePermission(AccessToken::AccessTokenID 
 void SecCompManager::DumpSecComp(std::string& dumpStr) const
 {
     for (auto iter = componentMap_.begin(); iter != componentMap_.end(); ++iter) {
-        dumpStr.append("uid:" + std::to_string(iter->first) + "\n");
+        dumpStr.append("pid:" + std::to_string(iter->first) + "\n");
         for (auto compIter = iter->second.begin(); compIter != iter->second.end(); compIter ++) {
             nlohmann::json json;
             compIter->GetComponentInfo()->ToJson(json);
@@ -334,7 +468,18 @@ void SecCompManager::DumpSecComp(std::string& dumpStr) const
 bool SecCompManager::Initialize()
 {
     SC_LOG_DEBUG(LABEL, "Initialize!!");
-    return SecCompPermManager::GetInstance().InitEventHandler();
+    SecCompEnhanceAdapter::StartEnhanceService();
+
+    secRunner_ = AppExecFwk::EventRunner::Create(true);
+    if (!secRunner_) {
+        SC_LOG_ERROR(LABEL, "failed to create a recvRunner.");
+        return false;
+    }
+
+    secHandler_ = std::make_shared<SecEventHandler>(secRunner_);
+    DelayExitTask::GetInstance().Init(secHandler_);
+
+    return SecCompPermManager::GetInstance().InitEventHandler(secHandler_);
 }
 }  // namespace SecurityComponent
 }  // namespace Security

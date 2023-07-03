@@ -28,6 +28,14 @@ enum SecurityComponentServiceInterfaceCode {
     GET_SECURITY_COMPONENT_ENHANCE_OBJECT,
     VERIFY_TEMP_SAVE_PERMISSION,
 };
+
+enum EnhanceInterfaceCode {
+    REGISTER_CHECK_CALLBACK = 0,
+};
+
+enum EnhanceCallbackCheckCode {
+    GET_CALLER_SECURITY_COMPONENT_INFO = 0,
+};
 } // namespace SecurityComponent
 } // namespace Security
 } // namespace OHOS

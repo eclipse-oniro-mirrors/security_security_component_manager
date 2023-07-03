@@ -12,21 +12,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef SECURITY_COMPONENT_ENHANCE_KITS_H
-#define SECURITY_COMPONENT_ENHANCE_KITS_H
+#ifndef I_SECURITY_COMPONENT_PROPE_H
+#define I_SECURITY_COMPONENT_PROPE_H
 
-#include <cstdint>
+#include <string>
 
 namespace OHOS {
 namespace Security {
 namespace SecurityComponent {
-struct SecCompEnhanceKit {
-    static void InitClientEnhance();
-    static int32_t SetEnhanceCfg(uint8_t* cfg, uint32_t cfgLen);
-    static int32_t GetPointerEventEnhanceData(void* data, uint32_t dataLen,
-        uint8_t* enhanceData, uint32_t& enHancedataLen);
+class ISecCompProbe {
+public:
+    virtual int32_t GetComponentInfo(int32_t nodeId, std::string& componentInfo) = 0;
 };
 }  // namespace SecurityComponent
 }  // namespace Security
 }  // namespace OHOS
-#endif  // SECURITY_COMPONENT_ENHANCE_KITS_H
+#endif  // I_SECURITY_COMPONENT_PROPE_H

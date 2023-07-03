@@ -41,7 +41,7 @@ public:
     int32_t GrantTempSavePermission(AccessToken::AccessTokenID tokenId);
     int32_t RevokeTempSavePermission(AccessToken::AccessTokenID tokenId);
 
-    bool InitEventHandler();
+    bool InitEventHandler(std::shared_ptr<SecEventHandler>& secHandler);
     std::shared_ptr<SecEventHandler> GetSecEventHandler() const;
 
 private:
@@ -51,7 +51,6 @@ private:
     std::unordered_map<AccessToken::AccessTokenID, int32_t> applySaveCountMap_;
     std::deque<std::string> taskQue_;
     std::mutex mutex_;
-    std::shared_ptr<AppExecFwk::EventRunner> secRunner_;
     std::shared_ptr<SecEventHandler> secHandler_;
 };
 }  // namespace SecurityComponent

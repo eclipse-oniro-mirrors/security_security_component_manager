@@ -47,7 +47,10 @@ ohos_shared_library("libsecurity_component_sdk") {
     "src/sec_comp_ui_register.cpp"
   ]
 
-  deps = [ "${sec_comp_root_dir}/frameworks:libsecurity_component_framework" ]
+  deps = [
+    "${sec_comp_root_dir}/frameworks:libsecurity_component_enhance_adapter",
+    "${sec_comp_root_dir}/frameworks:libsecurity_component_framework"
+  ]
 
   configs = [ "${sec_comp_root_dir}/config:coverage_flags" ]
 

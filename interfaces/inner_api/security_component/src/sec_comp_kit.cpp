@@ -17,6 +17,7 @@
 #include "ipc_skeleton.h"
 #include "sec_comp_caller_authorization.h"
 #include "sec_comp_client.h"
+#include "sec_comp_enhance_adapter.h"
 #include "sec_comp_log.h"
 
 namespace OHOS {
@@ -27,7 +28,7 @@ static constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {LOG_CORE, SECURITY_DOMAIN_
 }  // namespace
 
 int32_t SecCompKit::RegisterSecurityComponent(SecCompType type,
-    const std::string& componentInfo, int32_t& scId)
+    std::string& componentInfo, int32_t& scId)
 {
     if (!SecCompCallerAuthorization::GetInstance().IsKitCaller(
         reinterpret_cast<uintptr_t>(__builtin_return_address(0)))) {
@@ -38,17 +39,25 @@ int32_t SecCompKit::RegisterSecurityComponent(SecCompType type,
         return SC_SERVICE_ERROR_CALLER_INVALID;
     }
 
+    if (!SecCompEnhanceAdapter::EnhanceDataPreprocess(componentInfo)) {
+        SC_LOG_ERROR(LABEL, "Preprocess security component fail");
+        return SC_ENHANCE_ERROR_VALUE_INVALID;
+    }
+
     int32_t res = SecCompClient::GetInstance().RegisterSecurityComponent(type, componentInfo, scId);
     if (res != SC_OK) {
         SC_LOG_ERROR(LABEL, "register security component fail, error: %{public}d", res);
+    } else {
+        SecCompEnhanceAdapter::RegisterScIdEnhance(scId);
     }
+
     HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "REGISTER_SUCCESS",
         HiviewDFX::HiSysEvent::EventType::BEHAVIOR, "CALLER_UID", IPCSkeleton::GetCallingUid(),
         "CALLER_PID", IPCSkeleton::GetCallingPid(), "SC_ID", scId, "SC_TYPE", type);
     return res;
 }
 
-int32_t SecCompKit::UpdateSecurityComponent(int32_t scId, const std::string& componentInfo)
+int32_t SecCompKit::UpdateSecurityComponent(int32_t scId, std::string& componentInfo)
 {
     if (!SecCompCallerAuthorization::GetInstance().IsKitCaller(
         reinterpret_cast<uintptr_t>(__builtin_return_address(0)))) {
@@ -57,6 +66,11 @@ int32_t SecCompKit::UpdateSecurityComponent(int32_t scId, const std::string& com
             HiviewDFX::HiSysEvent::EventType::SECURITY, "CALLER_UID", IPCSkeleton::GetCallingUid(),
             "CALLER_PID", IPCSkeleton::GetCallingPid(), "CALL_SCENE", "CLICK");
         return SC_SERVICE_ERROR_CALLER_INVALID;
+    }
+
+    if (!SecCompEnhanceAdapter::EnhanceDataPreprocess(scId, componentInfo)) {
+        SC_LOG_ERROR(LABEL, "Preprocess security component fail");
+        return SC_ENHANCE_ERROR_VALUE_INVALID;
     }
 
     int32_t res = SecCompClient::GetInstance().UpdateSecurityComponent(scId, componentInfo);
@@ -68,15 +82,6 @@ int32_t SecCompKit::UpdateSecurityComponent(int32_t scId, const std::string& com
 
 int32_t SecCompKit::UnregisterSecurityComponent(int32_t scId)
 {
-    if (!SecCompCallerAuthorization::GetInstance().IsKitCaller(
-        reinterpret_cast<uintptr_t>(__builtin_return_address(0)))) {
-        SC_LOG_ERROR(LABEL, "unregister security component fail, caller invalid");
-        HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "CALLER_CHECK_FAILED",
-            HiviewDFX::HiSysEvent::EventType::SECURITY, "CALLER_UID", IPCSkeleton::GetCallingUid(),
-            "CALLER_PID", IPCSkeleton::GetCallingPid(), "CALL_SCENE", "UNREGISTER");
-        return SC_SERVICE_ERROR_CALLER_INVALID;
-    }
-
     int32_t res = SecCompClient::GetInstance().UnregisterSecurityComponent(scId);
     if (res != SC_OK) {
         SC_LOG_ERROR(LABEL, "unregister security component fail, error: %{public}d", res);
@@ -84,11 +89,12 @@ int32_t SecCompKit::UnregisterSecurityComponent(int32_t scId)
     HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "UNREGISTER_SUCCESS",
         HiviewDFX::HiSysEvent::EventType::BEHAVIOR, "CALLER_UID", IPCSkeleton::GetCallingUid(),
         "CALLER_PID", IPCSkeleton::GetCallingPid(), "SC_ID", scId);
+    SecCompEnhanceAdapter::UnregisterScIdEnhance(scId);
     return res;
 }
 
 int32_t SecCompKit::ReportSecurityComponentClickEvent(int32_t scId,
-    const std::string& componentInfo, const SecCompClickEvent& touchInfo)
+    std::string& componentInfo, const SecCompClickEvent& touchInfo)
 {
     if (!SecCompCallerAuthorization::GetInstance().IsKitCaller(
         reinterpret_cast<uintptr_t>(__builtin_return_address(0)))) {
@@ -97,6 +103,11 @@ int32_t SecCompKit::ReportSecurityComponentClickEvent(int32_t scId,
             HiviewDFX::HiSysEvent::EventType::SECURITY, "CALLER_UID", IPCSkeleton::GetCallingUid(),
             "CALLER_PID", IPCSkeleton::GetCallingPid(), "CALL_SCENE", "CLICK");
         return SC_SERVICE_ERROR_CALLER_INVALID;
+    }
+
+    if (!SecCompEnhanceAdapter::EnhanceDataPreprocess(scId, componentInfo)) {
+        SC_LOG_ERROR(LABEL, "Preprocess security component fail");
+        return SC_ENHANCE_ERROR_VALUE_INVALID;
     }
 
     int32_t res =
@@ -115,6 +126,11 @@ bool SecCompKit::ReduceAfterVerifySavePermission(AccessToken::AccessTokenID toke
         SC_LOG_ERROR(LABEL, "verify temp save permission, error: %{public}d", res);
     }
     return res;
+}
+
+sptr<IRemoteObject> SecCompKit::GetEnhanceRemoteObject(bool isLoad)
+{
+    return SecCompClient::GetInstance().GetEnhanceRemoteObject(isLoad);
 }
 }  // namespace SecurityComponent
 }  // namespace Security

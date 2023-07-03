@@ -54,6 +54,56 @@ int32_t SecCompEnhanceAdapter::DisableInputEnhance()
     SC_LOG_DEBUG(LABEL, "DisableInputEnhance success");
     return SC_OK;
 }
+
+bool SecCompEnhanceAdapter::EnhanceDataPreprocess(std::string& componentInfo)
+{
+    SC_LOG_DEBUG(LABEL, "EnhanceDataPreprocess success");
+    return true;
+}
+
+bool SecCompEnhanceAdapter::EnhanceDataPreprocess(int32_t scId, std::string& componentInfo)
+{
+    SC_LOG_DEBUG(LABEL, "EnhanceDataPreprocess success");
+    return true;
+}
+
+void SecCompEnhanceAdapter::RegisterScIdEnhance(int32_t scId)
+{
+    SC_LOG_DEBUG(LABEL, "RegisterScIdEnhance success");
+}
+
+void SecCompEnhanceAdapter::UnregisterScIdEnhance(int32_t scId)
+{
+    SC_LOG_DEBUG(LABEL, "UnregisterScIdEnhance success");
+}
+
+void SecCompEnhanceAdapter::StartEnhanceService()
+{
+    SC_LOG_DEBUG(LABEL, "StartEnhanceService success");
+}
+
+void SecCompEnhanceAdapter::ExistEnhanceService()
+{
+    SC_LOG_DEBUG(LABEL, "ExistEnhanceService success");
+}
+
+void SecCompEnhanceAdapter::NotifyProcessDied(int32_t pid)
+{
+    SC_LOG_DEBUG(LABEL, "NotifyProcessDied success");
+}
+
+int32_t SecCompEnhanceAdapter::CheckComponentInfoEnhnace(int32_t pid,
+    std::shared_ptr<SecCompBase>& compInfo, const nlohmann::json& jsonComponent)
+{
+    SC_LOG_DEBUG(LABEL, "CheckComponentInfoEnhnace success");
+    return SC_OK;
+}
+
+sptr<IRemoteObject> SecCompEnhanceAdapter::GetEnhanceRemoteObject()
+{
+    SC_LOG_DEBUG(LABEL, "GetEnhanceRemoteObject success");
+    return nullptr;
+}
 }  // namespace SecurityComponent
 }  // namespace Security
 }  // namespace OHOS

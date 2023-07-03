@@ -73,6 +73,8 @@ public:
     int32_t text_ = UNKNOWN_TYPE;
     int32_t icon_ = UNKNOWN_TYPE;
     SecCompBackground bg_ = SecCompBackground::UNKNOWN_BG;
+
+    int32_t nodeId_ = 0;
 protected:
     virtual bool IsParamValid() = 0;
 private:

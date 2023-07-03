@@ -182,6 +182,16 @@ int32_t SecCompStub::ReduceAfterVerifySavePermissionInner(MessageParcel& data, M
     return SC_OK;
 }
 
+int32_t SecCompStub::GetEnhanceRemoteObjectInner(MessageParcel& data, MessageParcel& reply)
+{
+    auto res = this->GetEnhanceRemoteObject();
+    if (!reply.WriteRemoteObject(res)) {
+        SC_LOG_ERROR(LABEL, "Register security component enhance remote object fail");
+        return SC_SERVICE_ERROR_PARCEL_OPERATE_FAIL;
+    }
+    return SC_OK;
+}
+
 SecCompStub::SecCompStub()
 {
     requestFuncMap_[static_cast<uint32_t>(SecurityComponentServiceInterfaceCode::REGISTER_SECURITY_COMPONENT)] =
@@ -195,6 +205,9 @@ SecCompStub::SecCompStub()
         &SecCompStub::ReportSecurityComponentClickEventInner;
     requestFuncMap_[static_cast<uint32_t>(SecurityComponentServiceInterfaceCode::VERIFY_TEMP_SAVE_PERMISSION)] =
         &SecCompStub::ReduceAfterVerifySavePermissionInner;
+    requestFuncMap_[static_cast<uint32_t>(
+        SecurityComponentServiceInterfaceCode::GET_SECURITY_COMPONENT_ENHANCE_OBJECT)] =
+        &SecCompStub::GetEnhanceRemoteObjectInner;
 }
 
 SecCompStub::~SecCompStub()

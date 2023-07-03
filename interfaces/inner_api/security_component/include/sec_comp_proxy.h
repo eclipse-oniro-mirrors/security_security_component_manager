@@ -32,6 +32,7 @@ public:
     int32_t ReportSecurityComponentClickEvent(int32_t scId,
         const std::string& componentInfo, const SecCompClickEvent& touchInfo) override;
     bool ReduceAfterVerifySavePermission(AccessToken::AccessTokenID tokenId) override;
+    sptr<IRemoteObject> GetEnhanceRemoteObject() override;
 
 private:
     static inline BrokerDelegator<SecCompProxy> delegator_;

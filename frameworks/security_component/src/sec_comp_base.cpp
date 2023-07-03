@@ -24,6 +24,7 @@ namespace {
 constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {LOG_CORE, SECURITY_DOMAIN_SECURITY_COMPONENT, "SecCompBase"};
 static const std::string JSON_RECT = "rect";
 static const std::string JSON_SC_TYPE = "type";
+static const std::string JSON_NODE_ID = "nodeId";
 static const std::string JSON_RECT_X = "x";
 static const std::string JSON_RECT_Y = "y";
 static const std::string JSON_RECT_WIDTH = "width";
@@ -221,6 +222,12 @@ bool SecCompBase::FromJson(const nlohmann::json& jsonSrc)
     }
     type_ = static_cast<SecCompType>(value);
 
+    if ((jsonSrc.find(JSON_NODE_ID) == jsonSrc.end()) ||
+        !jsonSrc.at(JSON_NODE_ID).is_number()) {
+        return false;
+    }
+    nodeId_ = jsonSrc.at(JSON_NODE_ID).get<int32_t>();
+
     if (!ParseRect(jsonSrc, JSON_RECT, rect_)) {
         return false;
     }
@@ -252,6 +259,7 @@ bool SecCompBase::FromJson(const nlohmann::json& jsonSrc)
 void SecCompBase::ToJson(nlohmann::json& jsonRes) const
 {
     jsonRes[JSON_SC_TYPE] = type_;
+    jsonRes[JSON_NODE_ID] = nodeId_;
     jsonRes[JSON_RECT] = nlohmann::json {
         {JSON_RECT_X, rect_.x_},
         {JSON_RECT_Y, rect_.y_},

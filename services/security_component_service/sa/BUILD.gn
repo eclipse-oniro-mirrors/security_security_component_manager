@@ -36,6 +36,7 @@ ohos_prebuilt_etc("security_component_service.rc") {
 ohos_shared_library("security_component_service") {
   subsystem_name = "security"
   part_name = "security_component"
+  #output_name = "libsec_comp_service"
 
   include_dirs = [
     "sa_main",
@@ -47,6 +48,7 @@ ohos_shared_library("security_component_service") {
 
   sources = [
     "sa_main/app_state_observer.cpp",
+    "sa_main/delay_exit_task.cpp",
     "sa_main/sec_comp_entity.cpp",
     "sa_main/sec_comp_info_helper.cpp",
     "sa_main/sec_comp_manager.cpp",

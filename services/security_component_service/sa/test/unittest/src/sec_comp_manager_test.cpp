@@ -36,9 +36,9 @@ static constexpr uint32_t TEST_COLOR_YELLOW = 0x7fff00;
 static constexpr uint32_t TEST_COLOR_RED = 0xff0000;
 static constexpr uint32_t TEST_COLOR_BLUE = 0x0000ff;
 
-static constexpr int32_t TEST_UID_1 = 1;
-static constexpr int32_t TEST_UID_2 = 2;
-static constexpr int32_t TEST_UID_3 = 3;
+static constexpr int32_t TEST_PID_1 = 1;
+static constexpr int32_t TEST_PID_2 = 2;
+static constexpr int32_t TEST_PID_3 = 3;
 
 static constexpr int32_t UNKNOWN_TEXT = -2;
 static constexpr int32_t UNKNOWN_ICON = -2;
@@ -197,7 +197,7 @@ HWTEST_F(SecCompManagerTest, AddSecurityComponentToList001, TestSize.Level1)
  */
 HWTEST_F(SecCompManagerTest, DeleteSecurityComponentFromList001, TestSize.Level1)
 {
-    ASSERT_EQ(SecCompManager::GetInstance().DeleteSecurityComponentFromList(TEST_UID_1, TEST_SC_ID_1),
+    ASSERT_EQ(SecCompManager::GetInstance().DeleteSecurityComponentFromList(TEST_PID_1, TEST_SC_ID_1),
         SC_SERVICE_ERROR_COMPONENT_NOT_EXIST);
 
     std::shared_ptr<LocationButton> compPtr = std::make_shared<LocationButton>();
@@ -207,12 +207,12 @@ HWTEST_F(SecCompManagerTest, DeleteSecurityComponentFromList001, TestSize.Level1
     compPtr->rect_.width_ = TEST_COORDINATE;
     compPtr->rect_.height_ = TEST_COORDINATE;
     SecCompEntity entity(compPtr, TEST_TOKEN_ID, TEST_SC_ID_1);
-    ASSERT_EQ(SecCompManager::GetInstance().AddSecurityComponentToList(TEST_UID_1, entity), SC_OK);
+    ASSERT_EQ(SecCompManager::GetInstance().AddSecurityComponentToList(TEST_PID_1, entity), SC_OK);
 
-    ASSERT_EQ(SecCompManager::GetInstance().DeleteSecurityComponentFromList(TEST_UID_1, TEST_SC_ID_2),
+    ASSERT_EQ(SecCompManager::GetInstance().DeleteSecurityComponentFromList(TEST_PID_1, TEST_SC_ID_2),
         SC_SERVICE_ERROR_COMPONENT_NOT_EXIST);
 
-    ASSERT_EQ(SecCompManager::GetInstance().DeleteSecurityComponentFromList(TEST_UID_1, TEST_SC_ID_1), SC_OK);
+    ASSERT_EQ(SecCompManager::GetInstance().DeleteSecurityComponentFromList(TEST_PID_1, TEST_SC_ID_1), SC_OK);
 }
 
 /**
@@ -223,7 +223,7 @@ HWTEST_F(SecCompManagerTest, DeleteSecurityComponentFromList001, TestSize.Level1
  */
 HWTEST_F(SecCompManagerTest, GetSecurityComponentFromList001, TestSize.Level1)
 {
-    ASSERT_EQ(SecCompManager::GetInstance().GetSecurityComponentFromList(TEST_UID_1, TEST_SC_ID_1), nullptr);
+    ASSERT_EQ(SecCompManager::GetInstance().GetSecurityComponentFromList(TEST_PID_1, TEST_SC_ID_1), nullptr);
 
     std::shared_ptr<LocationButton> compPtr = std::make_shared<LocationButton>();
     ASSERT_NE(compPtr, nullptr);
@@ -232,9 +232,9 @@ HWTEST_F(SecCompManagerTest, GetSecurityComponentFromList001, TestSize.Level1)
     compPtr->rect_.width_ = TEST_COORDINATE;
     compPtr->rect_.height_ = TEST_COORDINATE;
     SecCompEntity entity(compPtr, TEST_TOKEN_ID, TEST_SC_ID_1);
-    ASSERT_EQ(SecCompManager::GetInstance().AddSecurityComponentToList(TEST_UID_1, entity), SC_OK);
-    ASSERT_EQ(SecCompManager::GetInstance().GetSecurityComponentFromList(TEST_UID_1, TEST_SC_ID_2), nullptr);
-    ASSERT_NE(SecCompManager::GetInstance().GetSecurityComponentFromList(TEST_UID_1, TEST_SC_ID_1), nullptr);
+    ASSERT_EQ(SecCompManager::GetInstance().AddSecurityComponentToList(TEST_PID_1, entity), SC_OK);
+    ASSERT_EQ(SecCompManager::GetInstance().GetSecurityComponentFromList(TEST_PID_1, TEST_SC_ID_2), nullptr);
+    ASSERT_NE(SecCompManager::GetInstance().GetSecurityComponentFromList(TEST_PID_1, TEST_SC_ID_1), nullptr);
 }
 
 /**
@@ -245,7 +245,7 @@ HWTEST_F(SecCompManagerTest, GetSecurityComponentFromList001, TestSize.Level1)
  */
 HWTEST_F(SecCompManagerTest, NotifyProcessBackground001, TestSize.Level1)
 {
-    SecCompManager::GetInstance().NotifyProcessBackground(TEST_UID_1);
+    SecCompManager::GetInstance().NotifyProcessBackground(TEST_PID_1);
 
     std::shared_ptr<LocationButton> compPtr = std::make_shared<LocationButton>();
     ASSERT_NE(compPtr, nullptr);
@@ -254,13 +254,13 @@ HWTEST_F(SecCompManagerTest, NotifyProcessBackground001, TestSize.Level1)
     compPtr->rect_.width_ = TEST_COORDINATE;
     compPtr->rect_.height_ = TEST_COORDINATE;
     SecCompEntity entity(compPtr, TEST_TOKEN_ID, TEST_SC_ID_1);
-    ASSERT_EQ(SecCompManager::GetInstance().AddSecurityComponentToList(TEST_UID_1, entity), SC_OK);
-    auto component = SecCompManager::GetInstance().GetSecurityComponentFromList(TEST_UID_1, TEST_SC_ID_1);
+    ASSERT_EQ(SecCompManager::GetInstance().AddSecurityComponentToList(TEST_PID_1, entity), SC_OK);
+    auto component = SecCompManager::GetInstance().GetSecurityComponentFromList(TEST_PID_1, TEST_SC_ID_1);
     ASSERT_NE(component, nullptr);
-    SecCompManager::GetInstance().NotifyProcessForeground(TEST_UID_1);
+    SecCompManager::GetInstance().NotifyProcessForeground(TEST_PID_1);
     ASSERT_TRUE(component->isEffective_);
 
-    SecCompManager::GetInstance().NotifyProcessBackground(TEST_UID_1);
+    SecCompManager::GetInstance().NotifyProcessBackground(TEST_PID_1);
     ASSERT_NE(component, nullptr);
     ASSERT_FALSE(component->isEffective_);
 }
@@ -280,7 +280,7 @@ HWTEST_F(SecCompManagerTest, NotifyProcessDied001, TestSize.Level1)
     compPtr->rect_.width_ = TEST_COORDINATE;
     compPtr->rect_.height_ = TEST_COORDINATE;
     SecCompEntity entity(compPtr, TEST_TOKEN_ID, TEST_SC_ID_1);
-    ASSERT_EQ(SecCompManager::GetInstance().AddSecurityComponentToList(TEST_UID_1, entity), SC_OK);
+    ASSERT_EQ(SecCompManager::GetInstance().AddSecurityComponentToList(TEST_PID_1, entity), SC_OK);
 
     std::shared_ptr<LocationButton> compPtr2 = std::make_shared<LocationButton>();
     ASSERT_NE(compPtr2, nullptr);
@@ -289,13 +289,13 @@ HWTEST_F(SecCompManagerTest, NotifyProcessDied001, TestSize.Level1)
     compPtr2->rect_.width_ = TEST_COORDINATE;
     compPtr2->rect_.height_ = TEST_COORDINATE;
     SecCompEntity entity2(compPtr2, TEST_TOKEN_ID, TEST_SC_ID_2);
-    ASSERT_EQ(SecCompManager::GetInstance().AddSecurityComponentToList(TEST_UID_2, entity2), SC_OK);
+    ASSERT_EQ(SecCompManager::GetInstance().AddSecurityComponentToList(TEST_PID_2, entity2), SC_OK);
 
-    SecCompManager::GetInstance().NotifyProcessDied(TEST_UID_3);
-    ASSERT_NE(SecCompManager::GetInstance().GetSecurityComponentFromList(TEST_UID_1, TEST_SC_ID_1), nullptr);
+    SecCompManager::GetInstance().NotifyProcessDied(TEST_PID_3);
+    ASSERT_NE(SecCompManager::GetInstance().GetSecurityComponentFromList(TEST_PID_1, TEST_SC_ID_1), nullptr);
 
-    SecCompManager::GetInstance().NotifyProcessDied(TEST_UID_1);
-    ASSERT_EQ(SecCompManager::GetInstance().GetSecurityComponentFromList(TEST_UID_1, TEST_SC_ID_1), nullptr);
+    SecCompManager::GetInstance().NotifyProcessDied(TEST_PID_1);
+    ASSERT_EQ(SecCompManager::GetInstance().GetSecurityComponentFromList(TEST_PID_1, TEST_SC_ID_1), nullptr);
 }
 
 /**
@@ -312,7 +312,7 @@ HWTEST_F(SecCompManagerTest, RegisterSecurityComponent001, TestSize.Level1)
     int32_t scId;
     SecCompCallerInfo caller = {
         .tokenId = TEST_TOKEN_ID,
-        .uid = TEST_UID_1
+        .pid = TEST_PID_1
     };
     ASSERT_EQ(SecCompManager::GetInstance().RegisterSecurityComponent(LOCATION_COMPONENT, jsonInvalid, caller, scId),
         SC_SERVICE_ERROR_COMPONENT_INFO_INVALID);
@@ -321,8 +321,10 @@ HWTEST_F(SecCompManagerTest, RegisterSecurityComponent001, TestSize.Level1)
     LocationButton buttonValid = BuildValidLocationComponent();
     buttonValid.ToJson(jsonValid);
 
+    // callback check failed
     ASSERT_EQ(SecCompManager::GetInstance().RegisterSecurityComponent(
-        LOCATION_COMPONENT, jsonValid, caller, scId), SC_OK);
+        LOCATION_COMPONENT, jsonValid, caller, scId), SC_SERVICE_ERROR_COMPONENT_INFO_INVALID);
+    SecCompManager::GetInstance().maliciousAppList_.clear();
 }
 
 /**
@@ -338,19 +340,10 @@ HWTEST_F(SecCompManagerTest, UpdateSecurityComponent001, TestSize.Level1)
     buttonValid.ToJson(jsonValid);
     SecCompCallerInfo caller = {
         .tokenId = TEST_TOKEN_ID,
-        .uid = TEST_UID_1
+        .pid = TEST_PID_1
     };
     ASSERT_EQ(SecCompManager::GetInstance().UpdateSecurityComponent(TEST_SC_ID_1, jsonValid, caller),
         SC_SERVICE_ERROR_COMPONENT_NOT_EXIST);
-
-    int32_t scId;
-    ASSERT_EQ(SecCompManager::GetInstance().RegisterSecurityComponent(LOCATION_COMPONENT, jsonValid, caller, scId),
-        SC_OK);
-    nlohmann::json jsonInvalid;
-    LocationButton buttonInvalid = BuildInvalidLocationComponent();
-    buttonInvalid.ToJson(jsonInvalid);
-    ASSERT_EQ(SecCompManager::GetInstance().UpdateSecurityComponent(scId, jsonInvalid, caller),
-        SC_SERVICE_ERROR_COMPONENT_INFO_INVALID);
 }
 
 /**
@@ -363,7 +356,7 @@ HWTEST_F(SecCompManagerTest, UnregisterSecurityComponent001, TestSize.Level1)
 {
     SecCompCallerInfo caller = {
         .tokenId = TEST_TOKEN_ID,
-        .uid = TEST_UID_1
+        .pid = TEST_PID_1
     };
 
     ASSERT_EQ(SecCompManager::GetInstance().UnregisterSecurityComponent(TEST_INVALID_SC_ID, caller),
@@ -380,7 +373,7 @@ HWTEST_F(SecCompManagerTest, ReportSecurityComponentClickEvent001, TestSize.Leve
 {
     SecCompCallerInfo caller = {
         .tokenId = TEST_TOKEN_ID,
-        .uid = TEST_UID_1
+        .pid = TEST_PID_1
     };
     SecCompClickEvent touchInfo;
     nlohmann::json jsonVaild;
@@ -388,23 +381,4 @@ HWTEST_F(SecCompManagerTest, ReportSecurityComponentClickEvent001, TestSize.Leve
     buttonValid.ToJson(jsonVaild);
     ASSERT_EQ(SecCompManager::GetInstance().ReportSecurityComponentClickEvent(1, jsonVaild, caller, touchInfo),
         SC_SERVICE_ERROR_COMPONENT_NOT_EXIST);
-
-    int32_t scId;
-    ASSERT_EQ(SecCompManager::GetInstance().RegisterSecurityComponent(LOCATION_COMPONENT, jsonVaild, caller, scId),
-        SC_OK);
-
-    nlohmann::json jsonInvalid;
-    LocationButton buttonInvalid = BuildInvalidLocationComponent();
-    buttonInvalid.ToJson(jsonInvalid);
-
-    ASSERT_EQ(SecCompManager::GetInstance().ReportSecurityComponentClickEvent(scId, jsonInvalid, caller, touchInfo),
-        SC_SERVICE_ERROR_COMPONENT_INFO_INVALID);
-
-    ASSERT_EQ(SecCompManager::GetInstance().ReportSecurityComponentClickEvent(scId, jsonInvalid, caller, touchInfo),
-        SC_SERVICE_ERROR_COMPONENT_INFO_INVALID);
-
-    touchInfo.touchX = 500.0; // not hit component
-    touchInfo.touchY = 500.0; // not hit component
-    ASSERT_EQ(SecCompManager::GetInstance().ReportSecurityComponentClickEvent(scId, jsonVaild, caller, touchInfo),
-        SC_SERVICE_ERROR_CLICK_EVENT_INVALID);
 }

@@ -29,7 +29,7 @@ static const std::string JSON_STYLE_TAG = "style";
 static const std::string JSON_TEXT_TAG = "text";
 static const std::string JSON_ICON_TAG = "icon";
 static const std::string JSON_BG_TAG = "bg";
-
+static const std::string JSON_NODE_ID = "nodeId";
 static const std::string JSON_RECT = "rect";
 static const std::string JSON_WINDOW_RECT = "windowRect";
 static const std::string JSON_SC_TYPE = "type";
@@ -81,6 +81,7 @@ static void BuildLocationComponentInfo(nlohmann::json& jsonComponent)
         {JSON_RECT_WIDTH, TEST_COORDINATE },
         {JSON_RECT_HEIGHT, TEST_COORDINATE }
     };
+    jsonComponent[JSON_NODE_ID] = 0;
     jsonComponent[JSON_WINDOW_RECT] = nlohmann::json {
         {JSON_RECT_X, TEST_COORDINATE },
         {JSON_RECT_Y, TEST_COORDINATE },

@@ -36,6 +36,8 @@ private:
     int32_t UnregisterSecurityComponentInner(MessageParcel& data, MessageParcel& reply);
     int32_t ReportSecurityComponentClickEventInner(MessageParcel& data, MessageParcel& reply);
     int32_t ReduceAfterVerifySavePermissionInner(MessageParcel& data, MessageParcel& reply);
+    int32_t GetEnhanceRemoteObjectInner(MessageParcel& data, MessageParcel& reply);
+
     using RequestFuncType = int32_t (SecCompStub::*)(MessageParcel& data, MessageParcel& reply);
     std::map<uint32_t, RequestFuncType> requestFuncMap_;
 };

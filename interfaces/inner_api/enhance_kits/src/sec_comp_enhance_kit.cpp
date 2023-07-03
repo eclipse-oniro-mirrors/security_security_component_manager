@@ -15,9 +15,19 @@
 #include "sec_comp_enhance_kit.h"
 #include "sec_comp_enhance_adapter.h"
 
+extern "C" void InitSecCompClientEnhance()
+{
+    OHOS::Security::SecurityComponent::SecCompEnhanceKit::InitClientEnhance();
+}
+
 namespace OHOS {
 namespace Security {
 namespace SecurityComponent {
+void SecCompEnhanceKit::InitClientEnhance()
+{
+    SecCompEnhanceAdapter::InitEnhanceHandler(SEC_COMP_ENHANCE_CLIENT_INTERFACE);
+}
+
 int32_t SecCompEnhanceKit::SetEnhanceCfg(uint8_t* cfg, uint32_t cfgLen)
 {
     return SecCompEnhanceAdapter::SetEnhanceCfg(cfg, cfgLen);

@@ -20,6 +20,7 @@
 #include "hitrace_meter.h"
 #include "ipc_skeleton.h"
 #include "iservice_registry.h"
+#include "sec_comp_enhance_adapter.h"
 #include "sec_comp_err.h"
 #include "sec_comp_manager.h"
 #include "sec_comp_log.h"
@@ -60,15 +61,16 @@ void SecCompService::OnStart()
         FinishTrace(HITRACE_TAG_ACCESS_CONTROL);
         return;
     }
+    if (!Initialize()) {
+        SC_LOG_ERROR(LABEL, "Failed to initialize");
+        FinishTrace(HITRACE_TAG_ACCESS_CONTROL);
+        return;
+    }
+
     state_ = ServiceRunningState::STATE_RUNNING;
     bool ret = Publish(this);
     if (!ret) {
         SC_LOG_ERROR(LABEL, "Failed to publish service!");
-        FinishTrace(HITRACE_TAG_ACCESS_CONTROL);
-        return;
-    }
-    if (!Initialize()) {
-        SC_LOG_ERROR(LABEL, "Failed to initialize");
         FinishTrace(HITRACE_TAG_ACCESS_CONTROL);
         return;
     }
@@ -144,8 +146,8 @@ bool SecCompService::GetCallerInfo(SecCompCallerInfo& caller)
         SC_LOG_ERROR(LABEL, "Get caller tokenId invalid");
         return false;
     }
-    if ((uid != ROOT_UID) && (!appStateObserver_->IsProcessForeground(uid))) {
-        SC_LOG_ERROR(LABEL, "caller uid is not in foreground");
+    if ((uid != ROOT_UID) && (!appStateObserver_->IsProcessForeground(pid, uid))) {
+        SC_LOG_ERROR(LABEL, "caller pid is not in foreground");
         return false;
     }
     caller.tokenId = tokenId;
@@ -229,6 +231,11 @@ int32_t SecCompService::ReportSecurityComponentClickEvent(int32_t scId,
 bool SecCompService::ReduceAfterVerifySavePermission(AccessToken::AccessTokenID tokenId)
 {
     return SecCompManager::GetInstance().ReduceAfterVerifySavePermission(tokenId);
+}
+
+sptr<IRemoteObject> SecCompService::GetEnhanceRemoteObject()
+{
+    return SecCompEnhanceAdapter::GetEnhanceRemoteObject();
 }
 
 int SecCompService::Dump(int fd, const std::vector<std::u16string>& args)
