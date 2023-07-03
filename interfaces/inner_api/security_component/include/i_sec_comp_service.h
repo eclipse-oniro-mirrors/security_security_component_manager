@@ -19,6 +19,7 @@
 #include "access_token.h"
 #include "iremote_broker.h"
 #include "sec_comp_info.h"
+#include "security_component_service_ipc_interface_code.h"
 
 namespace OHOS {
 namespace Security {
@@ -36,15 +37,6 @@ public:
     virtual int32_t ReportSecurityComponentClickEvent(int32_t scId, const std::string& componentInfo,
         const SecCompClickEvent& touchInfo) = 0;
     virtual bool ReduceAfterVerifySavePermission(AccessToken::AccessTokenID tokenId) = 0;
-
-    enum class InterfaceCode {
-        REGISTER_SECURITY_COMPONENT = 0xff01,
-        UPDATE_SECURITY_COMPONENT = 0xff02,
-        UNREGISTER_SECURITY_COMPONENT = 0xff03,
-        REPORT_SECURITY_COMPONENT_CLICK_EVENT = 0xff04,
-        GET_SECURITY_COMPONENT_ENHANCE_OBJECT = 0xff05,
-        VERIFY_TEMP_SAVE_PERMISSION = 0xff06,
-    };
 };
 }  // namespace SecurityComponent
 }  // namespace Security

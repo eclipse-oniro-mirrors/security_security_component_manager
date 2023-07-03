@@ -62,11 +62,13 @@ HWTEST_F(SecCompStubTest, OnRemoteRequest001, TestSize.Level1)
     MessageOption option;
 
     data.WriteInterfaceToken(u"wrong");
-    ASSERT_EQ(stub_->OnRemoteRequest(static_cast<uint32_t>(ISecCompService::InterfaceCode::REGISTER_SECURITY_COMPONENT),
+    ASSERT_EQ(stub_->OnRemoteRequest(
+        static_cast<uint32_t>(SecurityComponentServiceInterfaceCode::REGISTER_SECURITY_COMPONENT),
         data, reply, option), SC_SERVICE_ERROR_IPC_REQUEST_FAIL);
 
     data.WriteInterfaceToken(u"ohos.security.ISecCompService");
-    ASSERT_EQ(stub_->OnRemoteRequest(static_cast<uint32_t>(ISecCompService::InterfaceCode::REGISTER_SECURITY_COMPONENT),
+    ASSERT_EQ(stub_->OnRemoteRequest(
+        static_cast<uint32_t>(SecurityComponentServiceInterfaceCode::REGISTER_SECURITY_COMPONENT),
         data, reply, option), SC_SERVICE_ERROR_PARCEL_OPERATE_FAIL);
 
     data.WriteInterfaceToken(u"ohos.security.ISecCompService");

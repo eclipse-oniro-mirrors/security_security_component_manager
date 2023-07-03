@@ -184,15 +184,16 @@ int32_t SecCompStub::ReduceAfterVerifySavePermissionInner(MessageParcel& data, M
 
 SecCompStub::SecCompStub()
 {
-    requestFuncMap_[static_cast<uint32_t>(ISecCompService::InterfaceCode::REGISTER_SECURITY_COMPONENT)] =
+    requestFuncMap_[static_cast<uint32_t>(SecurityComponentServiceInterfaceCode::REGISTER_SECURITY_COMPONENT)] =
         &SecCompStub::RegisterSecurityComponentInner;
-    requestFuncMap_[static_cast<uint32_t>(ISecCompService::InterfaceCode::UPDATE_SECURITY_COMPONENT)] =
+    requestFuncMap_[static_cast<uint32_t>(SecurityComponentServiceInterfaceCode::UPDATE_SECURITY_COMPONENT)] =
         &SecCompStub::UpdateSecurityComponentInner;
-    requestFuncMap_[static_cast<uint32_t>(ISecCompService::InterfaceCode::UNREGISTER_SECURITY_COMPONENT)] =
+    requestFuncMap_[static_cast<uint32_t>(SecurityComponentServiceInterfaceCode::UNREGISTER_SECURITY_COMPONENT)] =
         &SecCompStub::UnregisterSecurityComponentInner;
-    requestFuncMap_[static_cast<uint32_t>(ISecCompService::InterfaceCode::REPORT_SECURITY_COMPONENT_CLICK_EVENT)] =
+    requestFuncMap_[static_cast<uint32_t>(
+        SecurityComponentServiceInterfaceCode::REPORT_SECURITY_COMPONENT_CLICK_EVENT)] =
         &SecCompStub::ReportSecurityComponentClickEventInner;
-    requestFuncMap_[static_cast<uint32_t>(ISecCompService::InterfaceCode::VERIFY_TEMP_SAVE_PERMISSION)] =
+    requestFuncMap_[static_cast<uint32_t>(SecurityComponentServiceInterfaceCode::VERIFY_TEMP_SAVE_PERMISSION)] =
         &SecCompStub::ReduceAfterVerifySavePermissionInner;
 }
 
