@@ -12,10 +12,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef SECURITY_COMPONENT_ENHANCE_KIT_C_H
-#define SECURITY_COMPONENT_ENHANCE_KIT_C_H
 
-void InitSecCompClientEnhance(void);
+#ifndef LOCATION_BUTTON_SAMPLE_BUILD_H
+#define LOCATION_BUTTON_SAMPLE_BUILD_H
+#include "location_button.h"
 
-#endif  // SECURITY_COMPONENT_ENHANCE_KIT_C_H
+namespace OHOS {
+namespace Security {
+namespace SecurityComponent {
 
+class LocationButtonSampleBuild {
+public:
+    static void BuildLocationComponentInfo(nlohmann::json& jsonComponent);
+};
+}  // namespace SecurityComponent
+}  // namespace Security
+}  // namespace OHOS
+#endif  // LOCATION_BUTTON_SAMPLE_BUILD_H

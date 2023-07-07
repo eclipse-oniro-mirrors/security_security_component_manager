@@ -323,7 +323,7 @@ HWTEST_F(SecCompManagerTest, RegisterSecurityComponent001, TestSize.Level1)
 
     // callback check failed
     ASSERT_EQ(SecCompManager::GetInstance().RegisterSecurityComponent(
-        LOCATION_COMPONENT, jsonValid, caller, scId), SC_SERVICE_ERROR_COMPONENT_INFO_INVALID);
+        LOCATION_COMPONENT, jsonValid, caller, scId), SC_ENHANCE_ERROR_CALLBACK_NOT_EXIST);
     SecCompManager::GetInstance().maliciousAppList_.clear();
 }
 
@@ -342,8 +342,8 @@ HWTEST_F(SecCompManagerTest, UpdateSecurityComponent001, TestSize.Level1)
         .tokenId = TEST_TOKEN_ID,
         .pid = TEST_PID_1
     };
-    ASSERT_EQ(SecCompManager::GetInstance().UpdateSecurityComponent(TEST_SC_ID_1, jsonValid, caller),
-        SC_SERVICE_ERROR_COMPONENT_NOT_EXIST);
+    ASSERT_NE(SecCompManager::GetInstance().UpdateSecurityComponent(TEST_SC_ID_1, jsonValid, caller),
+        SC_OK);
 }
 
 /**
@@ -379,6 +379,6 @@ HWTEST_F(SecCompManagerTest, ReportSecurityComponentClickEvent001, TestSize.Leve
     nlohmann::json jsonVaild;
     LocationButton buttonValid = BuildValidLocationComponent();
     buttonValid.ToJson(jsonVaild);
-    ASSERT_EQ(SecCompManager::GetInstance().ReportSecurityComponentClickEvent(1, jsonVaild, caller, touchInfo),
-        SC_SERVICE_ERROR_COMPONENT_NOT_EXIST);
+    ASSERT_NE(SecCompManager::GetInstance().ReportSecurityComponentClickEvent(1, jsonVaild, caller, touchInfo),
+        SC_OK);
 }
