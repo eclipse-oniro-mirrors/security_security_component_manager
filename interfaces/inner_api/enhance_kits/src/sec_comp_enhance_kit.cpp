@@ -23,7 +23,7 @@ extern "C" void InitSecCompClientEnhance()
 namespace OHOS {
 namespace Security {
 namespace SecurityComponent {
-void SecCompEnhanceKit::InitClientEnhance()
+void SecCompEnhanceKit::InitClientEnhance(void)
 {
     SecCompEnhanceAdapter::InitEnhanceHandler(SEC_COMP_ENHANCE_CLIENT_INTERFACE);
 }

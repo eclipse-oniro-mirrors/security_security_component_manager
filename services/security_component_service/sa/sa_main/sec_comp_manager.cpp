@@ -265,6 +265,22 @@ void SecCompManager::ExitSaProcess()
     SC_LOG_INFO(LABEL, "UnloadSystemAbility successfully!");
 }
 
+void SecCompManager::SendCheckInfoEnhanceSysEvent(int32_t scId,
+    SecCompType type, const std::string& scene, int32_t res)
+{
+    if (res == SC_ENHANCE_ERROR_CHALLENGE_CHECK_FAIL) {
+        HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "CHALLENGE_CHECK_FAILED",
+            HiviewDFX::HiSysEvent::EventType::SECURITY, "CALLER_UID", IPCSkeleton::GetCallingUid(),
+            "CALLER_PID", IPCSkeleton::GetCallingPid(), "SC_ID", scId, "SC_TYPE", type, "CALL_SCENE",
+            scene);
+    } else {
+        HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "CALLBACK_FAILED",
+            HiviewDFX::HiSysEvent::EventType::SECURITY, "CALLER_UID", IPCSkeleton::GetCallingUid(),
+            "CALLER_PID", IPCSkeleton::GetCallingPid(), "SC_TYPE", type,
+            "CALL_SCENE", scene, "REASON", TransformCallBackResult(static_cast<enum SCErrCode>(res)));
+    }
+}
+
 int32_t SecCompManager::RegisterSecurityComponent(SecCompType type,
     const nlohmann::json& jsonComponent, const SecCompCallerInfo& caller, int32_t& scId)
 {
@@ -288,13 +304,10 @@ int32_t SecCompManager::RegisterSecurityComponent(SecCompType type,
     int32_t enhanceRes =
         SecCompEnhanceAdapter::CheckComponentInfoEnhnace(caller.pid, component, jsonComponent);
     if (enhanceRes != SC_OK) {
-        HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "CALLBACK_FAILED",
-            HiviewDFX::HiSysEvent::EventType::SECURITY, "CALLER_UID", IPCSkeleton::GetCallingUid(),
-            "CALLER_PID", IPCSkeleton::GetCallingPid(), "SC_TYPE", type,
-            "CALL_SCENE", "REGITSTER", "REASON", TransformCallBackResult(static_cast<enum SCErrCode>(enhanceRes)));
+        SendCheckInfoEnhanceSysEvent(INVALID_SC_ID, type, "REGISTER", enhanceRes);
         SC_LOG_ERROR(LABEL, "enhance check failed");
         AddAppToMaliciousAppList(caller.pid);
-        return SC_SERVICE_ERROR_COMPONENT_INFO_INVALID;
+        return enhanceRes;
     }
 
     int32_t registerId = CreateScId();
@@ -338,14 +351,10 @@ int32_t SecCompManager::UpdateSecurityComponent(int32_t scId, const nlohmann::js
     int32_t enhanceRes =
         SecCompEnhanceAdapter::CheckComponentInfoEnhnace(caller.pid, reportComponentInfo, jsonComponent);
     if (enhanceRes != SC_OK) {
-        HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "CALLBACK_FAILED",
-            HiviewDFX::HiSysEvent::EventType::SECURITY, "CALLER_UID", IPCSkeleton::GetCallingUid(),
-            "CALLER_PID", IPCSkeleton::GetCallingPid(), "SC_TYPE", sc->GetType(),
-            "CALL_SCENE", "UPDATE", "REASON", TransformCallBackResult(static_cast<enum SCErrCode>(enhanceRes)));
-
+        SendCheckInfoEnhanceSysEvent(scId, sc->GetType(), "UPDATE", enhanceRes);
         SC_LOG_ERROR(LABEL, "enhance check failed");
         AddAppToMaliciousAppList(caller.pid);
-        return SC_SERVICE_ERROR_COMPONENT_INFO_INVALID;
+        return enhanceRes;
     }
 
     sc->SetComponentInfo(reportComponentInfo);
@@ -382,14 +391,10 @@ int32_t SecCompManager::CheckClickSecurityComponentInfo(SecCompEntity* sc, int32
     int32_t enhanceRes =
         SecCompEnhanceAdapter::CheckComponentInfoEnhnace(caller.pid, reportComponentInfo, jsonComponent);
     if (enhanceRes != SC_OK) {
-        HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "CALLBACK_FAILED",
-            HiviewDFX::HiSysEvent::EventType::SECURITY, "CALLER_UID", IPCSkeleton::GetCallingUid(),
-            "CALLER_PID", IPCSkeleton::GetCallingPid(), "SC_TYPE", sc->GetType(),
-            "CALL_SCENE", "CLICK", "REASON", TransformCallBackResult(static_cast<enum SCErrCode>(enhanceRes)));
-
+        SendCheckInfoEnhanceSysEvent(scId, sc->GetType(), "CLICK", enhanceRes);
         SC_LOG_ERROR(LABEL, "enhance check failed");
         AddAppToMaliciousAppList(caller.pid);
-        return SC_SERVICE_ERROR_COMPONENT_INFO_INVALID;
+        return enhanceRes;
     }
 
     sc->SetComponentInfo(reportComponentInfo);
@@ -417,10 +422,9 @@ int32_t SecCompManager::ReportSecurityComponentClickEvent(int32_t scId,
 
     if (SecCompEnhanceAdapter::CheckExtraInfo(touchInfo) != SC_OK) {
         SC_LOG_ERROR(LABEL, "check extra info failed, HMAC is invalid");
-        HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "CHALLENGE_CHECK_FAILED",
+        HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "CLICK_INFO_CHECK_FAILED",
             HiviewDFX::HiSysEvent::EventType::SECURITY, "CALLER_UID", IPCSkeleton::GetCallingUid(),
-            "CALLER_PID", IPCSkeleton::GetCallingPid(), "SC_ID", scId, "SC_TYPE", sc->GetType(), "CALL_SCENE",
-            "CLICK");
+            "CALLER_PID", IPCSkeleton::GetCallingPid(), "SC_ID", scId, "SC_TYPE", sc->GetType());
         AddAppToMaliciousAppList(caller.pid);
         return SC_SERVICE_ERROR_CLICK_EVENT_INVALID;
     }
@@ -437,6 +441,7 @@ int32_t SecCompManager::ReportSecurityComponentClickEvent(int32_t scId,
         HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "TEMP_GRANT_FAILED",
             HiviewDFX::HiSysEvent::EventType::FAULT, "CALLER_UID", IPCSkeleton::GetCallingUid(),
             "CALLER_PID", IPCSkeleton::GetCallingPid(), "SC_ID", scId, "SC_TYPE", sc->GetType());
+        return res;
     }
     HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "TEMP_GRANT_SUCCESS",
         HiviewDFX::HiSysEvent::EventType::BEHAVIOR, "CALLER_UID", IPCSkeleton::GetCallingUid(),

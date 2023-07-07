@@ -73,6 +73,8 @@ private:
     void AddAppToMaliciousAppList(int32_t pid);
     void RemoveAppFromMaliciousAppList(int32_t pid);
     bool IsMaliciousAppListEmpty();
+    void SendCheckInfoEnhanceSysEvent(int32_t scId,
+        SecCompType type, const std::string& scene, int32_t res);
     int32_t CreateScId();
 
     OHOS::Utils::RWLock componentInfoLock_;

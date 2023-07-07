@@ -287,9 +287,8 @@ HWTEST_F(SecCompServiceTest, ReportSecurityComponentClickEvent001, TestSize.Leve
     };
     secCompService_->appStateObserver_->AddProcessToForegroundSet(stateData);
 
-    // register security component ok
     EXPECT_EQ(secCompService_->RegisterSecurityComponent(LOCATION_COMPONENT, BuildLocationComponentInfo(), scId),
-        SC_SERVICE_ERROR_COMPONENT_INFO_INVALID);
+        SC_ENHANCE_ERROR_CALLBACK_NOT_EXIST);
     uint8_t data[16] = { 0 };
     struct SecCompClickEvent touch = {
         .touchX = 100,
