@@ -14,7 +14,10 @@
  */
 #include "sec_comp_entity.h"
 #include <chrono>
+#include "hisysevent.h"
+#include "ipc_skeleton.h"
 #include "sec_comp_err.h"
+#include "sec_comp_enhance_adapter.h"
 #include "sec_comp_info_helper.h"
 #include "sec_comp_log.h"
 
@@ -60,6 +63,16 @@ bool SecCompEntity::CheckTouchInfo(const SecCompClickEvent& touchInfo) const
 
     if (!componentInfo_->rect_.IsInRect(touchInfo.touchX, touchInfo.touchY)) {
         SC_LOG_ERROR(LABEL, "touch point is not in component rect");
+        return false;
+    }
+
+    if (SecCompEnhanceAdapter::CheckExtraInfo(touchInfo) != SC_OK) {
+        SC_LOG_ERROR(LABEL, "HMAC checkout failed"
+            "touchX:%{public}f, touchY:%{public}f, timestamp:%{public}lu, dataSize:%{public}d",
+            touchInfo.touchX, touchInfo.touchY, touchInfo.timestamp, touchInfo.extraInfo.dataSize);
+        HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "CLICK_INFO_CHECK_FAILED",
+            HiviewDFX::HiSysEvent::EventType::SECURITY, "CALLER_UID", IPCSkeleton::GetCallingUid(),
+            "CALLER_PID", IPCSkeleton::GetCallingPid(), "SC_ID", scId_, "SC_TYPE", componentInfo_->type_);
         return false;
     }
     return true;
