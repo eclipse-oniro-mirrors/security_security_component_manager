@@ -285,7 +285,7 @@ int32_t SecCompManager::RegisterSecurityComponent(SecCompType type,
     const nlohmann::json& jsonComponent, const SecCompCallerInfo& caller, int32_t& scId)
 {
     DelayExitTask::GetInstance().Stop();
-
+    SC_LOG_DEBUG(LABEL, "PID: %{public}d, register security component", caller.pid);
     if (IsInMaliciousAppList(caller.pid)) {
         SC_LOG_ERROR(LABEL, "app is in MaliciousAppList, never allow it");
         return SC_ENHANCE_ERROR_IN_MALICIOUS_LIST;
@@ -326,6 +326,7 @@ int32_t SecCompManager::RegisterSecurityComponent(SecCompType type,
 int32_t SecCompManager::UpdateSecurityComponent(int32_t scId, const nlohmann::json& jsonComponent,
     const SecCompCallerInfo& caller)
 {
+    SC_LOG_DEBUG(LABEL, "PID: %{public}d, update security component", caller.pid);
     if (IsInMaliciousAppList(caller.pid)) {
         SC_LOG_ERROR(LABEL, "app is in MaliciousAppList, never allow it");
         return SC_ENHANCE_ERROR_IN_MALICIOUS_LIST;
@@ -363,6 +364,7 @@ int32_t SecCompManager::UpdateSecurityComponent(int32_t scId, const nlohmann::js
 
 int32_t SecCompManager::UnregisterSecurityComponent(int32_t scId, const SecCompCallerInfo& caller)
 {
+    SC_LOG_DEBUG(LABEL, "PID: %{public}d, unregister security component", caller.pid);
     if (scId < 0) {
         SC_LOG_ERROR(LABEL, "ScId is invalid");
         return SC_SERVICE_ERROR_VALUE_INVALID;
@@ -420,20 +422,11 @@ int32_t SecCompManager::ReportSecurityComponentClickEvent(int32_t scId,
         return res;
     }
 
-    if (SecCompEnhanceAdapter::CheckExtraInfo(touchInfo) != SC_OK) {
-        SC_LOG_ERROR(LABEL, "check extra info failed, HMAC is invalid");
+    if (!sc->CheckTouchInfo(touchInfo)) {
         HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "CLICK_INFO_CHECK_FAILED",
             HiviewDFX::HiSysEvent::EventType::SECURITY, "CALLER_UID", IPCSkeleton::GetCallingUid(),
             "CALLER_PID", IPCSkeleton::GetCallingPid(), "SC_ID", scId, "SC_TYPE", sc->GetType());
         AddAppToMaliciousAppList(caller.pid);
-        return SC_SERVICE_ERROR_CLICK_EVENT_INVALID;
-    }
-
-    if (!sc->CheckTouchInfo(touchInfo)) {
-        SC_LOG_ERROR(LABEL, "touchInfo is invalid");
-        HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "CLICK_INFO_CHECK_FAILED",
-            HiviewDFX::HiSysEvent::EventType::SECURITY, "CALLER_UID", IPCSkeleton::GetCallingUid(),
-            "CALLER_PID", IPCSkeleton::GetCallingPid(), "SC_ID", scId, "SC_TYPE", sc->GetType());
         return SC_SERVICE_ERROR_CLICK_EVENT_INVALID;
     }
     res = sc->GrantTempPermission();
