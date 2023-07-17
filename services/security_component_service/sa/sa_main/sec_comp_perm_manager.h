@@ -41,7 +41,7 @@ public:
     int32_t GrantTempSavePermission(AccessToken::AccessTokenID tokenId);
     int32_t RevokeTempSavePermission(AccessToken::AccessTokenID tokenId);
 
-    bool InitEventHandler(std::shared_ptr<SecEventHandler>& secHandler);
+    bool InitEventHandler(const std::shared_ptr<SecEventHandler>& secHandler);
     std::shared_ptr<SecEventHandler> GetSecEventHandler() const;
 
 private:
