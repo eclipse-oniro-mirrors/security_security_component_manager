@@ -120,7 +120,7 @@ int32_t SecCompPermManager::RevokeTempSavePermission(AccessToken::AccessTokenID 
     return SC_OK;
 }
 
-bool SecCompPermManager::InitEventHandler(std::shared_ptr<SecEventHandler>& secHandler)
+bool SecCompPermManager::InitEventHandler(const std::shared_ptr<SecEventHandler>& secHandler)
 {
     secHandler_ = secHandler;
     return true;

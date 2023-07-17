@@ -29,7 +29,7 @@ public:
     static DelayExitTask& GetInstance();
     virtual ~DelayExitTask() = default;
 
-    void Init(std::shared_ptr<SecEventHandler>& secHandler);
+    void Init(const std::shared_ptr<SecEventHandler>& secHandler);
     void Start();
     void Stop();
 private:

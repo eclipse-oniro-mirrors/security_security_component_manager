@@ -38,7 +38,7 @@ DelayExitTask& DelayExitTask::GetInstance()
     return instance;
 }
 
-void DelayExitTask::Init(std::shared_ptr<SecEventHandler>& secHandler)
+void DelayExitTask::Init(const std::shared_ptr<SecEventHandler>& secHandler)
 {
     secHandler_ = secHandler;
 }
