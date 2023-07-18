@@ -148,8 +148,6 @@ HWTEST_F(SecCompRegisterCallbackTest, Register003, TestSize.Level1)
     g_probe.mockRes = 0;
 
     int32_t scId;
-    ASSERT_EQ(SC_ENHANCE_ERROR_IN_MALICIOUS_LIST,
-        SecCompKit::RegisterSecurityComponent(LOCATION_COMPONENT, locationInfo, scId));
-    ASSERT_EQ(-1, scId);
+    ASSERT_EQ(SC_OK, SecCompKit::RegisterSecurityComponent(LOCATION_COMPONENT, locationInfo, scId));
 }
 

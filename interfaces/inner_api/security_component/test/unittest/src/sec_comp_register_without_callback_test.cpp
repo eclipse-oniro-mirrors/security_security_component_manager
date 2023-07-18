@@ -106,7 +106,7 @@ HWTEST_F(SecCompRegisterWithoutCallbackTest, RegisterWithoutCallback002, TestSiz
     std::string locationInfo = jsonRes.dump();
 
     int32_t scId;
-    ASSERT_EQ(SC_ENHANCE_ERROR_IN_MALICIOUS_LIST,
+    ASSERT_EQ(SC_ENHANCE_ERROR_CALLBACK_NOT_EXIST,
         SecCompKit::RegisterSecurityComponent(LOCATION_COMPONENT, locationInfo, scId));
     ASSERT_EQ(-1, scId);
 }

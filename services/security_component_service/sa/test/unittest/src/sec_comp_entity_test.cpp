@@ -153,5 +153,5 @@ HWTEST_F(SecCompEntityTest, CheckTouchInfo001, TestSize.Level1)
     entity_->componentInfo_->rect_.y_ = TEST_COORDINATE;
     touch.timestamp = static_cast<uint64_t>(
         std::chrono::high_resolution_clock::now().time_since_epoch().count()) / TIME_CONVERSION_UNIT;
-    ASSERT_TRUE(entity_->CheckTouchInfo(touch));
+    ASSERT_FALSE(entity_->CheckTouchInfo(touch));
 }

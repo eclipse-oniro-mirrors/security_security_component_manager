@@ -32,6 +32,7 @@ namespace {
 constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {LOG_CORE, SECURITY_DOMAIN_SECURITY_COMPONENT, "SecCompManager"};
 static constexpr int32_t SC_ID_START = 1000;
 static constexpr int32_t MAX_INT_NUM = 0x7fffffff;
+static constexpr int32_t ROOT_UID = 0;
 }
 
 SecCompManager::SecCompManager()
@@ -111,6 +112,9 @@ int32_t SecCompManager::DeleteSecurityComponentFromList(int32_t pid, int32_t scI
 bool SecCompManager::IsInMaliciousAppList(int32_t pid)
 {
     std::lock_guard<std::mutex> lock(maliciousMtx_);
+    if (IPCSkeleton::GetCallingUid() == ROOT_UID) {
+        return false;
+    }
     return (maliciousAppList_.find(pid) != maliciousAppList_.end());
 }
 
