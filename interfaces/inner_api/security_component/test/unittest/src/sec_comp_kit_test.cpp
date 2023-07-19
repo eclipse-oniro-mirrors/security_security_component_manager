@@ -41,7 +41,7 @@ static void TestInCallerNotCheckList()
     std::string emptyStr = "";
     int registerRes = SecCompKit::RegisterSecurityComponent(LOCATION_COMPONENT, emptyStr, scId);
     int updateRes = SecCompKit::UpdateSecurityComponent(scId, emptyStr);
-    int reportRes = SecCompKit::ReportSecurityComponentClickEvent(scId, emptyStr, touch);
+    int reportRes = SecCompKit::ReportSecurityComponentClickEvent(scId, emptyStr, touch, nullptr);
 
     EXPECT_EQ(registerRes, SC_SERVICE_ERROR_CALLER_INVALID);
     EXPECT_EQ(updateRes, SC_SERVICE_ERROR_CALLER_INVALID);
@@ -55,7 +55,7 @@ static void TestInCallerCheckList()
     std::string emptyStr = "";
     int registerRes = SecCompKit::RegisterSecurityComponent(LOCATION_COMPONENT, emptyStr, scId);
     int updateRes = SecCompKit::UpdateSecurityComponent(scId, emptyStr);
-    int reportRes = SecCompKit::ReportSecurityComponentClickEvent(scId, emptyStr, touch);
+    int reportRes = SecCompKit::ReportSecurityComponentClickEvent(scId, emptyStr, touch, nullptr);
 
     EXPECT_NE(registerRes, SC_SERVICE_ERROR_CALLER_INVALID);
     EXPECT_NE(updateRes, SC_SERVICE_ERROR_CALLER_INVALID);
@@ -123,7 +123,7 @@ HWTEST_F(SecCompKitTest, ExceptCall001, TestSize.Level1)
         .touchY = TEST_COORDINATE,
         .timestamp = static_cast<uint64_t>(std::chrono::high_resolution_clock::now().time_since_epoch().count())
     };
-    EXPECT_NE(SC_OK, SecCompKit::ReportSecurityComponentClickEvent(scId, jsonStr, touch));
+    EXPECT_NE(SC_OK, SecCompKit::ReportSecurityComponentClickEvent(scId, jsonStr, touch, nullptr));
     EXPECT_NE(SC_OK, SecCompKit::UnregisterSecurityComponent(scId));
 }
 

@@ -48,6 +48,7 @@ ohos_shared_library("security_component_service") {
   sources = [
     "sa_main/app_state_observer.cpp",
     "sa_main/delay_exit_task.cpp",
+    "sa_main/first_use_dialog.cpp",
     "sa_main/sec_comp_entity.cpp",
     "sa_main/sec_comp_info_helper.cpp",
     "sa_main/sec_comp_manager.cpp",
@@ -70,7 +71,11 @@ ohos_shared_library("security_component_service") {
   public_configs = [ ":security_component_service_config" ]
 
   external_deps = [
+    "ability_base:base",
+    "ability_base:want",
+    "ability_runtime:ability_manager",
     "ability_runtime:app_manager",
+    "ability_runtime:runtime",
     "access_token:libaccesstoken_sdk",
     "c_utils:utils",
     "eventhandler:libeventhandler",

@@ -134,7 +134,7 @@ bool IsColorSimilar(const SecCompColor& color1, const SecCompColor& color2)
 
 bool IsColorTransparent(const SecCompColor& color)
 {
-    return ((color.argb.alpha != 0) && (color.argb.alpha < MAX_TRANSPARENT));
+    return color.argb.alpha < MAX_TRANSPARENT;
 }
 }  // namespace SecurityComponent
 }  // namespace Security
