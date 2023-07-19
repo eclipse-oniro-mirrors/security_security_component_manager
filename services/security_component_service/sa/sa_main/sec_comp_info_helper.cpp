@@ -33,6 +33,8 @@ namespace {
 constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {LOG_CORE, SECURITY_DOMAIN_SECURITY_COMPONENT, "SecCompInfoHelper"};
 static constexpr double MAX_RECT_PERCENT = 0.1F; // 10%
 static constexpr double ZERO_OFFSET = 0.0F;
+static constexpr int32_t NO_TEXT = -1;
+static constexpr int32_t NO_ICON = -1;
 static std::mutex g_renderLock;
 }
 
@@ -140,8 +142,9 @@ static bool CheckSecCompBaseButton(const SecCompBase* comp)
         return false;
     }
 
-    if (comp->bg_ != SecCompBackground::NO_BG_TYPE &&
-        (IsColorSimilar(comp->fontColor_, comp->bgColor_) || IsColorSimilar(comp->iconColor_, comp->bgColor_))) {
+    if ((comp->bg_ != SecCompBackground::NO_BG_TYPE) &&
+        (((comp->text_ != NO_TEXT) && (IsColorSimilar(comp->fontColor_, comp->bgColor_))) ||
+        ((comp->icon_ != NO_ICON) && (IsColorSimilar(comp->iconColor_, comp->bgColor_))))) {
         SC_LOG_INFO(LABEL, "fontColor or iconColor is similar whith backgroundColor.");
         return false;
     }
@@ -175,8 +178,9 @@ static bool CheckSecCompBase(const SecCompBase* comp)
         return false;
     }
 
-    if (IsColorTransparent(comp->bgColor_) || IsColorTransparent(comp->fontColor_) ||
-        IsColorTransparent(comp->iconColor_)) {
+    if (((comp->bg_ != SecCompBackground::NO_BG_TYPE) && (IsColorTransparent(comp->bgColor_))) ||
+        ((comp->text_ != NO_TEXT) && (IsColorTransparent(comp->fontColor_))) ||
+        ((comp->icon_ != NO_ICON) && (IsColorTransparent(comp->iconColor_)))) {
         SC_LOG_ERROR(LABEL, "bgColor or fontColor or iconColor is too transparent.");
         return false;
     }

@@ -143,25 +143,6 @@ HWTEST_F(SecCompManagerTest, CreateScId001, TestSize.Level1)
 }
 
 /**
- * @tc.name: AddProcessComponent001
- * @tc.desc: Test add process component
- * @tc.type: FUNC
- * @tc.require: AR000HO9J7
- */
-HWTEST_F(SecCompManagerTest, AddProcessComponent001, TestSize.Level1)
-{
-    std::shared_ptr<LocationButton> compPtr = std::make_shared<LocationButton>();
-    ASSERT_NE(compPtr, nullptr);
-    compPtr->rect_.x_ = TEST_COORDINATE;
-    compPtr->rect_.y_ = TEST_COORDINATE;
-    compPtr->rect_.width_ = TEST_COORDINATE;
-    compPtr->rect_.height_ = TEST_COORDINATE;
-    SecCompEntity entity(compPtr, TEST_TOKEN_ID, TEST_SC_ID_1);
-    std::vector<SecCompEntity> componentList;
-    ASSERT_EQ(SecCompManager::GetInstance().AddProcessComponent(componentList, entity), SC_OK);
-}
-
-/**
  * @tc.name: AddSecurityComponentToList001
  * @tc.desc: Test add security component to list
  * @tc.type: FUNC
@@ -258,11 +239,10 @@ HWTEST_F(SecCompManagerTest, NotifyProcessBackground001, TestSize.Level1)
     auto component = SecCompManager::GetInstance().GetSecurityComponentFromList(TEST_PID_1, TEST_SC_ID_1);
     ASSERT_NE(component, nullptr);
     SecCompManager::GetInstance().NotifyProcessForeground(TEST_PID_1);
-    ASSERT_TRUE(component->isEffective_);
+    ASSERT_TRUE(SecCompManager::GetInstance().IsForegroundCompExist());
 
     SecCompManager::GetInstance().NotifyProcessBackground(TEST_PID_1);
-    ASSERT_NE(component, nullptr);
-    ASSERT_FALSE(component->isEffective_);
+    ASSERT_FALSE(SecCompManager::GetInstance().IsForegroundCompExist());
 }
 
 /**
@@ -379,6 +359,6 @@ HWTEST_F(SecCompManagerTest, ReportSecurityComponentClickEvent001, TestSize.Leve
     nlohmann::json jsonVaild;
     LocationButton buttonValid = BuildValidLocationComponent();
     buttonValid.ToJson(jsonVaild);
-    ASSERT_NE(SecCompManager::GetInstance().ReportSecurityComponentClickEvent(1, jsonVaild, caller, touchInfo),
-        SC_OK);
+    ASSERT_NE(SecCompManager::GetInstance().
+        ReportSecurityComponentClickEvent(1, jsonVaild, caller, touchInfo, nullptr), SC_OK);
 }

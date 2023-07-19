@@ -34,6 +34,7 @@ ohos_unittest("sec_comp_service_test") {
   sources = [
     "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/app_state_observer.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/delay_exit_task.cpp",
+    "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/first_use_dialog.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/sec_comp_entity.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/sec_comp_perm_manager.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/sec_comp_info_helper.cpp",
@@ -61,6 +62,10 @@ ohos_unittest("sec_comp_service_test") {
   ]
 
   external_deps = [
+    "ability_base:base",
+    "ability_base:want",
+    "ability_runtime:ability_manager",
+    "ability_runtime:runtime",
     "access_token:libtoken_setproc",
     "c_utils:utils",
     "eventhandler:libeventhandler",
@@ -91,6 +96,7 @@ ohos_unittest("sec_comp_service_mock_test") {
   sources = [
     "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/app_state_observer.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/delay_exit_task.cpp",
+    "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/first_use_dialog.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/sec_comp_entity.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/sec_comp_perm_manager.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/sec_comp_info_helper.cpp",
@@ -113,6 +119,10 @@ ohos_unittest("sec_comp_service_mock_test") {
   ]
 
   external_deps = [
+    "ability_base:base",
+    "ability_base:want",
+    "ability_runtime:ability_manager",
+    "ability_runtime:runtime",
     "access_token:libtoken_setproc",
     "c_utils:utils",
     "eventhandler:libeventhandler",

@@ -153,7 +153,9 @@ int32_t SecCompStub::ReportSecurityComponentClickEventInner(MessageParcel& data,
         return SC_SERVICE_ERROR_PARCEL_OPERATE_FAIL;
     }
 
-    int32_t res = this->ReportSecurityComponentClickEvent(scId, componentInfo, touchInfoParcel->touchInfoParams_);
+    sptr<IRemoteObject> callerToken = data.ReadRemoteObject();
+    int32_t res =
+        this->ReportSecurityComponentClickEvent(scId, componentInfo, touchInfoParcel->touchInfoParams_, callerToken);
     if (!reply.WriteInt32(res)) {
         SC_LOG_ERROR(LABEL, "Register security component result fail");
         return SC_SERVICE_ERROR_PARCEL_OPERATE_FAIL;

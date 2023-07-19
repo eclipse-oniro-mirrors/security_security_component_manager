@@ -38,7 +38,6 @@ static constexpr int32_t ROOT_UID = 0;
 SecCompManager::SecCompManager()
 {
     scIdStart_ = SC_ID_START;
-    scValidCount_ = 0;
     SC_LOG_INFO(LABEL, "SecCompManager()");
 }
 
@@ -59,28 +58,27 @@ int32_t SecCompManager::CreateScId()
     return scIdStart_;
 }
 
-int32_t SecCompManager::AddProcessComponent(std::vector<SecCompEntity>& componentList,
-    const SecCompEntity& newEntity)
-{
-    componentList.emplace_back(newEntity);
-    if (scValidCount_ == 0) {
-        SecCompEnhanceAdapter::EnableInputEnhance();
-    }
-    scValidCount_++;
-    return SC_OK;
-}
-
 int32_t SecCompManager::AddSecurityComponentToList(int32_t pid, const SecCompEntity& newEntity)
 {
     OHOS::Utils::UniqueWriteGuard<OHOS::Utils::RWLock> lk(this->componentInfoLock_);
-    auto iter = componentMap_.find(pid);
-    if (iter != componentMap_.end()) {
-        return AddProcessComponent(iter->second, newEntity);
+    if (isSaExit_) {
+        SC_LOG_ERROR(LABEL, "SA is exiting, retry...");
+        return SC_SERVICE_ERROR_SERVICE_NOT_EXIST;
     }
 
-    std::vector<SecCompEntity> newComponentList;
-    AddProcessComponent(newComponentList, newEntity);
-    componentMap_[pid] = newComponentList;
+    auto iter = componentMap_.find(pid);
+    if (iter != componentMap_.end()) {
+        iter->second.isForeground = true;
+        iter->second.compList.emplace_back(newEntity);
+        SecCompEnhanceAdapter::EnableInputEnhance();
+        return SC_OK;
+    }
+
+    ProcessCompInfos newProcess;
+    newProcess.isForeground = true;
+    newProcess.compList.emplace_back(newEntity);
+    componentMap_[pid] = newProcess;
+    SecCompEnhanceAdapter::EnableInputEnhance();
     return SC_OK;
 }
 
@@ -92,16 +90,14 @@ int32_t SecCompManager::DeleteSecurityComponentFromList(int32_t pid, int32_t scI
         SC_LOG_ERROR(LABEL, "Can not find registered process");
         return SC_SERVICE_ERROR_COMPONENT_NOT_EXIST;
     }
-    std::vector<SecCompEntity>& list = iter->second;
+    std::vector<SecCompEntity>& list = iter->second.compList;
     for (auto it = list.begin(); it != list.end(); ++it) {
         if (it->GetScId() == scId) {
             it->RevokeTempPermission();
-            SC_LOG_INFO(LABEL, "scValidCount %{public}d before delete", scValidCount_);
-            if (it->GetEffective()) {
-                scValidCount_--;
-            }
-
             list.erase(it);
+            if (!IsForegroundCompExist()) {
+                SecCompEnhanceAdapter::DisableInputEnhance();
+            }
             return SC_OK;
         }
     }
@@ -171,13 +167,20 @@ SecCompEntity* SecCompManager::GetSecurityComponentFromList(int32_t pid, int32_t
     if (iter == componentMap_.end()) {
         return nullptr;
     }
-    std::vector<SecCompEntity>& list = iter->second;
+    std::vector<SecCompEntity>& list = iter->second.compList;
     for (auto it = list.begin(); it != list.end(); ++it) {
         if (it->GetScId() == scId) {
             return std::addressof(*it);
         }
     }
     return nullptr;
+}
+
+bool SecCompManager::IsForegroundCompExist()
+{
+    return std::any_of(componentMap_.begin(), componentMap_.end(), [](const auto & iter) {
+        return (iter.second.isForeground) && (iter.second.compList.size() > 0);
+    });
 }
 
 void SecCompManager::NotifyProcessForeground(int32_t pid)
@@ -187,16 +190,12 @@ void SecCompManager::NotifyProcessForeground(int32_t pid)
     if (iter == componentMap_.end()) {
         return;
     }
-
-    SC_LOG_INFO(LABEL, "App pid %{public}d to foreground", pid);
-    std::vector<SecCompEntity>& list = iter->second;
-    for (auto it = list.begin(); it != list.end(); ++it) {
-        it->SetEffective(true);
-        scValidCount_++;
-    }
-    if (!list.empty()) {
+    iter->second.isForeground = true;
+    if (IsForegroundCompExist()) {
         SecCompEnhanceAdapter::EnableInputEnhance();
     }
+
+    SC_LOG_INFO(LABEL, "App pid %{public}d to foreground", pid);
 }
 
 void SecCompManager::NotifyProcessBackground(int32_t pid)
@@ -207,16 +206,11 @@ void SecCompManager::NotifyProcessBackground(int32_t pid)
         return;
     }
 
-    SC_LOG_INFO(LABEL, "App pid %{public}d to background", pid);
-    std::vector<SecCompEntity>& list = iter->second;
-    for (auto it = list.begin(); it != list.end(); ++it) {
-        it->RevokeTempPermission();
-        it->SetEffective(false);
-        scValidCount_--;
-    }
-    if (scValidCount_ <= 0) {
+    iter->second.isForeground = false;
+    if (!IsForegroundCompExist()) {
         SecCompEnhanceAdapter::DisableInputEnhance();
     }
+    SC_LOG_INFO(LABEL, "App pid %{public}d to background", pid);
 }
 
 void SecCompManager::NotifyProcessDied(int32_t pid)
@@ -230,29 +224,30 @@ void SecCompManager::NotifyProcessDied(int32_t pid)
         return;
     }
     SC_LOG_INFO(LABEL, "App pid %{public}d died", pid);
-    std::vector<SecCompEntity>& list = iter->second;
+    std::vector<SecCompEntity>& list = iter->second.compList;
     for (auto it = list.begin(); it != list.end(); ++it) {
         it->RevokeTempPermission();
-        if (it->GetEffective()) {
-            scValidCount_--;
-        }
     }
     list.clear();
+    componentMap_.erase(pid);
 
-    if (scValidCount_ <= 0) {
+    if (!IsForegroundCompExist()) {
         SecCompEnhanceAdapter::DisableInputEnhance();
     }
-    componentMap_.erase(pid);
+
     RemoveAppFromMaliciousAppList(pid);
     DelayExitTask::GetInstance().Start();
 }
 
 void SecCompManager::ExitSaProcess()
 {
+    OHOS::Utils::UniqueReadGuard<OHOS::Utils::RWLock> lk(this->componentInfoLock_);
     if (!componentMap_.empty() || !IsMaliciousAppListEmpty()) {
         SC_LOG_INFO(LABEL, "Apps using security component still exist, no exit sa");
         return;
     }
+    isSaExit_ = true;
+    SecCompEnhanceAdapter::DisableInputEnhance();
     SecCompEnhanceAdapter::ExistEnhanceService();
 
     SC_LOG_INFO(LABEL, "All processes using security component died, start sa exit");
@@ -316,7 +311,6 @@ int32_t SecCompManager::RegisterSecurityComponent(SecCompType type,
 
     int32_t registerId = CreateScId();
     SecCompEntity entity(component, caller.tokenId, registerId);
-    entity.SetEffective(true);
     int32_t ret = AddSecurityComponentToList(caller.pid, entity);
     if (ret == SC_OK) {
         scId = registerId;
@@ -373,11 +367,7 @@ int32_t SecCompManager::UnregisterSecurityComponent(int32_t scId, const SecCompC
         SC_LOG_ERROR(LABEL, "ScId is invalid");
         return SC_SERVICE_ERROR_VALUE_INVALID;
     }
-    int32_t res = DeleteSecurityComponentFromList(caller.pid, scId);
-    if (scValidCount_ <= 0) {
-        SecCompEnhanceAdapter::DisableInputEnhance();
-    }
-    return res;
+    return DeleteSecurityComponentFromList(caller.pid, scId);
 }
 
 int32_t SecCompManager::CheckClickSecurityComponentInfo(SecCompEntity* sc, int32_t scId,
@@ -408,7 +398,8 @@ int32_t SecCompManager::CheckClickSecurityComponentInfo(SecCompEntity* sc, int32
 }
 
 int32_t SecCompManager::ReportSecurityComponentClickEvent(int32_t scId,
-    const nlohmann::json& jsonComponent, const SecCompCallerInfo& caller, const SecCompClickEvent& touchInfo)
+    const nlohmann::json& jsonComponent, const SecCompCallerInfo& caller,
+    const SecCompClickEvent& touchInfo, sptr<IRemoteObject> callerToken)
 {
     if (IsInMaliciousAppList(caller.pid)) {
         SC_LOG_ERROR(LABEL, "app is in MaliciousAppList, never allow it");
@@ -421,6 +412,7 @@ int32_t SecCompManager::ReportSecurityComponentClickEvent(int32_t scId,
         SC_LOG_ERROR(LABEL, "Can not find target component");
         return SC_SERVICE_ERROR_COMPONENT_NOT_EXIST;
     }
+
     int32_t res = CheckClickSecurityComponentInfo(sc, scId, jsonComponent, caller);
     if (res != SC_OK) {
         return res;
@@ -443,6 +435,7 @@ int32_t SecCompManager::ReportSecurityComponentClickEvent(int32_t scId,
     HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "TEMP_GRANT_SUCCESS",
         HiviewDFX::HiSysEvent::EventType::BEHAVIOR, "CALLER_UID", IPCSkeleton::GetCallingUid(),
         "CALLER_PID", IPCSkeleton::GetCallingPid(), "SC_ID", scId, "SC_TYPE", sc->GetType());
+    firstUseDialog_.NotifyFirstUseDialog(caller.tokenId, sc->GetType(), callerToken);
     return res;
 }
 
@@ -454,11 +447,12 @@ bool SecCompManager::ReduceAfterVerifySavePermission(AccessToken::AccessTokenID 
     return false;
 }
 
-void SecCompManager::DumpSecComp(std::string& dumpStr) const
+void SecCompManager::DumpSecComp(std::string& dumpStr)
 {
+    OHOS::Utils::UniqueReadGuard<OHOS::Utils::RWLock> lk(this->componentInfoLock_);
     for (auto iter = componentMap_.begin(); iter != componentMap_.end(); ++iter) {
         dumpStr.append("pid:" + std::to_string(iter->first) + "\n");
-        for (auto compIter = iter->second.begin(); compIter != iter->second.end(); compIter ++) {
+        for (auto compIter = iter->second.compList.begin(); compIter != iter->second.compList.end(); compIter ++) {
             nlohmann::json json;
             compIter->GetComponentInfo()->ToJson(json);
             dumpStr.append("    scId:" + std::to_string(compIter->GetScId()) +
@@ -480,6 +474,7 @@ bool SecCompManager::Initialize()
 
     secHandler_ = std::make_shared<SecEventHandler>(secRunner_);
     DelayExitTask::GetInstance().Init(secHandler_);
+    firstUseDialog_.Init(secHandler_);
 
     return SecCompPermManager::GetInstance().InitEventHandler(secHandler_);
 }

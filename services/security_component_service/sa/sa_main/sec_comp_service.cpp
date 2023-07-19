@@ -16,6 +16,7 @@
 #include "sec_comp_service.h"
 
 #include <unistd.h>
+
 #include "hisysevent.h"
 #include "hitrace_meter.h"
 #include "ipc_skeleton.h"
@@ -207,7 +208,7 @@ int32_t SecCompService::UnregisterSecurityComponent(int32_t scId)
 }
 
 int32_t SecCompService::ReportSecurityComponentClickEvent(int32_t scId,
-    const std::string& componentInfo, const SecCompClickEvent& touchInfo)
+    const std::string& componentInfo, const SecCompClickEvent& touchInfo, sptr<IRemoteObject> callerToken)
 {
     StartTrace(HITRACE_TAG_ACCESS_CONTROL, "SecurityComponentClick");
     SecCompCallerInfo caller;
@@ -223,7 +224,8 @@ int32_t SecCompService::ReportSecurityComponentClickEvent(int32_t scId,
         FinishTrace(HITRACE_TAG_ACCESS_CONTROL);
         return SC_SERVICE_ERROR_VALUE_INVALID;
     }
-    int32_t res = SecCompManager::GetInstance().ReportSecurityComponentClickEvent(scId, jsonRes, caller, touchInfo);
+    int32_t res =
+        SecCompManager::GetInstance().ReportSecurityComponentClickEvent(scId, jsonRes, caller, touchInfo, callerToken);
     FinishTrace(HITRACE_TAG_ACCESS_CONTROL);
     return res;
 }

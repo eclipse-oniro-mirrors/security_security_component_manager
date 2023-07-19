@@ -112,6 +112,6 @@ HWTEST_F(SecCompReportClickWithoutHmacTest, ReportClickWithoutHmac001, TestSize.
         .timestamp = static_cast<uint64_t>(std::chrono::high_resolution_clock::now().time_since_epoch().count())
     };
     EXPECT_EQ(SC_SERVICE_ERROR_CLICK_EVENT_INVALID,
-        SecCompKit::ReportSecurityComponentClickEvent(scId, locationInfo, touch));
+        SecCompKit::ReportSecurityComponentClickEvent(scId, locationInfo, touch, nullptr));
 }
 

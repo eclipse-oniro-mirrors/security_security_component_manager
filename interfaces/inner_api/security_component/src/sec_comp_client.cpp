@@ -83,7 +83,7 @@ int32_t SecCompClient::UnregisterSecurityComponent(int32_t scId)
 }
 
 int32_t SecCompClient::ReportSecurityComponentClickEvent(int32_t scId,
-    const std::string& componentInfo, const SecCompClickEvent& touchInfo)
+    const std::string& componentInfo, const SecCompClickEvent& touchInfo, sptr<IRemoteObject> callerToken)
 {
     auto proxy = GetProxy(true);
     if (proxy == nullptr) {
@@ -91,7 +91,7 @@ int32_t SecCompClient::ReportSecurityComponentClickEvent(int32_t scId,
         return SC_SERVICE_ERROR_VALUE_INVALID;
     }
 
-    return proxy->ReportSecurityComponentClickEvent(scId, componentInfo, touchInfo);
+    return proxy->ReportSecurityComponentClickEvent(scId, componentInfo, touchInfo, callerToken);
 }
 
 bool SecCompClient::ReduceAfterVerifySavePermission(AccessToken::AccessTokenID tokenId)

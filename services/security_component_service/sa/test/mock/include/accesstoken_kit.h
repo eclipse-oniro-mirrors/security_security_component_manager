@@ -21,6 +21,9 @@
 namespace OHOS {
 namespace Security {
 namespace AccessToken {
+struct HapTokenInfo {
+};
+
 class AccessTokenKit {
 public:
     static int RevokePermission(AccessTokenID tokenID, const std::string& permissionName, int flag)
@@ -29,6 +32,11 @@ public:
     };
 
     static int GrantPermission(AccessTokenID tokenID, const std::string& permissionName, int flag)
+    {
+        return 0;
+    };
+
+    static int GetHapTokenInfo(AccessTokenID tokenID, HapTokenInfo& hapTokenInfoRes)
     {
         return 0;
     };

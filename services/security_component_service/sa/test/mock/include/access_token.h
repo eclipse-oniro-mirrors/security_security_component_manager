@@ -19,6 +19,13 @@ namespace OHOS {
 namespace Security {
 namespace AccessToken {
 typedef unsigned int AccessTokenID;
+static const AccessTokenID INVALID_TOKENID = 0;
+
+enum AccessTokenKitRet {
+    RET_FAILED = -1,
+    RET_SUCCESS = 0,
+};
+
 typedef enum TypeATokenTypeEnum {
     TOKEN_INVALID = -1,
     TOKEN_HAP = 0,

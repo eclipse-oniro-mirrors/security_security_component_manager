@@ -300,7 +300,7 @@ HWTEST_F(SecCompServiceTest, ReportSecurityComponentClickEvent001, TestSize.Leve
         .extraInfo.data = data,
         .extraInfo.dataSize = 16,
     };
-    EXPECT_EQ(secCompService_->ReportSecurityComponentClickEvent(scId, BuildLocationComponentInfo(), touch),
+    EXPECT_EQ(secCompService_->ReportSecurityComponentClickEvent(scId, BuildLocationComponentInfo(), touch, nullptr),
         SC_ENHANCE_ERROR_IN_MALICIOUS_LIST);
     EXPECT_EQ(secCompService_->UnregisterSecurityComponent(scId), SC_SERVICE_ERROR_COMPONENT_NOT_EXIST);
     setuid(uid);
