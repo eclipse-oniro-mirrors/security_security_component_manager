@@ -38,7 +38,7 @@ public:
     FirstUseDialog() = default;
     ~FirstUseDialog() = default;
     void NotifyFirstUseDialog(AccessToken::AccessTokenID tokenId, SecCompType type, sptr<IRemoteObject> callerToken);
-    void Init(std::shared_ptr<SecEventHandler> secHandler_);
+    void Init(std::shared_ptr<SecEventHandler> secHandler);
 
 private:
     bool IsCfgDirExist(void);
