@@ -100,7 +100,7 @@ bool FirstUseDialog::ReadCfgContent(std::string& content)
     return true;
 }
 
-void FirstUseDialog::WriteCfgContent(std::string content)
+void FirstUseDialog::WriteCfgContent(const std::string content)
 {
     std::ofstream out(FIRST_USE_RECORD_JSON);
     if (!out.is_open()) {
