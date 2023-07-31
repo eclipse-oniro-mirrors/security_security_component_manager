@@ -45,7 +45,7 @@ private:
     bool IsCfgFileExist(void);
     bool IsCfgFileValid(void);
     bool ReadCfgContent(std::string& content);
-    void WriteCfgContent(const std::string content);
+    void WriteCfgContent(const std::string& content);
     bool ParseRecord(nlohmann::json& jsonRes,
         AccessToken::AccessTokenID& id, uint64_t& type);
     void ParseRecords(nlohmann::json& jsonRes);
