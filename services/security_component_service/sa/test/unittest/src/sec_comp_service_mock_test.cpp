@@ -40,9 +40,9 @@ static constexpr uint32_t HAP_TOKEN_ID = 537715419;
 static constexpr int32_t SA_ID = 3506;
 static constexpr double TEST_COORDINATE = 100.0;
 static constexpr double TEST_SIZE = 100.0;
-static constexpr uint32_t TEST_COLOR_YELLOW = 0x7fff00;
-static constexpr uint32_t TEST_COLOR_RED = 0xff0000;
-static constexpr uint32_t TEST_COLOR_BLUE = 0x0000ff;
+static constexpr uint32_t TEST_COLOR_YELLOW = 0xff7fff00;
+static constexpr uint32_t TEST_COLOR_RED = 0xffff0000;
+static constexpr uint32_t TEST_COLOR_BLUE = 0xff0000ff;
 static constexpr uint64_t TIME_CONVERSION_UNIT = 1000;
 static AccessTokenID g_selfTokenId = 0;
 
