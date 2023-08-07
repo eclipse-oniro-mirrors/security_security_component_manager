@@ -98,7 +98,8 @@
         }
       ],
       "test": [
-        "//base/security/security_component:security_component_build_module_test"
+        "//base/security/security_component:security_component_build_module_test",
+        "//base/security/security_component:security_component_build_fuzz_test"
       ]
     }
   }
