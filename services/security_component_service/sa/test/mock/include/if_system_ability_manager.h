@@ -21,6 +21,13 @@
 
 namespace OHOS {
 class MockIRemoteObject : public virtual RefBase {
+public:
+    bool AddDeathRecipient(const sptr<IPCObjectProxy::DeathRecipient>& recipient)
+    {
+        (void)recipient;
+        return addResult;
+    }
+    bool addResult = true;
 };
 
 template <typename INTERFACE> inline sptr<INTERFACE> iface_cast(const sptr<MockIRemoteObject> &object)

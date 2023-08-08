@@ -46,6 +46,7 @@ ohos_shared_library("security_component_service") {
   ]
 
   sources = [
+    "sa_main/app_mgr_death_recipient.cpp",
     "sa_main/app_state_observer.cpp",
     "sa_main/delay_exit_task.cpp",
     "sa_main/first_use_dialog.cpp",

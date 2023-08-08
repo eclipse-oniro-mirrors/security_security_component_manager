@@ -17,6 +17,7 @@
 
 #include <unistd.h>
 
+#include "app_mgr_death_recipient.h"
 #include "hisysevent.h"
 #include "hitrace_meter.h"
 #include "ipc_skeleton.h"
@@ -107,7 +108,8 @@ bool SecCompService::RegisterAppStateObserver()
         appStateObserver_ = nullptr;
         return false;
     }
-    iAppMgr_ = iface_cast<AppExecFwk::IAppMgr>(samgrClient->GetSystemAbility(APP_MGR_SERVICE_ID));
+    auto remoteObject = samgrClient->GetSystemAbility(APP_MGR_SERVICE_ID);
+    iAppMgr_ = iface_cast<AppExecFwk::IAppMgr>(remoteObject);
     if (iAppMgr_ == nullptr) {
         SC_LOG_ERROR(LABEL, "Failed to get ability manager service");
         appStateObserver_ = nullptr;
@@ -118,6 +120,17 @@ bool SecCompService::RegisterAppStateObserver()
         SC_LOG_ERROR(LABEL, "Failed to Register app state observer");
         iAppMgr_ = nullptr;
         appStateObserver_ = nullptr;
+        return false;
+    }
+
+    sptr<AppMgrDeathRecipient> appMgrDeathRecipient = new (std::nothrow) AppMgrDeathRecipient();
+    if (appMgrDeathRecipient == nullptr) {
+        SC_LOG_ERROR(LABEL, "Alloc appMgr death observer fail");
+        return false;
+    }
+
+    if (!remoteObject->AddDeathRecipient(appMgrDeathRecipient)) {
+        SC_LOG_ERROR(LABEL, "Add service death observer fail");
         return false;
     }
 

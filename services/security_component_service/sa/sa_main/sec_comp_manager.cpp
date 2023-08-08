@@ -218,6 +218,7 @@ void SecCompManager::NotifyProcessDied(int32_t pid)
     // notify enhance process died.
     SecCompEnhanceAdapter::NotifyProcessDied(pid);
 
+    RemoveAppFromMaliciousAppList(pid);
     OHOS::Utils::UniqueWriteGuard<OHOS::Utils::RWLock> lk(this->componentInfoLock_);
     auto iter = componentMap_.find(pid);
     if (iter == componentMap_.end()) {
@@ -235,7 +236,6 @@ void SecCompManager::NotifyProcessDied(int32_t pid)
         SecCompEnhanceAdapter::DisableInputEnhance();
     }
 
-    RemoveAppFromMaliciousAppList(pid);
     DelayExitTask::GetInstance().Start();
 }
 
@@ -259,6 +259,36 @@ void SecCompManager::ExitSaProcess()
     int32_t ret = systemAbilityMgr->UnloadSystemAbility(SA_ID_SECURITY_COMPONENT_SERVICE);
     if (ret != SC_OK) {
         SC_LOG_ERROR(LABEL, "Failed to UnloadSystemAbility service! errcode=%{public}d", ret);
+        return;
+    }
+    SC_LOG_INFO(LABEL, "UnloadSystemAbility successfully!");
+}
+
+void SecCompManager::ExitWhenAppMgrDied()
+{
+    OHOS::Utils::UniqueWriteGuard<OHOS::Utils::RWLock> lk(this->componentInfoLock_);
+    for (auto iter = componentMap_.begin(); iter != componentMap_.end(); ++iter) {
+        std::vector<SecCompEntity>& list = iter->second.compList;
+        for (auto it = list.begin(); it != list.end(); ++it) {
+            it->RevokeTempPermission();
+        }
+        list.clear();
+    }
+    componentMap_.clear();
+
+    // no need exit enhance service, only disable input enhance.
+    SecCompEnhanceAdapter::DisableInputEnhance();
+    isSaExit_ = true;
+
+    SC_LOG_INFO(LABEL, "app mgr died, start sa exit");
+    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (systemAbilityMgr == nullptr) {
+        SC_LOG_ERROR(LABEL, "failed to get SystemAbilityManager.");
+        return;
+    }
+    int32_t ret = systemAbilityMgr->UnloadSystemAbility(SA_ID_SECURITY_COMPONENT_SERVICE);
+    if (ret != SC_OK) {
+        SC_LOG_ERROR(LABEL, "failed to UnloadSystemAbility service! errcode=%{public}d", ret);
         return;
     }
     SC_LOG_INFO(LABEL, "UnloadSystemAbility successfully!");
