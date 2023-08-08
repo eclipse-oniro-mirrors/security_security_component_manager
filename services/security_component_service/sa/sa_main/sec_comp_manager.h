@@ -65,6 +65,7 @@ public:
     void DumpSecComp(std::string& dumpStr);
     bool Initialize();
     void ExitSaProcess();
+    void ExitWhenAppMgrDied();
 
 private:
     SecCompManager();

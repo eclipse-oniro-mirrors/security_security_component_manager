@@ -32,6 +32,7 @@ ohos_unittest("sec_comp_service_test") {
   ]
 
   sources = [
+    "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/app_mgr_death_recipient.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/app_state_observer.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/delay_exit_task.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/first_use_dialog.cpp",
@@ -94,6 +95,7 @@ ohos_unittest("sec_comp_service_mock_test") {
   ]
 
   sources = [
+    "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/app_mgr_death_recipient.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/app_state_observer.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/delay_exit_task.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/first_use_dialog.cpp",
