@@ -21,6 +21,11 @@
 namespace OHOS {
 namespace Security {
 namespace SecurityComponent {
+constexpr int32_t UNKNOWN_TEXT = -2;
+constexpr int32_t NO_TEXT = -1;
+constexpr int32_t UNKNOWN_ICON = -2;
+constexpr int32_t NO_ICON = -1;
+
 enum class SecCompBackground {
     UNKNOWN_BG = -2,
     NO_BG_TYPE = -1,
@@ -30,6 +35,44 @@ enum class SecCompBackground {
     MAX_BG_TYPE
 };
 
+class JsonTagConstants final {
+public:
+    static const std::string JSON_RECT;
+    static const std::string JSON_SC_TYPE;
+    static const std::string JSON_NODE_ID;
+    static const std::string JSON_RECT_X;
+    static const std::string JSON_RECT_Y;
+    static const std::string JSON_RECT_WIDTH;
+    static const std::string JSON_RECT_HEIGHT;
+    static const std::string JSON_WINDOW_RECT;
+
+    static const std::string JSON_SIZE_TAG;
+    static const std::string JSON_FONT_SIZE_TAG;
+    static const std::string JSON_ICON_SIZE_TAG;
+    static const std::string JSON_PADDING_SIZE_TAG;
+    static const std::string JSON_PADDING_LEFT_TAG;
+    static const std::string JSON_PADDING_TOP_TAG;
+    static const std::string JSON_PADDING_RIGHT_TAG;
+    static const std::string JSON_PADDING_BOTTOM_TAG;
+    static const std::string JSON_TEXT_ICON_PADDING_TAG;
+    static const std::string JSON_RECT_WIDTH_TAG;
+    static const std::string JSON_RECT_HEIGHT_TAG;
+    static const std::string JSON_COLORS_TAG;
+    static const std::string JSON_FONT_COLOR_TAG;
+    static const std::string JSON_ICON_COLOR_TAG;
+    static const std::string JSON_BG_COLOR_TAG;
+
+    static const std::string JSON_BORDER_TAG;
+    static const std::string JSON_BORDER_WIDTH_TAG;
+    static const std::string JSON_PARENT_TAG;
+    static const std::string JSON_PARENT_EFFECT_TAG;
+
+    static const std::string JSON_STYLE_TAG;
+    static const std::string JSON_TEXT_TAG;
+    static const std::string JSON_ICON_TAG;
+    static const std::string JSON_BG_TAG;
+};
+
 class SecCompBase {
 public:
     SecCompBase() = default;
@@ -37,7 +80,7 @@ public:
     bool FromJson(const nlohmann::json& jsonSrc);
     void ToJson(nlohmann::json& jsonRes) const;
     std::string ToJsonStr(void) const;
-    virtual bool CompareComponentBasicInfo(SecCompBase *other) const;
+    virtual bool CompareComponentBasicInfo(SecCompBase *other, bool isRectCheck) const;
     void SetValid(bool valid)
     {
         isValid_ = valid;
@@ -70,8 +113,8 @@ public:
     SecCompRect windowRect_;
     bool isValid_ = false;
 
-    int32_t text_ = UNKNOWN_TYPE;
-    int32_t icon_ = UNKNOWN_TYPE;
+    int32_t text_ = UNKNOWN_TEXT;
+    int32_t icon_ = UNKNOWN_ICON;
     SecCompBackground bg_ = SecCompBackground::UNKNOWN_BG;
 
     int32_t nodeId_ = 0;

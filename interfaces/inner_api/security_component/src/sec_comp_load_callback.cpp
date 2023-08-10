@@ -12,8 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 #include "sec_comp_load_callback.h"
+
 #include "i_sec_comp_service.h"
 #include "sec_comp_client.h"
 #include "sec_comp_log.h"

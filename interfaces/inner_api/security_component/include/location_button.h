@@ -24,13 +24,11 @@ namespace OHOS {
 namespace Security {
 namespace SecurityComponent {
 enum class LocationDesc : int32_t {
-    UNKNOWN_TEXT = -2,
-    NO_TEXT = -1,
-    CURRENT_LOCATION  = 0,
-    ADD_LOCATION = 4,
-    SELECT_LOCATION = 1,
-    SHARE_LOCATION = 2,
-    SEND_LOCATION = 3,
+    CURRENT_LOCATION = 0,
+    ADD_LOCATION = 1,
+    SELECT_LOCATION = 2,
+    SHARE_LOCATION = 3,
+    SEND_LOCATION = 4,
     LOCATING = 5,
     LOCATION = 6,
     SEND_CURRENT_LOCATION = 7,
@@ -41,8 +39,6 @@ enum class LocationDesc : int32_t {
 };
 
 enum class LocationIcon : int32_t {
-    UNKNOWN_ICON = -2,
-    NO_ICON = -1,
     FILLED_ICON = 0,
     LINE_ICON = 1,
     MAX_ICON_TYPE
@@ -51,7 +47,7 @@ enum class LocationIcon : int32_t {
 class LocationButton : public SecCompBase {
 public:
     virtual bool IsParamValid() override;
-    virtual bool CompareComponentBasicInfo(SecCompBase *other) const override;
+    virtual bool CompareComponentBasicInfo(SecCompBase *other, bool isRectCheck) const override;
 private:
     bool ParseStyle(const nlohmann::json& json, const std::string& tag);
 };

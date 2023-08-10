@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 #include "sec_comp_kit.h"
+
 #include "hisysevent.h"
 #include "ipc_skeleton.h"
 #include "sec_comp_caller_authorization.h"
@@ -47,10 +48,9 @@ int32_t SecCompKit::RegisterSecurityComponent(SecCompType type,
     int32_t res = SecCompClient::GetInstance().RegisterSecurityComponent(type, componentInfo, scId);
     if (res != SC_OK) {
         SC_LOG_ERROR(LABEL, "register security component fail, error: %{public}d", res);
-    } else {
-        SecCompEnhanceAdapter::RegisterScIdEnhance(scId);
+        return res;
     }
-
+    SecCompEnhanceAdapter::RegisterScIdEnhance(scId);
     HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "REGISTER_SUCCESS",
         HiviewDFX::HiSysEvent::EventType::BEHAVIOR, "CALLER_UID", IPCSkeleton::GetCallingUid(),
         "CALLER_PID", IPCSkeleton::GetCallingPid(), "SC_ID", scId, "SC_TYPE", type);
@@ -64,7 +64,7 @@ int32_t SecCompKit::UpdateSecurityComponent(int32_t scId, std::string& component
         SC_LOG_ERROR(LABEL, "update security component fail, caller invalid");
         HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "CALLER_CHECK_FAILED",
             HiviewDFX::HiSysEvent::EventType::SECURITY, "CALLER_UID", IPCSkeleton::GetCallingUid(),
-            "CALLER_PID", IPCSkeleton::GetCallingPid(), "CALL_SCENE", "CLICK");
+            "CALLER_PID", IPCSkeleton::GetCallingPid(), "CALL_SCENE", "UPDATE");
         return SC_SERVICE_ERROR_CALLER_INVALID;
     }
 
@@ -83,13 +83,14 @@ int32_t SecCompKit::UpdateSecurityComponent(int32_t scId, std::string& component
 int32_t SecCompKit::UnregisterSecurityComponent(int32_t scId)
 {
     int32_t res = SecCompClient::GetInstance().UnregisterSecurityComponent(scId);
+    SecCompEnhanceAdapter::UnregisterScIdEnhance(scId);
     if (res != SC_OK) {
         SC_LOG_ERROR(LABEL, "unregister security component fail, error: %{public}d", res);
+        return res;
     }
     HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "UNREGISTER_SUCCESS",
         HiviewDFX::HiSysEvent::EventType::BEHAVIOR, "CALLER_UID", IPCSkeleton::GetCallingUid(),
         "CALLER_PID", IPCSkeleton::GetCallingPid(), "SC_ID", scId);
-    SecCompEnhanceAdapter::UnregisterScIdEnhance(scId);
     return res;
 }
 

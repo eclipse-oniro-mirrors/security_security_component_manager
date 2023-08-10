@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 #ifndef SECURITY_COMPONENT_ENTITY_H
 #define SECURITY_COMPONENT_ENTITY_H
 
@@ -66,7 +65,7 @@ public:
         return componentInfo_;
     };
 
-    bool CompareComponentBasicInfo(SecCompBase* other) const;
+    bool CompareComponentBasicInfo(SecCompBase* other, bool isRectCheck) const;
     bool CheckTouchInfo(const SecCompClickEvent& touchInfo) const;
 
 private:

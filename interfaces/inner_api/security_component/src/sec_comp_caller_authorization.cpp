@@ -19,7 +19,6 @@
 namespace OHOS {
 namespace Security {
 namespace SecurityComponent {
-
 namespace {
 static constexpr int32_t MAX_FUNC_ASM_SIZE = 0x250;
 static constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {

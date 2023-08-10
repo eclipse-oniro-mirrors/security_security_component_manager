@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 #include "sec_comp_info_helper.h"
 
 #include "display.h"
@@ -33,8 +32,6 @@ namespace {
 constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {LOG_CORE, SECURITY_DOMAIN_SECURITY_COMPONENT, "SecCompInfoHelper"};
 static constexpr double MAX_RECT_PERCENT = 0.1F; // 10%
 static constexpr double ZERO_OFFSET = 0.0F;
-static constexpr int32_t NO_TEXT = -1;
-static constexpr int32_t NO_ICON = -1;
 static std::mutex g_renderLock;
 }
 
@@ -86,7 +83,7 @@ static bool GetScreenSize(double& width, double& height)
     return true;
 }
 
-static bool CheckRectValid(const SecCompRect& rect, const SecCompRect& windowRect)
+bool SecCompInfoHelper::CheckRectValid(const SecCompRect& rect, const SecCompRect& windowRect)
 {
     double curScreenWidth = 0.0F;
     double curScreenHeight = 0.0F;
@@ -123,7 +120,7 @@ static bool CheckRectValid(const SecCompRect& rect, const SecCompRect& windowRec
         SC_LOG_ERROR(LABEL, "rect area is too large");
         return false;
     }
-
+    SC_LOG_DEBUG(LABEL, "check component rect success.");
     return true;
 }
 
@@ -161,11 +158,6 @@ static bool CheckSecCompBaseButton(const SecCompBase* comp)
 
 static bool CheckSecCompBase(const SecCompBase* comp)
 {
-    if (!CheckRectValid(comp->rect_, comp->windowRect_)) {
-        SC_LOG_INFO(LABEL, "check component rect failed.");
-        return false;
-    }
-
     if (comp->parentEffect_) {
         SC_LOG_ERROR(LABEL, "parentEffect is active, security component invalid.");
         return false;
@@ -205,37 +197,6 @@ bool SecCompInfoHelper::CheckComponentValid(const SecCompBase* comp)
     return true;
 }
 
-int32_t SecCompInfoHelper::RevokeTempPermission(AccessToken::AccessTokenID tokenId,
-    const std::shared_ptr<SecCompBase>& componentInfo)
-{
-    if (componentInfo == nullptr) {
-        SC_LOG_ERROR(LABEL, "revoke component is null");
-        return SC_SERVICE_ERROR_PERMISSION_OPER_FAIL;
-    }
-
-    SecCompType type = componentInfo->type_;
-    switch (type) {
-        case LOCATION_COMPONENT:
-            {
-                int32_t locationRes = SecCompPermManager::GetInstance().RevokeLocationPermission(tokenId,
-                    "ohos.permission.LOCATION", AccessToken::PermissionFlag::PERMISSION_COMPONENT_SET);
-                int32_t approxLocationRes = SecCompPermManager::GetInstance().RevokeLocationPermission(tokenId,
-                    "ohos.permission.APPROXIMATELY_LOCATION", AccessToken::PermissionFlag::PERMISSION_COMPONENT_SET);
-                if ((locationRes != SC_OK) || (approxLocationRes != SC_OK)) {
-                    return SC_SERVICE_ERROR_PERMISSION_OPER_FAIL;
-                }
-                return SC_OK;
-            }
-        case PASTE_COMPONENT:
-            SC_LOG_DEBUG(LABEL, "revoke paste permission");
-            return SC_OK;
-        default:
-            SC_LOG_ERROR(LABEL, "revoke component type unknown");
-            break;
-    }
-    return SC_SERVICE_ERROR_PERMISSION_OPER_FAIL;
-}
-
 int32_t SecCompInfoHelper::GrantTempPermission(AccessToken::AccessTokenID tokenId,
     const std::shared_ptr<SecCompBase>& componentInfo)
 {
@@ -271,6 +232,37 @@ int32_t SecCompInfoHelper::GrantTempPermission(AccessToken::AccessTokenID tokenI
             return SecCompPermManager::GetInstance().GrantTempSavePermission(tokenId);
         default:
             SC_LOG_ERROR(LABEL, "Parse component type unknown");
+            break;
+    }
+    return SC_SERVICE_ERROR_PERMISSION_OPER_FAIL;
+}
+
+int32_t SecCompInfoHelper::RevokeTempPermission(AccessToken::AccessTokenID tokenId,
+    const std::shared_ptr<SecCompBase>& componentInfo)
+{
+    if (componentInfo == nullptr) {
+        SC_LOG_ERROR(LABEL, "revoke component is null");
+        return SC_SERVICE_ERROR_PERMISSION_OPER_FAIL;
+    }
+
+    SecCompType type = componentInfo->type_;
+    switch (type) {
+        case LOCATION_COMPONENT:
+            {
+                int32_t locationRes = SecCompPermManager::GetInstance().RevokeLocationPermission(tokenId,
+                    "ohos.permission.LOCATION", AccessToken::PermissionFlag::PERMISSION_COMPONENT_SET);
+                int32_t approxLocationRes = SecCompPermManager::GetInstance().RevokeLocationPermission(tokenId,
+                    "ohos.permission.APPROXIMATELY_LOCATION", AccessToken::PermissionFlag::PERMISSION_COMPONENT_SET);
+                if ((locationRes != SC_OK) || (approxLocationRes != SC_OK)) {
+                    return SC_SERVICE_ERROR_PERMISSION_OPER_FAIL;
+                }
+                return SC_OK;
+            }
+        case PASTE_COMPONENT:
+            SC_LOG_DEBUG(LABEL, "revoke paste permission");
+            return SC_OK;
+        default:
+            SC_LOG_ERROR(LABEL, "revoke component type unknown");
             break;
     }
     return SC_SERVICE_ERROR_PERMISSION_OPER_FAIL;

@@ -12,39 +12,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 #include "paste_button.h"
+
 #include <tuple>
-#include "sec_comp_err.h"
 #include "sec_comp_log.h"
-#include "sec_comp_tool.h"
 
 namespace OHOS {
 namespace Security {
 namespace SecurityComponent {
 namespace {
 constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {LOG_CORE, SECURITY_DOMAIN_SECURITY_COMPONENT, "PasteButton"};
-static const std::string JSON_STYLE_TAG = "style";
-static const std::string JSON_TEXT_TAG = "text";
-static const std::string JSON_ICON_TAG = "icon";
-static const std::string JSON_BG_TAG = "bg";
 }
 
 bool PasteButton::IsParamValid()
 {
-    if ((static_cast<PasteDesc>(text_) <= PasteDesc::UNKNOWN_TEXT) ||
-        (static_cast<PasteDesc>(text_) >= PasteDesc::MAX_LABEL_TYPE) ||
-        (static_cast<PasteIcon>(icon_) <= PasteIcon::UNKNOWN_ICON) ||
-        (static_cast<PasteIcon>(icon_) >= PasteIcon::MAX_ICON_TYPE)) {
+    if ((text_ <= UNKNOWN_TEXT) || (static_cast<PasteDesc>(text_) >= PasteDesc::MAX_LABEL_TYPE) ||
+        (icon_ <= UNKNOWN_ICON) || (static_cast<PasteIcon>(icon_) >= PasteIcon::MAX_ICON_TYPE)) {
         return false;
     }
 
     return true;
 }
 
-bool PasteButton::CompareComponentBasicInfo(SecCompBase *other) const
+bool PasteButton::CompareComponentBasicInfo(SecCompBase *other, bool isRectCheck) const
 {
-    if (!SecCompBase::CompareComponentBasicInfo(other)) {
+    if (!SecCompBase::CompareComponentBasicInfo(other, isRectCheck)) {
         SC_LOG_ERROR(LABEL, "SecComp base not equal.");
         return false;
     }

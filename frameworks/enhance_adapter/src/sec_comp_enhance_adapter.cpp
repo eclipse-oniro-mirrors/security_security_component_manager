@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 #include "sec_comp_enhance_adapter.h"
+
 #include <dlfcn.h>
 #include "sec_comp_err.h"
 #include "sec_comp_log.h"

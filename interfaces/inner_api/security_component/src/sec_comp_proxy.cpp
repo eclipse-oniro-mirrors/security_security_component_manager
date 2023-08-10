@@ -12,9 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 #include "sec_comp_proxy.h"
-#include "parcel.h"
+
 #include "sec_comp_click_event_parcel.h"
 #include "sec_comp_err.h"
 #include "sec_comp_log.h"

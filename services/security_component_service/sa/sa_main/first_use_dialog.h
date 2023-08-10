@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 #ifndef FIRST_USE_DIALOG_H
 #define FIRST_USE_DIALOG_H
 

@@ -110,4 +110,3 @@ HWTEST_F(SecCompRegisterWithoutCallbackTest, RegisterWithoutCallback002, TestSiz
         SecCompKit::RegisterSecurityComponent(LOCATION_COMPONENT, locationInfo, scId));
     ASSERT_EQ(-1, scId);
 }
-

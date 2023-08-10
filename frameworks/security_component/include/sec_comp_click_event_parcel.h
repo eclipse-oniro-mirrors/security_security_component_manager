@@ -12,8 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef SECURITY_COMPONENT_TOUCH_INFO_PARCEL_H
-#define SECURITY_COMPONENT_TOUCH_INFO_PARCEL_H
+#ifndef SECURITY_COMPONENT_CLICK_INFO_PARCEL_H
+#define SECURITY_COMPONENT_CLICK_INFO_PARCEL_H
+
 #include "parcel.h"
 #include "sec_comp_info.h"
 
@@ -34,4 +35,4 @@ struct SecCompClickEventParcel final : public Parcelable {
 }  // namespace SecurityComponent
 }  // namespace Security
 }  // namespace OHOS
-#endif  // SECURITY_COMPONENT_TOUCH_INFO_PARCEL_H
+#endif  // SECURITY_COMPONENT_CLICK_INFO_PARCEL_H

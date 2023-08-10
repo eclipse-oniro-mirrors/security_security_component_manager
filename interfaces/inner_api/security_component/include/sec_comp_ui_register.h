@@ -15,8 +15,6 @@
 #ifndef INTERFACES_INNER_API_SECURITY_COMPONENT_UI_REGISTER_H
 #define INTERFACES_INNER_API_SECURITY_COMPONENT_UI_REGISTER_H
 
-#include <vector>
-#include <unistd.h>
 #include "i_sec_comp_probe.h"
 
 namespace OHOS {

@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 #include "sec_comp_ui_register.h"
+
 #include "sec_comp_caller_authorization.h"
 #include "sec_comp_log.h"
 

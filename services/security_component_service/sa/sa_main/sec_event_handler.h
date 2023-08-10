@@ -12,12 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 #ifndef SEC_EVENT_HANDLER_H
 #define SEC_EVENT_HANDLER_H
 
 #include <memory>
-
 #include "event_handler.h"
 #include "event_runner.h"
 

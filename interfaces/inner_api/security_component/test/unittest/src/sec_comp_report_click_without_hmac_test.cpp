@@ -114,4 +114,3 @@ HWTEST_F(SecCompReportClickWithoutHmacTest, ReportClickWithoutHmac001, TestSize.
     EXPECT_EQ(SC_SERVICE_ERROR_CLICK_EVENT_INVALID,
         SecCompKit::ReportSecurityComponentClickEvent(scId, locationInfo, touch, nullptr));
 }
-

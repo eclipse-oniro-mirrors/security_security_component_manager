@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 #include "delay_exit_task.h"
 
 #include "sec_comp_log.h"
@@ -29,7 +28,6 @@ static const int32_t DELAY_EXIT_MILLISECONDS = 30 * 1000; // 30s
 
 DelayExitTask::DelayExitTask()
 {
-    SC_LOG_INFO(LABEL, "DelayExitTask()");
 }
 
 DelayExitTask& DelayExitTask::GetInstance()
@@ -65,7 +63,7 @@ void DelayExitTask::Stop()
         return;
     }
 
-    SC_LOG_INFO(LABEL, "Delay exit service stop");
+    SC_LOG_INFO(LABEL, "service delay exit handler stop");
     secHandler_->ProxyRemoveTask(DELAY_EXIT_TASK);
 }
 }  // namespace SecurityComponent

@@ -14,10 +14,10 @@
  */
 #ifndef SECURITY_COMPONENT_ENHANCE_ADAPTER_H
 #define SECURITY_COMPONENT_ENHANCE_ADAPTER_H
+
 #include <mutex>
 #include "iremote_object.h"
 #include "nlohmann/json.hpp"
-#include "parcel.h"
 #include "sec_comp_base.h"
 #include "sec_comp_info.h"
 
@@ -30,57 +30,80 @@ enum EnhanceInterfaceType {
     SEC_COMP_ENHANCE_CLIENT_INTERFACE = 2,
 };
 
-class SecCompEnhanceCfgBase {
-};
-
+// for multimodalinput to add enhance data to PointerEvent
 class SecCompInputEnhanceInterface {
 public:
+    // for multimodalinput to set enhance cfg which is from security component enhance service
     virtual int32_t SetEnhanceCfg(uint8_t* cfg, uint32_t cfgLen) = 0;
+
+    // for multimodalinput to get enhance data
     virtual int32_t GetPointerEventEnhanceData(void* data, uint32_t dataLen,
         uint8_t* enhanceData, uint32_t& enHancedataLen) = 0;
 };
 
+// for security component service to send command to enhance service
 class SecCompSrvEnhanceInterface {
  public:
+    // enable input enhance, then enhance service send config to multimodalinput
     virtual int32_t EnableInputEnhance() = 0;
+
+    // disable input enhance
     virtual int32_t DisableInputEnhance() = 0;
+
+    // send click event to enhance service for checking extra data validity
     virtual int32_t CheckExtraInfo(const SecCompClickEvent& touchInfo) = 0;
+
+    // send component info to enhance service for checking its validity
     virtual int32_t CheckComponentInfoEnhnace(int32_t pid, std::shared_ptr<SecCompBase>& compInfo,
         const nlohmann::json& jsonComponent) = 0;
+
+    // get RemoteObject of enhance service to connect it
     virtual sptr<IRemoteObject> GetEnhanceRemoteObject() = 0;
+
+    // start enhance service
     virtual void StartEnhanceService() = 0;
+
+    // exit enhance service
     virtual void ExitEnhanceService() = 0;
+
+    // notify process died
     virtual void NotifyProcessDied(int32_t pid) = 0;
 };
 
+// for client
 class SecCompClientEnhanceInterface {
 public:
+    // preprocess component info which is send to security component service, e.g. RegisterSecurityComponent
     virtual bool EnhanceDataPreprocess(const uintptr_t caller, std::string& componentInfo) = 0;
     virtual bool EnhanceDataPreprocess(const uintptr_t caller, int32_t scId, std::string& componentInfo) = 0;
+
+    // regiter scid to enhance client
     virtual void RegisterScIdEnhance(const uintptr_t caller, int32_t scId) = 0;
+    // unregiter scid to enhance client
     virtual void UnregisterScIdEnhance(const uintptr_t caller, int32_t scId) = 0;
 };
 
-struct SecCompEnhanceAdapter {
+class SecCompEnhanceAdapter final {
+public:
     static void InitEnhanceHandler(EnhanceInterfaceType type);
     static int32_t SetEnhanceCfg(uint8_t* cfg, uint32_t cfgLen);
     static int32_t GetPointerEventEnhanceData(void* data, uint32_t dataLen,
         uint8_t* enhanceData, uint32_t& enHancedataLen);
+
     static int32_t CheckExtraInfo(const SecCompClickEvent& touchInfo);
     static int32_t EnableInputEnhance();
     static int32_t DisableInputEnhance();
-
     static int32_t CheckComponentInfoEnhnace(int32_t pid, std::shared_ptr<SecCompBase>& compInfo,
         const nlohmann::json& jsonComponent);
     static sptr<IRemoteObject> GetEnhanceRemoteObject();
+    static void StartEnhanceService();
+    static void ExistEnhanceService();
+    static void NotifyProcessDied(int32_t pid);
+
     static bool EnhanceDataPreprocess(std::string& componentInfo);
     static bool EnhanceDataPreprocess(int32_t scId, std::string& componentInfo);
     static void RegisterScIdEnhance(int32_t scId);
     static void UnregisterScIdEnhance(int32_t scId);
-
-    static void StartEnhanceService();
-    static void ExistEnhanceService();
-    static void NotifyProcessDied(int32_t pid);
 
     static SecCompInputEnhanceInterface* inputHandler;
     static bool isEnhanceInputHandlerInit;

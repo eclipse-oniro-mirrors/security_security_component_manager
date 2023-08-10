@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 #include "sec_comp_client.h"
+
 #include "iservice_registry.h"
 #include "sec_comp_load_callback.h"
 #include "sec_comp_log.h"
@@ -109,7 +110,6 @@ sptr<IRemoteObject> SecCompClient::GetEnhanceRemoteObject(bool doLoadSa)
 {
     auto proxy = GetProxy(doLoadSa);
     if (proxy == nullptr) {
-        SC_LOG_INFO(LABEL, "Proxy is null");
         return nullptr;
     }
 
@@ -140,7 +140,7 @@ bool SecCompClient::StartLoadSecCompSa()
         SC_LOG_ERROR(LABEL, "LoadSystemAbility %{public}d failed", SA_ID_SECURITY_COMPONENT_SERVICE);
         return false;
     }
-    SC_LOG_INFO(LABEL, "Notify samgr load sa %{public}d success", SA_ID_SECURITY_COMPONENT_SERVICE);
+    SC_LOG_INFO(LABEL, "Notify samgr load sa %{public}d, waiting for service start", SA_ID_SECURITY_COMPONENT_SERVICE);
     return true;
 }
 
@@ -154,7 +154,7 @@ bool SecCompClient::TryToGetSecCompSa()
 
     auto secCompSa = sam->CheckSystemAbility(SA_ID_SECURITY_COMPONENT_SERVICE);
     if (secCompSa == nullptr) {
-        SC_LOG_INFO(LABEL, "Get secComp sa return null");
+        SC_LOG_INFO(LABEL, "Service is not start.");
         return false;
     }
     GetProxyFromRemoteObject(secCompSa);
@@ -176,10 +176,7 @@ void SecCompClient::WaitForSecCompSa()
 
 void SecCompClient::FinishStartSASuccess(const sptr<IRemoteObject>& remoteObject)
 {
-    SC_LOG_INFO(LABEL, "Get security component sa success.");
-
     GetProxyFromRemoteObject(remoteObject);
-
     // get lock which wait_for release and send a notice so that wait_for can out of block
     std::unique_lock<std::mutex> lock(cvLock_);
     readyFlag_ = true;
@@ -189,7 +186,6 @@ void SecCompClient::FinishStartSASuccess(const sptr<IRemoteObject>& remoteObject
 void SecCompClient::FinishStartSAFail()
 {
     SC_LOG_ERROR(LABEL, "get security component sa failed.");
-
     // get lock which wait_for release and send a notice
     std::unique_lock<std::mutex> lock(cvLock_);
     readyFlag_ = true;
