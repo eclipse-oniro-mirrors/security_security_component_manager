@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 #include "sec_comp_perm_manager.h"
 
 #include "location_button.h"

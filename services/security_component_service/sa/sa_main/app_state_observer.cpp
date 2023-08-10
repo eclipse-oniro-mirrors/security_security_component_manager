@@ -12,8 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 #include "app_state_observer.h"
+
 #include "sec_comp_log.h"
 #include "sec_comp_manager.h"
 

@@ -22,18 +22,18 @@ namespace OHOS {
 namespace Security {
 namespace SecurityComponent {
 namespace {
-static constexpr double PI_CIRCLE = 3.1415926F;
-static constexpr double MIN_HSV_DISTANCE = 25.0F;
-static constexpr double MAX_RGB_VALUE = 255.0F;
+static constexpr double PI_CIRCLE = 3.1415926;
+static constexpr double MIN_HSV_DISTANCE = 25.0;
+static constexpr double MAX_RGB_VALUE = 255.0;
 static constexpr uint8_t MAX_TRANSPARENT = 0x99; // 60%
-static constexpr double ZERO_DOUBLE = 0.0F;
-static constexpr double THIRTY_ANGLE = 30.0F;
-static constexpr double SIXTY_ANGLE = 60.0F;
-static constexpr double ONE_HUNDRED_TWEENTY_ANGLE = 120.0F;
-static constexpr double ONE_HUNDRED_EIGHTY_ANGLE = 180.0F;
-static constexpr double TWO_HUNDREDS_FORTY_ANGLE = 240.0F;
-static constexpr double THREE_HUNDREDS_SIXTY_ANGLE = 360.0F;
-static constexpr double DEFAULT_R = 100.0F;
+static constexpr double ZERO_DOUBLE = 0.0;
+static constexpr double THIRTY_ANGLE = 30.0;
+static constexpr double SIXTY_ANGLE = 60.0;
+static constexpr double ONE_HUNDRED_TWEENTY_ANGLE = 120.0;
+static constexpr double ONE_HUNDRED_EIGHTY_ANGLE = 180.0;
+static constexpr double TWO_HUNDREDS_FORTY_ANGLE = 240.0;
+static constexpr double THREE_HUNDREDS_SIXTY_ANGLE = 360.0;
+static constexpr double DEFAULT_R = 100.0;
 
 constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {LOG_CORE, SECURITY_DOMAIN_SECURITY_COMPONENT, "SecCompTool"};
 }
@@ -60,9 +60,9 @@ static HsvColor RgbToHsv(uint8_t r, uint8_t g, uint8_t b)
     double red = static_cast<double>(r) / MAX_RGB_VALUE;
     double green = static_cast<double>(g) / MAX_RGB_VALUE;
     double blue = static_cast<double>(b) / MAX_RGB_VALUE;
-    float max = MaxValue(red, green, blue);
-    float min = MinValue(red, green, blue);
-    float delta = max - min;
+    double max = MaxValue(red, green, blue);
+    double min = MinValue(red, green, blue);
+    double delta = max - min;
     if (max == min) {
         hsv.h = ZERO_DOUBLE;
     } else if (max == red) {
@@ -127,13 +127,14 @@ bool IsColorSimilar(const SecCompColor& color1, const SecCompColor& color2)
     HsvColor hsv2 = RgbToHsv(color2.argb.red, color2.argb.green, color2.argb.blue);
 
     double distance = HsvDistance(hsv1, hsv2);
-    SC_LOG_INFO(LABEL, "Compare color %{public}x %{public}x distance %{public}f",
+    SC_LOG_DEBUG(LABEL, "Compare color %{public}x %{public}x distance %{public}f",
         color1.value, color2.value, distance);
     return (distance < MIN_HSV_DISTANCE);
 }
 
 bool IsColorTransparent(const SecCompColor& color)
 {
+    SC_LOG_DEBUG(LABEL, "Color %{public}x alpha %{public}x", color.value, color.argb.alpha);
     return color.argb.alpha < MAX_TRANSPARENT;
 }
 }  // namespace SecurityComponent

@@ -46,38 +46,6 @@ static constexpr uint32_t TEST_COLOR_BLUE = 0xff0000ff;
 static constexpr uint64_t TIME_CONVERSION_UNIT = 1000;
 static AccessTokenID g_selfTokenId = 0;
 
-static std::string BuildLocationComponentInfo()
-{
-    LocationButton button;
-    button.fontSize_ = TEST_SIZE;
-    button.iconSize_ = TEST_SIZE;
-    button.padding_.top = TEST_SIZE;
-    button.padding_.right = TEST_SIZE;
-    button.padding_.bottom = TEST_SIZE;
-    button.padding_.left = TEST_SIZE;
-    button.textIconSpace_ = TEST_SIZE;
-    button.fontColor_.value = TEST_COLOR_YELLOW;
-    button.iconColor_.value = TEST_COLOR_RED;
-    button.bgColor_.value = TEST_COLOR_BLUE;
-    button.borderWidth_ = TEST_SIZE;
-    button.type_ = LOCATION_COMPONENT;
-    button.rect_.x_ = TEST_COORDINATE;
-    button.rect_.y_ = TEST_COORDINATE;
-    button.rect_.width_ = TEST_COORDINATE;
-    button.rect_.height_ = TEST_COORDINATE;
-    button.windowRect_.x_ = TEST_COORDINATE;
-    button.windowRect_.y_ = TEST_COORDINATE;
-    button.windowRect_.width_ = TEST_COORDINATE;
-    button.windowRect_.height_ = TEST_COORDINATE;
-    button.text_ = static_cast<int32_t>(LocationDesc::SELECT_LOCATION);
-    button.icon_ = static_cast<int32_t>(LocationIcon::LINE_ICON);
-    button.bg_ = SecCompBackground::CIRCLE;
-
-    nlohmann::json jsonRes;
-    button.ToJson(jsonRes);
-    return jsonRes.dump();
-}
-
 static std::string BuildSaveComponentInfo()
 {
     SaveButton button;
@@ -150,7 +118,9 @@ HWTEST_F(SecCompServiceTest, RegisterSecurityComponent001, TestSize.Level1)
 {
     // get caller fail
     int32_t scId;
-    EXPECT_EQ(secCompService_->RegisterSecurityComponent(LOCATION_COMPONENT, "", scId),
+    secCompService_->state_ = ServiceRunningState::STATE_RUNNING;
+    secCompService_->Initialize();
+    EXPECT_EQ(secCompService_->RegisterSecurityComponent(SAVE_COMPONENT, "", scId),
         SC_SERVICE_ERROR_VALUE_INVALID);
 
     // parse component json fail
@@ -159,13 +129,13 @@ HWTEST_F(SecCompServiceTest, RegisterSecurityComponent001, TestSize.Level1)
         .uid = getuid()
     };
     secCompService_->appStateObserver_->AddProcessToForegroundSet(stateData);
-    EXPECT_EQ(secCompService_->RegisterSecurityComponent(LOCATION_COMPONENT, "{a=", scId),
+    EXPECT_EQ(secCompService_->RegisterSecurityComponent(SAVE_COMPONENT, "{a=", scId),
         SC_SERVICE_ERROR_VALUE_INVALID); // wrong json
 
     // register security component ok
-    EXPECT_EQ(secCompService_->RegisterSecurityComponent(LOCATION_COMPONENT, BuildLocationComponentInfo(), scId),
+    EXPECT_EQ(secCompService_->RegisterSecurityComponent(SAVE_COMPONENT, BuildSaveComponentInfo(), scId),
         SC_OK);
-    EXPECT_EQ(secCompService_->UpdateSecurityComponent(scId, BuildLocationComponentInfo()),
+    EXPECT_EQ(secCompService_->UpdateSecurityComponent(scId, BuildSaveComponentInfo()),
         SC_OK);
     struct SecCompClickEvent touch = {
         .touchX = 100,
@@ -174,8 +144,9 @@ HWTEST_F(SecCompServiceTest, RegisterSecurityComponent001, TestSize.Level1)
             std::chrono::high_resolution_clock::now().time_since_epoch().count()) / TIME_CONVERSION_UNIT
     };
 
-    EXPECT_EQ(secCompService_->ReportSecurityComponentClickEvent(scId, BuildLocationComponentInfo(), touch, nullptr),
+    EXPECT_EQ(secCompService_->ReportSecurityComponentClickEvent(scId, BuildSaveComponentInfo(), touch, nullptr),
         SC_OK);
+    sleep(5);
     EXPECT_EQ(secCompService_->UnregisterSecurityComponent(scId), SC_OK);
 }
 
@@ -205,7 +176,7 @@ HWTEST_F(SecCompServiceTest, RegisterSecurityComponent002, TestSize.Level1)
         .timestamp = static_cast<uint64_t>(
             std::chrono::high_resolution_clock::now().time_since_epoch().count())
     };
-    EXPECT_EQ(secCompService_->ReportSecurityComponentClickEvent(scId, BuildLocationComponentInfo(), touch, nullptr),
+    EXPECT_EQ(secCompService_->ReportSecurityComponentClickEvent(scId, BuildSaveComponentInfo(), touch, nullptr),
         SC_SERVICE_ERROR_CLICK_EVENT_INVALID);
     EXPECT_EQ(secCompService_->UnregisterSecurityComponent(scId), SC_OK);
 }
@@ -236,7 +207,7 @@ HWTEST_F(SecCompServiceTest, RegisterSecurityComponent003, TestSize.Level1)
         .timestamp = static_cast<uint64_t>(
             std::chrono::high_resolution_clock::now().time_since_epoch().count()) / TIME_CONVERSION_UNIT
     };
-    EXPECT_EQ(secCompService_->ReportSecurityComponentClickEvent(scId, BuildLocationComponentInfo(), touch, nullptr),
+    EXPECT_EQ(secCompService_->ReportSecurityComponentClickEvent(scId, BuildSaveComponentInfo(), touch, nullptr),
         SC_SERVICE_ERROR_PERMISSION_OPER_FAIL);
     EXPECT_EQ(secCompService_->UnregisterSecurityComponent(scId), SC_OK);
 }

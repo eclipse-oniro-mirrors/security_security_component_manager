@@ -43,6 +43,7 @@ public:
     static int32_t GrantTempPermission(AccessToken::AccessTokenID tokenId,
         const std::shared_ptr<SecCompBase>& componentInfo);
     static bool CheckComponentValid(const SecCompBase* comp);
+    static bool CheckRectValid(const SecCompRect& rect, const SecCompRect& windowRect);
 };
 }  // namespace SecurityComponent
 }  // namespace Security

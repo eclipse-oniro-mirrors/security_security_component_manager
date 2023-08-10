@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 #include "sec_comp_manager.h"
 
 #include "delay_exit_task.h"
@@ -38,7 +37,6 @@ static constexpr int32_t ROOT_UID = 0;
 SecCompManager::SecCompManager()
 {
     scIdStart_ = SC_ID_START;
-    SC_LOG_INFO(LABEL, "SecCompManager()");
 }
 
 SecCompManager& SecCompManager::GetInstance()
@@ -401,11 +399,12 @@ int32_t SecCompManager::UnregisterSecurityComponent(int32_t scId, const SecCompC
 }
 
 int32_t SecCompManager::CheckClickSecurityComponentInfo(SecCompEntity* sc, int32_t scId,
-    const nlohmann::json& jsonComponent,  const SecCompCallerInfo& caller)
+    const nlohmann::json& jsonComponent, const SecCompCallerInfo& caller)
 {
+    SC_LOG_DEBUG(LABEL, "PID: %{public}d, Check security component", caller.pid);
     SecCompBase* report = SecCompInfoHelper::ParseComponent(sc->GetType(), jsonComponent);
     std::shared_ptr<SecCompBase> reportComponentInfo(report);
-    if ((reportComponentInfo == nullptr) || !reportComponentInfo->GetValid()) {
+    if ((reportComponentInfo == nullptr) || (!reportComponentInfo->GetValid())) {
         SC_LOG_ERROR(LABEL, "report component info invalid");
         HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "COMPONENT_INFO_CHECK_FAILED",
             HiviewDFX::HiSysEvent::EventType::SECURITY, "CALLER_UID", IPCSkeleton::GetCallingUid(),
@@ -413,7 +412,14 @@ int32_t SecCompManager::CheckClickSecurityComponentInfo(SecCompEntity* sc, int32
             sc->GetType());
         return SC_SERVICE_ERROR_COMPONENT_INFO_INVALID;
     }
-
+    if ((!SecCompInfoHelper::CheckRectValid(reportComponentInfo->rect_, reportComponentInfo->windowRect_))) {
+        SC_LOG_ERROR(LABEL, "compare component info failed.");
+        HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "COMPONENT_INFO_CHECK_FAILED",
+            HiviewDFX::HiSysEvent::EventType::SECURITY, "CALLER_UID", IPCSkeleton::GetCallingUid(),
+            "CALLER_PID", IPCSkeleton::GetCallingPid(), "SC_ID", scId, "CALL_SCENE", "CLICK", "SC_TYPE",
+            sc->GetType());
+        return SC_SERVICE_ERROR_COMPONENT_INFO_INVALID;
+    }
     int32_t enhanceRes =
         SecCompEnhanceAdapter::CheckComponentInfoEnhnace(caller.pid, reportComponentInfo, jsonComponent);
     if (enhanceRes != SC_OK) {

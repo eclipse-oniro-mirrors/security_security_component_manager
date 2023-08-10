@@ -16,6 +16,7 @@
 #define FRAMEWORKS_COMMON_SECURITY_COMPONENT_ERR_H
 
 #include <inttypes.h>
+
 namespace OHOS {
 namespace Security {
 namespace SecurityComponent {

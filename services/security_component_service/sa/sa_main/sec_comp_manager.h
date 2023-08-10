@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 #ifndef SECURITY_COMPONENT_MANAGER_H
 #define SECURITY_COMPONENT_MANAGER_H
 
@@ -21,7 +20,6 @@
 #include <mutex>
 #include <string>
 #include <vector>
-
 #include "accesstoken_kit.h"
 #include "app_state_observer.h"
 #include "first_use_dialog.h"

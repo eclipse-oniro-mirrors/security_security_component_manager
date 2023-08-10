@@ -12,7 +12,6 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
-import("../../../security_component.gni")
 
 sec_comp_root_dir = "../../.."
 

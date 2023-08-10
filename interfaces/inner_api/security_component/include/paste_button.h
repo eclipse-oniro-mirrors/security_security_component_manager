@@ -23,15 +23,11 @@ namespace OHOS {
 namespace Security {
 namespace SecurityComponent {
 enum class PasteDesc : int32_t {
-    UNKNOWN_TEXT = -2,
-    NO_TEXT = -1,
     PASTE = 0,
     MAX_LABEL_TYPE
 };
 
 enum class PasteIcon : int32_t {
-    UNKNOWN_ICON = -2,
-    NO_ICON = -1,
     FILLED_ICON = 0,
     LINE_ICON = 1,
     MAX_ICON_TYPE
@@ -40,7 +36,7 @@ enum class PasteIcon : int32_t {
 class PasteButton : public SecCompBase {
 public:
     virtual bool IsParamValid() override;
-    virtual bool CompareComponentBasicInfo(SecCompBase *other) const override;
+    virtual bool CompareComponentBasicInfo(SecCompBase *other, bool isRectCheck) const override;
 private:
     bool ParseStyle(const nlohmann::json& json, const std::string& tag);
 };

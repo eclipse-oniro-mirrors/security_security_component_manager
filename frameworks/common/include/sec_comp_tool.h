@@ -15,7 +15,6 @@
 #ifndef SECURITY_COMPONENT_TOOL_H
 #define SECURITY_COMPONENT_TOOL_H
 
-#include <stdint.h>
 #include "sec_comp_info.h"
 
 namespace OHOS {

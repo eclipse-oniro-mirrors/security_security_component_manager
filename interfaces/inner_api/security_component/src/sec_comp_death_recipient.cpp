@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 #include "sec_comp_death_recipient.h"
+
 #include "sec_comp_client.h"
 
 namespace OHOS {

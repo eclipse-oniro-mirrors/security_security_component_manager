@@ -16,18 +16,19 @@
 #ifndef SECURITY_COMPONENT_INFO_H
 #define SECURITY_COMPONENT_INFO_H
 
+#include <cstdint>
+
 namespace OHOS {
 namespace Security {
 namespace SecurityComponent {
 static constexpr int32_t INVALID_SC_ID = -1;
 using DimensionT = double; // unit is vp
-static constexpr DimensionT DEFAULT_DIMENSION = 0.0f;
-static constexpr DimensionT MIN_FONT_SIZE = 12.0f;
-static constexpr DimensionT MIN_ICON_SIZE = 12.0f;
-static constexpr DimensionT MIN_PADDING_SIZE = 0.0f;
-static constexpr DimensionT MIN_PADDING_WITHOUT_BG = 4.0f;
+static constexpr DimensionT DEFAULT_DIMENSION = 0.0;
+static constexpr DimensionT MIN_FONT_SIZE = 12.0;
+static constexpr DimensionT MIN_ICON_SIZE = 12.0;
+static constexpr DimensionT MIN_PADDING_SIZE = 0.0;
+static constexpr DimensionT MIN_PADDING_WITHOUT_BG = 4.0;
 static constexpr uint32_t MAX_EXTRA_SIZE = 0x1000;
-static constexpr int32_t UNKNOWN_TYPE = -2;
 
 struct PaddingSize {
     DimensionT top = DEFAULT_DIMENSION;
@@ -56,27 +57,24 @@ union SecCompColor {
 
 inline bool IsComponentTypeValid(int32_t type)
 {
-    if (!(type > UNKNOWN_SC_TYPE) || !(type < MAX_SC_TYPE)) {
-        return false;
-    }
-    return true;
+    return (type > UNKNOWN_SC_TYPE && type < MAX_SC_TYPE);
 }
 
 inline bool GreatOrEqual(double left, double right)
 {
-    constexpr double epsilon = -0.001f;
+    constexpr double epsilon = -0.001;
     return (left - right) > epsilon;
 }
 
 inline bool GreatNotEqual(double left, double right)
 {
-    constexpr double epsilon = 0.001f;
+    constexpr double epsilon = 0.001;
     return (left - right) > epsilon;
 }
 
 inline bool IsEqual(double left, double right)
 {
-    constexpr double epsilon = 0.001f;
+    constexpr double epsilon = 0.001;
     if (left > right) {
         return (left - right) < epsilon;
     } else if (right > left) {
@@ -97,10 +95,16 @@ public:
             GreatOrEqual(y, y_) && GreatOrEqual((y_ + height_), y));
     };
 
-    DimensionT x_ = 0.0F;
-    DimensionT y_ = 0.0F;
-    DimensionT width_ = 0.0F;
-    DimensionT height_ = 0.0F;
+    bool operator==(const SecCompRect& other) const
+    {
+        return (IsEqual(x_, other.x_)) && (IsEqual(y_, other.y_)) &&
+            (IsEqual(width_, other.width_)) && (IsEqual(height_, other.height_));
+    }
+
+    DimensionT x_ = 0.0;
+    DimensionT y_ = 0.0;
+    DimensionT width_ = 0.0;
+    DimensionT height_ = 0.0;
 };
 
 struct ExtraInfo {

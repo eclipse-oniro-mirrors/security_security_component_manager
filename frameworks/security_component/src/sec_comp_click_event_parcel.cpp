@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 #include "sec_comp_click_event_parcel.h"
+
 #include "sec_comp_log.h"
 #include "securec.h"
 

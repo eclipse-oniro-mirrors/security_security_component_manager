@@ -12,7 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 #include "sec_comp_enhance_kit.h"
+
 #include "sec_comp_enhance_adapter.h"
 
 extern "C" void InitSecCompClientEnhance()

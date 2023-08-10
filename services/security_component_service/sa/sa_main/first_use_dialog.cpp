@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 #include "first_use_dialog.h"
 
 #include <fcntl.h>
@@ -20,7 +19,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-
 #include "ability_manager_client.h"
 #include "accesstoken_kit.h"
 #include "sec_comp_err.h"
@@ -158,7 +156,7 @@ void FirstUseDialog::ParseRecords(nlohmann::json& jsonRes)
 void FirstUseDialog::LoadFirstUseRecord(void)
 {
     if (!IsCfgFileValid()) {
-        SC_LOG_INFO(LABEL, "first use record is not valid.");
+        SC_LOG_INFO(LABEL, "first use record is invalid.");
         return;
     }
 

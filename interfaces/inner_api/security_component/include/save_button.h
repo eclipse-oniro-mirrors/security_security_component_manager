@@ -24,22 +24,18 @@ namespace OHOS {
 namespace Security {
 namespace SecurityComponent {
 enum class SaveDesc : int32_t {
-    UNKNOWN_TEXT = -2,
-    NO_TEXT = -1,
     DOWNLOAD = 0,
-    DOWNLOAD_FILE,
-    SAVE,
-    SAVE_IMAGE,
-    SAVE_FILE,
-    DOWNLOAD_AND_SHARE,
-    RECEIVE,
-    CONTINUE_TO_RECEIVE,
+    DOWNLOAD_FILE = 1,
+    SAVE = 2,
+    SAVE_IMAGE = 3,
+    SAVE_FILE = 4,
+    DOWNLOAD_AND_SHARE = 5,
+    RECEIVE = 6,
+    CONTINUE_TO_RECEIVE = 7,
     MAX_LABEL_TYPE
 };
 
 enum class SaveIcon : int32_t {
-    UNKNOWN_ICON = -2,
-    NO_ICON = -1,
     FILLED_ICON = 0,
     LINE_ICON = 1,
     MAX_ICON_TYPE
@@ -48,7 +44,7 @@ enum class SaveIcon : int32_t {
 class SaveButton : public SecCompBase {
 public:
     virtual bool IsParamValid() override;
-    virtual bool CompareComponentBasicInfo(SecCompBase *other) const override;
+    virtual bool CompareComponentBasicInfo(SecCompBase *other, bool isRectCheck) const override;
 private:
     bool ParseStyle(const nlohmann::json& json, const std::string& tag);
 };

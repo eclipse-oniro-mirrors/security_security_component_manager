@@ -40,9 +40,6 @@ static constexpr int32_t TEST_PID_1 = 1;
 static constexpr int32_t TEST_PID_2 = 2;
 static constexpr int32_t TEST_PID_3 = 3;
 
-static constexpr int32_t UNKNOWN_TEXT = -2;
-static constexpr int32_t UNKNOWN_ICON = -2;
-
 static constexpr AccessTokenID TEST_TOKEN_ID = 1;
 static constexpr int32_t TEST_SC_ID_1 = 1;
 static constexpr int32_t TEST_SC_ID_2 = 2;

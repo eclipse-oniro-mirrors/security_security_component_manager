@@ -12,13 +12,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 #ifndef SECURITY_COMPONENT_PERMISSION_MANAGER_H
 #define SECURITY_COMPONENT_PERMISSION_MANAGER_H
 
 #include <map>
 #include <deque>
-
 #include "accesstoken_kit.h"
 #include "rwlock.h"
 #include "sec_comp_base.h"

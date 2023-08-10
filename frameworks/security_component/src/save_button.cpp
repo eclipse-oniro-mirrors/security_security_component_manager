@@ -12,39 +12,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 #include "save_button.h"
+
 #include <tuple>
-#include "sec_comp_err.h"
 #include "sec_comp_log.h"
-#include "sec_comp_tool.h"
 
 namespace OHOS {
 namespace Security {
 namespace SecurityComponent {
 namespace {
 constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {LOG_CORE, SECURITY_DOMAIN_SECURITY_COMPONENT, "SaveButton"};
-static const std::string JSON_STYLE_TAG = "style";
-static const std::string JSON_TEXT_TAG = "text";
-static const std::string JSON_ICON_TAG = "icon";
-static const std::string JSON_BG_TAG = "bg";
 }
 
 bool SaveButton::IsParamValid()
 {
-    if ((static_cast<SaveDesc>(text_) <= SaveDesc::UNKNOWN_TEXT) ||
-        (static_cast<SaveDesc>(text_) >= SaveDesc::MAX_LABEL_TYPE) ||
-        (static_cast<SaveIcon>(icon_) <= SaveIcon::UNKNOWN_ICON) ||
-        (static_cast<SaveIcon>(icon_) >= SaveIcon::MAX_ICON_TYPE)) {
+    if ((text_ <= UNKNOWN_TEXT) || (static_cast<SaveDesc>(text_) >= SaveDesc::MAX_LABEL_TYPE) ||
+        (icon_ <= UNKNOWN_ICON) || (static_cast<SaveIcon>(icon_) >= SaveIcon::MAX_ICON_TYPE)) {
         return false;
     }
 
     return true;
 }
 
-bool SaveButton::CompareComponentBasicInfo(SecCompBase *other) const
+bool SaveButton::CompareComponentBasicInfo(SecCompBase *other, bool isRectCheck) const
 {
-    if (!SecCompBase::CompareComponentBasicInfo(other)) {
+    if (!SecCompBase::CompareComponentBasicInfo(other, isRectCheck)) {
         SC_LOG_ERROR(LABEL, "SecComp base not equal.");
         return false;
     }

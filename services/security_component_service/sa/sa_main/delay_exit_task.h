@@ -12,12 +12,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 #ifndef SECURITY_COMPONENT_DELAY_EXIT_TASK_H
 #define SECURITY_COMPONENT_DELAY_EXIT_TASK_H
+
 #include <memory>
 #include <string>
-
 #include "nocopyable.h"
 #include "sec_event_handler.h"
 

@@ -83,7 +83,7 @@ ohos_shared_library("libsecurity_component_enhance_adapter") {
   external_deps = [
     "c_utils:utils",
     "hilog:libhilog",
-    "ipc:ipc_core",
+    "ipc:ipc_single",
   ]
 
   cflags_cc = [ "-DHILOG_ENABLE" ]

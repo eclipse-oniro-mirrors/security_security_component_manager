@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 #include "sec_comp_entity.h"
+
 #include <chrono>
 #include "hisysevent.h"
 #include "ipc_skeleton.h"
@@ -46,9 +47,9 @@ int32_t SecCompEntity::GrantTempPermission()
     return SecCompInfoHelper::GrantTempPermission(tokenId_, componentInfo_);
 }
 
-bool SecCompEntity::CompareComponentBasicInfo(SecCompBase* other) const
+bool SecCompEntity::CompareComponentBasicInfo(SecCompBase* other, bool isRectCheck) const
 {
-    return componentInfo_->CompareComponentBasicInfo(other);
+    return componentInfo_->CompareComponentBasicInfo(other, isRectCheck);
 }
 
 bool SecCompEntity::CheckTouchInfo(const SecCompClickEvent& touchInfo) const
@@ -66,7 +67,8 @@ bool SecCompEntity::CheckTouchInfo(const SecCompClickEvent& touchInfo) const
         return false;
     }
 
-    if (SecCompEnhanceAdapter::CheckExtraInfo(touchInfo) != SC_OK) {
+    int32_t res = SecCompEnhanceAdapter::CheckExtraInfo(touchInfo);
+    if ((res != SC_OK) && (res != SC_ENHANCE_ERROR_NOT_EXIST_ENHANCE)) {
         SC_LOG_ERROR(LABEL, "HMAC checkout failed"
             "touchX:%{public}f, touchY:%{public}f, timestamp:%{public}lu, dataSize:%{public}d",
             touchInfo.touchX, touchInfo.touchY, touchInfo.timestamp, touchInfo.extraInfo.dataSize);

@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 #include "sec_comp_service.h"
 
 #include <unistd.h>
@@ -41,12 +40,10 @@ REGISTER_SYSTEM_ABILITY_BY_ID(SecCompService, SA_ID_SECURITY_COMPONENT_SERVICE, 
 SecCompService::SecCompService(int32_t saId, bool runOnCreate)
     : SystemAbility(saId, runOnCreate), state_(ServiceRunningState::STATE_NOT_START)
 {
-    SC_LOG_INFO(LABEL, "SecCompService()");
 }
 
 SecCompService::~SecCompService()
 {
-    SC_LOG_INFO(LABEL, "~SecCompService()");
 }
 
 void SecCompService::OnStart()
