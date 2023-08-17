@@ -204,6 +204,11 @@ void SecCompManager::NotifyProcessBackground(int32_t pid)
         return;
     }
 
+    std::vector<SecCompEntity>& list = iter->second.compList;
+    for (auto it = list.begin(); it != list.end(); ++it) {
+        it->RevokeTempPermission();
+    }
+
     iter->second.isForeground = false;
     if (!IsForegroundCompExist()) {
         SecCompEnhanceAdapter::DisableInputEnhance();
