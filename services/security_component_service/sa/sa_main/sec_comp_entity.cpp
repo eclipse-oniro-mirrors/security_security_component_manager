@@ -69,7 +69,7 @@ bool SecCompEntity::CheckTouchInfo(const SecCompClickEvent& touchInfo) const
 
     int32_t res = SecCompEnhanceAdapter::CheckExtraInfo(touchInfo);
     if ((res != SC_OK) && (res != SC_ENHANCE_ERROR_NOT_EXIST_ENHANCE)) {
-        SC_LOG_ERROR(LABEL, "HMAC checkout failed"
+        SC_LOG_ERROR(LABEL, "HMAC checkout failed,"
             "touchX:%{public}f, touchY:%{public}f, timestamp:%{public}lu, dataSize:%{public}d",
             touchInfo.touchX, touchInfo.touchY, touchInfo.timestamp, touchInfo.extraInfo.dataSize);
         HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "CLICK_INFO_CHECK_FAILED",

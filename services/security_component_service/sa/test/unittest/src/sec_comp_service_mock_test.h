@@ -12,25 +12,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef SECURITY_COMPONENT_ENHANCE_ADAPTER_H
-#define SECURITY_COMPONENT_ENHANCE_ADAPTER_H
-#include <mutex>
-#include "parcel.h"
-#include "sec_comp_info.h"
+
+#ifndef SEC_COMP_SERVICE_TEST_H
+#define SEC_COMP_SERVICE_TEST_H
+
+#include <gtest/gtest.h>
+#define private public
+#include "sec_comp_service.h"
+#undef private
 
 namespace OHOS {
 namespace Security {
 namespace SecurityComponent {
-struct SecCompEnhanceAdapter {
-    static int32_t SetEnhanceCfg(uint8_t* cfg, uint32_t cfgLen);
-    static int32_t GetPointerEventEnhanceData(void* data, uint32_t dataLen,
-        uint8_t* enhanceData, uint32_t& enHancedataLen);
-    static int32_t CheckExtraInfo(const SecCompClickEvent& touchInfo);
+class SecCompServiceMockTest : public testing::Test {
+public:
+    static void SetUpTestCase();
 
-    static int32_t EnableInputEnhance();
-    static int32_t DisableInputEnhance();
+    static void TearDownTestCase();
+
+    void SetUp();
+
+    void TearDown();
+
+    sptr<SecCompService> secCompService_ = nullptr;
 };
 }  // namespace SecurityComponent
 }  // namespace Security
 }  // namespace OHOS
-#endif  // SECURITY_COMPONENT_ENHANCE_ADAPTER_H
+#endif  // SEC_COMP_SERVICE_TEST_H

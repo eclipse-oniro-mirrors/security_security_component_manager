@@ -14,14 +14,16 @@
  */
 
 #include "sec_comp_info_helper_test.h"
+
+#include "display.h"
+#include "display_info.h"
+#include "display_manager.h"
 #include "location_button.h"
 #include "paste_button.h"
 #include "save_button.h"
 #include "sec_comp_log.h"
 #include "sec_comp_err.h"
-#include "display.h"
-#include "display_info.h"
-#include "display_manager.h"
+#include "service_test_common.h"
 
 using namespace testing::ext;
 using namespace OHOS;
@@ -30,18 +32,6 @@ using namespace OHOS::Security::SecurityComponent;
 namespace {
 static constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {
     LOG_CORE, SECURITY_DOMAIN_SECURITY_COMPONENT, "SecCompInfoHelperTest"};
-
-static constexpr float TEST_SIZE = 100.0;
-static constexpr double TEST_DIMENSION = 100.0;
-static constexpr double TEST_INVALID_DIMENSION = -100.0;
-static constexpr uint32_t TEST_COLOR_YELLOW = 0xff7fff00;
-static constexpr uint32_t TEST_COLOR_RED = 0xffff0000;
-static constexpr uint32_t TEST_COLOR_BLUE = 0xff0000ff;
-static constexpr uint32_t TEST_COLOR_INVALID = 0x66000000;
-static constexpr uint32_t TEST_COLOR_BLACK = 0x00000000;
-static constexpr uint32_t TEST_COLOR_WHITE = 0xffffffff;
-static constexpr uint32_t QUARTER = 4;
-static constexpr double ZERO_OFFSET = 0.0F;
 static double g_curScreenWidth = 0.0F;
 static double g_curScreenHeight = 0.0F;
 static double g_testWidth = 0.0F;
@@ -63,55 +53,6 @@ static bool GetScreenSize()
     g_curScreenWidth = static_cast<double>(info->GetWidth());
     g_curScreenHeight = static_cast<double>(info->GetHeight());
     return true;
-}
-
-static void BuildLocationComponentInfo(nlohmann::json& jsonComponent)
-{
-    jsonComponent[JsonTagConstants::JSON_SC_TYPE] = LOCATION_COMPONENT;
-    jsonComponent[JsonTagConstants::JSON_NODE_ID] = 0;
-    jsonComponent[JsonTagConstants::JSON_RECT] =  nlohmann::json {
-        {JsonTagConstants::JSON_RECT_X, g_testWidth },
-        {JsonTagConstants::JSON_RECT_Y, g_testHeight },
-        {JsonTagConstants::JSON_RECT_WIDTH, g_testWidth },
-        {JsonTagConstants::JSON_RECT_HEIGHT, g_testHeight }
-    };
-    jsonComponent[JsonTagConstants::JSON_WINDOW_RECT] = nlohmann::json {
-        { JsonTagConstants::JSON_RECT_X, g_testWidth },
-        { JsonTagConstants::JSON_RECT_Y, g_testHeight },
-        { JsonTagConstants::JSON_RECT_WIDTH, g_testWidth },
-        { JsonTagConstants::JSON_RECT_HEIGHT, g_testHeight }
-    };
-    nlohmann::json jsonPadding = nlohmann::json {
-        { JsonTagConstants::JSON_PADDING_TOP_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_RIGHT_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_BOTTOM_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_LEFT_TAG, TEST_DIMENSION },
-    };
-
-    jsonComponent[JsonTagConstants::JSON_SIZE_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_FONT_SIZE_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_ICON_SIZE_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_PADDING_SIZE_TAG, jsonPadding },
-    };
-
-    jsonComponent[JsonTagConstants::JSON_COLORS_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_FONT_COLOR_TAG, TEST_COLOR_RED },
-        { JsonTagConstants::JSON_ICON_COLOR_TAG, TEST_COLOR_BLUE },
-        { JsonTagConstants::JSON_BG_COLOR_TAG, TEST_COLOR_YELLOW }
-    };
-
-    jsonComponent[JsonTagConstants::JSON_BORDER_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_BORDER_WIDTH_TAG, TEST_SIZE },
-    };
-    jsonComponent[JsonTagConstants::JSON_PARENT_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_PARENT_EFFECT_TAG, false },
-    };
-    jsonComponent[JsonTagConstants::JSON_STYLE_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_TEXT_TAG, LocationDesc::SELECT_LOCATION },
-        { JsonTagConstants::JSON_ICON_TAG, LocationIcon::LINE_ICON },
-        { JsonTagConstants::JSON_BG_TAG, SecCompBackground::CIRCLE },
-    };
 }
 }
 
@@ -142,9 +83,9 @@ void SecCompInfoHelperTest::TearDown()
 HWTEST_F(SecCompInfoHelperTest, ParseComponent001, TestSize.Level1)
 {
     nlohmann::json jsonComponent;
-    BuildLocationComponentInfo(jsonComponent);
+    ServiceTestCommon::BuildLocationComponentJson(jsonComponent);
     SecCompBase* comp = SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent);
-    ASSERT_NE(comp, nullptr);
+    ASSERT_NE(nullptr, comp);
     ASSERT_TRUE(comp->GetValid());
 }
 
@@ -157,11 +98,11 @@ HWTEST_F(SecCompInfoHelperTest, ParseComponent001, TestSize.Level1)
 HWTEST_F(SecCompInfoHelperTest, ParseComponent002, TestSize.Level1)
 {
     nlohmann::json jsonComponent;
-    ASSERT_EQ(SecCompInfoHelper::ParseComponent(UNKNOWN_SC_TYPE, jsonComponent), nullptr);
+    ASSERT_EQ(nullptr, SecCompInfoHelper::ParseComponent(UNKNOWN_SC_TYPE, jsonComponent));
 
-    ASSERT_EQ(SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent), nullptr);
-    ASSERT_EQ(SecCompInfoHelper::ParseComponent(PASTE_COMPONENT, jsonComponent), nullptr);
-    ASSERT_EQ(SecCompInfoHelper::ParseComponent(SAVE_COMPONENT, jsonComponent), nullptr);
+    ASSERT_EQ(nullptr, SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent));
+    ASSERT_EQ(nullptr, SecCompInfoHelper::ParseComponent(PASTE_COMPONENT, jsonComponent));
+    ASSERT_EQ(nullptr, SecCompInfoHelper::ParseComponent(SAVE_COMPONENT, jsonComponent));
 }
 
 /**
@@ -173,14 +114,14 @@ HWTEST_F(SecCompInfoHelperTest, ParseComponent002, TestSize.Level1)
 HWTEST_F(SecCompInfoHelperTest, ParseComponent003, TestSize.Level1)
 {
     nlohmann::json jsonComponent;
-    BuildLocationComponentInfo(jsonComponent);
+    ServiceTestCommon::BuildLocationComponentJson(jsonComponent);
 
     SecCompBase* comp = SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent);
     ASSERT_TRUE(comp->GetValid());
 
     jsonComponent[JsonTagConstants::JSON_SC_TYPE] = UNKNOWN_SC_TYPE;
     comp = SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent);
-    ASSERT_EQ(comp, nullptr);
+    ASSERT_EQ(nullptr, comp);
 }
 
 /**
@@ -268,7 +209,7 @@ HWTEST_F(SecCompInfoHelperTest, ParseComponent005, TestSize.Level1)
 HWTEST_F(SecCompInfoHelperTest, ParseComponent006, TestSize.Level1)
 {
     nlohmann::json jsonComponent;
-    BuildLocationComponentInfo(jsonComponent);
+    ServiceTestCommon::BuildLocationComponentJson(jsonComponent);
 
     SecCompBase* comp = SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent);
     ASSERT_TRUE(comp->GetValid());
@@ -289,7 +230,7 @@ HWTEST_F(SecCompInfoHelperTest, ParseComponent006, TestSize.Level1)
 HWTEST_F(SecCompInfoHelperTest, ParseComponent007, TestSize.Level1)
 {
     nlohmann::json jsonComponent;
-    BuildLocationComponentInfo(jsonComponent);
+    ServiceTestCommon::BuildLocationComponentJson(jsonComponent);
 
     SecCompBase* comp = SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent);
     ASSERT_TRUE(comp->GetValid());
@@ -352,7 +293,7 @@ HWTEST_F(SecCompInfoHelperTest, ParseComponent007, TestSize.Level1)
 HWTEST_F(SecCompInfoHelperTest, ParseComponent008, TestSize.Level1)
 {
     nlohmann::json jsonComponent;
-    BuildLocationComponentInfo(jsonComponent);
+    ServiceTestCommon::BuildLocationComponentJson(jsonComponent);
     SecCompBase* comp = SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent);
     ASSERT_TRUE(comp->GetValid());
 
@@ -398,7 +339,7 @@ HWTEST_F(SecCompInfoHelperTest, ParseComponent008, TestSize.Level1)
 HWTEST_F(SecCompInfoHelperTest, ParseComponent009, TestSize.Level1)
 {
     nlohmann::json jsonComponent;
-    BuildLocationComponentInfo(jsonComponent);
+    ServiceTestCommon::BuildLocationComponentJson(jsonComponent);
     SecCompBase* comp = SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent);
     ASSERT_TRUE(comp->GetValid());
 
@@ -444,7 +385,7 @@ HWTEST_F(SecCompInfoHelperTest, ParseComponent009, TestSize.Level1)
 HWTEST_F(SecCompInfoHelperTest, ParseComponent010, TestSize.Level1)
 {
     nlohmann::json jsonComponent;
-    BuildLocationComponentInfo(jsonComponent);
+    ServiceTestCommon::BuildLocationComponentJson(jsonComponent);
     SecCompBase* comp = SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent);
     ASSERT_TRUE(comp->GetValid());
 
@@ -482,7 +423,7 @@ HWTEST_F(SecCompInfoHelperTest, ParseComponent010, TestSize.Level1)
 HWTEST_F(SecCompInfoHelperTest, ParseComponent011, TestSize.Level1)
 {
     nlohmann::json jsonComponent;
-    BuildLocationComponentInfo(jsonComponent);
+    ServiceTestCommon::BuildLocationComponentJson(jsonComponent);
     SecCompBase* comp = SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent);
     ASSERT_TRUE(comp->GetValid());
 
@@ -504,7 +445,7 @@ HWTEST_F(SecCompInfoHelperTest, ParseComponent011, TestSize.Level1)
 HWTEST_F(SecCompInfoHelperTest, ParseComponent012, TestSize.Level1)
 {
     nlohmann::json jsonComponent;
-    BuildLocationComponentInfo(jsonComponent);
+    ServiceTestCommon::BuildLocationComponentJson(jsonComponent);
     SecCompBase* comp = SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent);
     ASSERT_TRUE(comp->GetValid());
 
@@ -557,7 +498,7 @@ HWTEST_F(SecCompInfoHelperTest, ParseComponent012, TestSize.Level1)
 HWTEST_F(SecCompInfoHelperTest, ParseComponent013, TestSize.Level1)
 {
     nlohmann::json jsonComponent;
-    BuildLocationComponentInfo(jsonComponent);
+    ServiceTestCommon::BuildLocationComponentJson(jsonComponent);
     SecCompBase* comp = SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent);
     ASSERT_TRUE(comp->GetValid());
 
@@ -608,7 +549,7 @@ HWTEST_F(SecCompInfoHelperTest, ParseComponent013, TestSize.Level1)
 HWTEST_F(SecCompInfoHelperTest, ParseComponent014, TestSize.Level1)
 {
     nlohmann::json jsonComponent;
-    BuildLocationComponentInfo(jsonComponent);
+    ServiceTestCommon::BuildLocationComponentJson(jsonComponent);
     SecCompBase* comp = SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent);
     ASSERT_TRUE(comp->GetValid());
 
@@ -661,7 +602,7 @@ HWTEST_F(SecCompInfoHelperTest, ParseComponent014, TestSize.Level1)
 HWTEST_F(SecCompInfoHelperTest, CheckComponentValid001, TestSize.Level1)
 {
     nlohmann::json jsonComponent;
-    BuildLocationComponentInfo(jsonComponent);
+    ServiceTestCommon::BuildLocationComponentJson(jsonComponent);
     SecCompBase* comp = SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent);
     ASSERT_TRUE(comp->GetValid());
     jsonComponent[JsonTagConstants::JSON_COLORS_TAG] = nlohmann::json {
@@ -681,7 +622,7 @@ HWTEST_F(SecCompInfoHelperTest, CheckComponentValid001, TestSize.Level1)
 HWTEST_F(SecCompInfoHelperTest, CheckComponentValid002, TestSize.Level1)
 {
     nlohmann::json jsonComponent;
-    BuildLocationComponentInfo(jsonComponent);
+    ServiceTestCommon::BuildLocationComponentJson(jsonComponent);
     SecCompBase* comp = SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent);
     comp->text_ = UNKNOWN_TEXT;
     ASSERT_TRUE(SecCompInfoHelper::CheckComponentValid(comp));
@@ -703,7 +644,7 @@ HWTEST_F(SecCompInfoHelperTest, CheckComponentValid002, TestSize.Level1)
 HWTEST_F(SecCompInfoHelperTest, CheckComponentValid003, TestSize.Level1)
 {
     nlohmann::json jsonComponent;
-    BuildLocationComponentInfo(jsonComponent);
+    ServiceTestCommon::BuildLocationComponentJson(jsonComponent);
     SecCompBase* comp = SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent);
     comp->type_ = SecCompType::UNKNOWN_SC_TYPE;
     ASSERT_FALSE(SecCompInfoHelper::CheckComponentValid(comp));

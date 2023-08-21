@@ -36,9 +36,9 @@ ohos_unittest("sec_comp_service_test") {
     "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/delay_exit_task.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/first_use_dialog.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/sec_comp_entity.cpp",
-    "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/sec_comp_perm_manager.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/sec_comp_info_helper.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/sec_comp_manager.cpp",
+    "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/sec_comp_perm_manager.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/sec_comp_service.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/sec_comp_stub.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/sec_event_handler.cpp",
@@ -50,6 +50,7 @@ ohos_unittest("sec_comp_service_test") {
     "unittest/src/sec_comp_manager_test.cpp",
     "unittest/src/sec_comp_service_test.cpp",
     "unittest/src/sec_comp_stub_test.cpp",
+    "unittest/src/service_test_common.cpp",
   ]
 
   configs = [ "${sec_comp_root_dir}/config:coverage_flags" ]
@@ -99,9 +100,9 @@ ohos_unittest("sec_comp_service_mock_test") {
     "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/delay_exit_task.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/first_use_dialog.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/sec_comp_entity.cpp",
-    "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/sec_comp_perm_manager.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/sec_comp_info_helper.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/sec_comp_manager.cpp",
+    "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/sec_comp_perm_manager.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/sec_comp_service.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/sec_comp_stub.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/sec_event_handler.cpp",
@@ -109,6 +110,7 @@ ohos_unittest("sec_comp_service_mock_test") {
     "${sec_comp_root_dir}/services/security_component_service/sa/test/mock/src/mock_iservice_registry.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/test/mock/src/sec_comp_enhance_adapter.cpp",
     "unittest/src/sec_comp_service_mock_test.cpp",
+    "unittest/src/service_test_common.cpp",
   ]
 
   configs = [ "${sec_comp_root_dir}/config:coverage_flags" ]
@@ -139,7 +141,7 @@ ohos_unittest("sec_comp_service_mock_test") {
 group("unittest") {
   testonly = true
   deps = [
-    ":sec_comp_service_test",
     ":sec_comp_service_mock_test",
+    ":sec_comp_service_test",
   ]
 }
