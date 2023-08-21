@@ -13,9 +13,11 @@
  * limitations under the License.
  */
 #include "save_button_test.h"
+
 #include <string>
 #include "sec_comp_log.h"
 #include "sec_comp_err.h"
+#include "test_common.h"
 
 using namespace testing::ext;
 using namespace OHOS;
@@ -24,63 +26,6 @@ using namespace OHOS::Security::SecurityComponent;
 namespace {
 static constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {
     LOG_CORE, SECURITY_DOMAIN_SECURITY_COMPONENT, "SaveButtonTest"};
-
-static constexpr float TEST_SIZE = 100.0;
-static constexpr double TEST_COORDINATE = 100.0;
-static constexpr double TEST_DIMENSION = 100.0;
-static constexpr uint32_t TEST_COLOR_YELLOW = 0x7ffff00;
-static constexpr uint32_t TEST_COLOR_RED = 0xff0000;
-static constexpr uint32_t TEST_COLOR_BLUE = 0x0000ff;
-static constexpr uint32_t TEST_DIFF_COLOR = 0;
-
-static void BuildSaveComponentInfo(nlohmann::json& jsonComponent)
-{
-    jsonComponent[JsonTagConstants::JSON_SC_TYPE] = SAVE_COMPONENT;
-    jsonComponent[JsonTagConstants::JSON_NODE_ID] = 0;
-    jsonComponent[JsonTagConstants::JSON_RECT] = nlohmann::json {
-        {JsonTagConstants::JSON_RECT_X, TEST_COORDINATE },
-        {JsonTagConstants::JSON_RECT_Y, TEST_COORDINATE },
-        {JsonTagConstants::JSON_RECT_WIDTH, TEST_COORDINATE },
-        {JsonTagConstants::JSON_RECT_HEIGHT, TEST_COORDINATE }
-    };
-    jsonComponent[JsonTagConstants::JSON_WINDOW_RECT] = nlohmann::json {
-        {JsonTagConstants::JSON_RECT_X, TEST_COORDINATE },
-        {JsonTagConstants::JSON_RECT_Y, TEST_COORDINATE },
-        {JsonTagConstants::JSON_RECT_WIDTH, TEST_COORDINATE },
-        {JsonTagConstants::JSON_RECT_HEIGHT, TEST_COORDINATE }
-    };
-    nlohmann::json jsonPadding = nlohmann::json {
-        { JsonTagConstants::JSON_PADDING_TOP_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_RIGHT_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_BOTTOM_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_LEFT_TAG, TEST_DIMENSION },
-    };
-
-    jsonComponent[JsonTagConstants::JSON_SIZE_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_FONT_SIZE_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_ICON_SIZE_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_PADDING_SIZE_TAG, jsonPadding },
-    };
-
-    jsonComponent[JsonTagConstants::JSON_COLORS_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_FONT_COLOR_TAG, TEST_COLOR_RED },
-        { JsonTagConstants::JSON_ICON_COLOR_TAG, TEST_COLOR_BLUE },
-        { JsonTagConstants::JSON_BG_COLOR_TAG, TEST_COLOR_YELLOW }
-    };
-
-    jsonComponent[JsonTagConstants::JSON_BORDER_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_BORDER_WIDTH_TAG, TEST_SIZE },
-    };
-    jsonComponent[JsonTagConstants::JSON_PARENT_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_PARENT_EFFECT_TAG, false },
-    };
-    jsonComponent[JsonTagConstants::JSON_STYLE_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_TEXT_TAG, SaveDesc::DOWNLOAD },
-        { JsonTagConstants::JSON_ICON_TAG, SaveIcon::LINE_ICON },
-        { JsonTagConstants::JSON_BG_TAG, SecCompBackground::CIRCLE },
-    };
-}
 }
 
 void SaveButtonTest::SetUpTestCase()
@@ -105,8 +50,8 @@ void SaveButtonTest::TearDown()
  */
 HWTEST_F(SaveButtonTest, FromJson010, TestSize.Level1)
 {
-nlohmann::json jsonComponent;
-    BuildSaveComponentInfo(jsonComponent);
+    nlohmann::json jsonComponent;
+    TestCommon::BuildSaveComponentInfo(jsonComponent);
     SaveButton button;
 
     ASSERT_TRUE(button.FromJson(jsonComponent));
@@ -166,7 +111,7 @@ HWTEST_F(SaveButtonTest, CompareSaveButton001, TestSize.Level1)
     SaveButton button2;
 
     nlohmann::json jsonComponent;
-    BuildSaveComponentInfo(jsonComponent);
+    TestCommon::BuildSaveComponentInfo(jsonComponent);
 
     ASSERT_TRUE(button1.FromJson(jsonComponent));
     ASSERT_TRUE(button2.FromJson(jsonComponent));
@@ -197,7 +142,7 @@ HWTEST_F(SaveButtonTest, CompareSaveButton002, TestSize.Level1)
 {
     nlohmann::json jsonComponent;
     SaveButton comp1;
-    BuildSaveComponentInfo(jsonComponent);
+    TestCommon::BuildSaveComponentInfo(jsonComponent);
     ASSERT_TRUE(comp1.FromJson(jsonComponent));
     SaveButton comp2 = comp1;
 

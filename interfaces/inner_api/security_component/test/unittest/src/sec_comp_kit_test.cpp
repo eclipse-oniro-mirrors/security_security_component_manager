@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 #include "sec_comp_kit_test.h"
+
 #include "location_button.h"
 #define private public
 #include "sec_comp_caller_authorization.h"
@@ -21,6 +22,7 @@
 #include "sec_comp_info.h"
 #include "sec_comp_log.h"
 #include "sec_comp_tool.h"
+#include "test_common.h"
 
 using namespace testing::ext;
 using namespace OHOS::Security::SecurityComponent;
@@ -28,11 +30,6 @@ using namespace OHOS::Security::SecurityComponent;
 namespace {
 static constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {
     LOG_CORE, SECURITY_DOMAIN_SECURITY_COMPONENT, "SecCompKitTest"};
-static constexpr float TEST_SIZE = 100.0;
-static constexpr double TEST_COORDINATE = 100.0;
-static constexpr double TEST_DIMENSION = 100.0;
-static constexpr uint32_t TEST_COLOR = 0xffffffff;
-static constexpr size_t MAX_CALLER_SIZE = 10;
 
 static void TestInCallerNotCheckList()
 {
@@ -175,3 +172,20 @@ HWTEST_F(SecCompKitTest, TestCallerCheck002, TestSize.Level1)
     SecCompCallerAuthorization::GetInstance().isInit_ = false;
 }
 
+/**
+ * @tc.name: RegisterWithoutCallback001
+ * @tc.desc: test register without callback.
+ * @tc.type: FUNC
+ * @tc.require: AR000HO9JM
+ */
+HWTEST_F(SecCompKitTest, RegisterWithoutCallback001, TestSize.Level1)
+{
+    nlohmann::json jsonRes;
+    TestCommon::BuildLocationComponentInfo(jsonRes);
+    std::string locationInfo = jsonRes.dump();
+
+    int32_t scId;
+    ASSERT_EQ(SC_ENHANCE_ERROR_CALLBACK_NOT_EXIST,
+        SecCompKit::RegisterSecurityComponent(LOCATION_COMPONENT, locationInfo, scId));
+    ASSERT_EQ(-1, scId);
+}

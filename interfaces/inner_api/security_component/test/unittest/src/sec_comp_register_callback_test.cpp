@@ -13,19 +13,21 @@
  * limitations under the License.
  */
 #include <gtest/gtest.h>
-
 #include "i_sec_comp_probe.h"
 #include "location_button.h"
-#include "location_button_sample_build.h"
 #define private public
 #include "sec_comp_caller_authorization.h"
 #undef private
+#include "sec_comp_client.h"
+#include "sec_comp_enhance_adapter.h"
 #include "sec_comp_err.h"
 #include "sec_comp_info.h"
 #include "sec_comp_kit.h"
 #include "sec_comp_log.h"
 #include "sec_comp_tool.h"
 #include "sec_comp_ui_register.h"
+#include "test_common.h"
+#include "token_setproc.h"
 
 using namespace testing::ext;
 using namespace OHOS::Security::SecurityComponent;
@@ -88,6 +90,25 @@ void SecCompRegisterCallbackTest::TearDown()
 }
 
 /**
+ * @tc.name: RegisterWithoutPreprocess001
+ * @tc.desc: test register without preprocess
+ * @tc.type: FUNC
+ * @tc.require: AR000HO9JM
+ */
+HWTEST_F(SecCompRegisterCallbackTest, RegisterWithoutPreprocess001, TestSize.Level1)
+{
+    nlohmann::json jsonRes;
+    TestCommon::BuildLocationComponentInfo(jsonRes);
+    std::string locationInfo = jsonRes.dump();
+
+    SecCompEnhanceAdapter::InitEnhanceHandler(SEC_COMP_ENHANCE_CLIENT_INTERFACE);
+    int32_t scId;
+    ASSERT_EQ(SC_ENHANCE_ERROR_CHALLENGE_CHECK_FAIL,
+        SecCompClient::GetInstance().RegisterSecurityComponent(LOCATION_COMPONENT, locationInfo, scId));
+    ASSERT_EQ(-1, scId);
+}
+
+/**
  * @tc.name: Register001
  * @tc.desc: test register security component success.
  * @tc.type: FUNC
@@ -95,9 +116,8 @@ void SecCompRegisterCallbackTest::TearDown()
  */
 HWTEST_F(SecCompRegisterCallbackTest, Register001, TestSize.Level1)
 {
-    SC_LOG_INFO(LABEL, "Register001.");
     nlohmann::json jsonRes;
-    LocationButtonSampleBuild::BuildLocationComponentInfo(jsonRes);
+    TestCommon::BuildLocationComponentInfo(jsonRes);
     std::string locationInfo = jsonRes.dump();
     g_probe.mockComponentInfo = locationInfo;
     g_probe.mockRes = 0;
@@ -117,10 +137,8 @@ HWTEST_F(SecCompRegisterCallbackTest, Register001, TestSize.Level1)
  */
 HWTEST_F(SecCompRegisterCallbackTest, Register002, TestSize.Level1)
 {
-    SC_LOG_INFO(LABEL, "Register002.");
-
     nlohmann::json jsonRes;
-    LocationButtonSampleBuild::BuildLocationComponentInfo(jsonRes);
+    TestCommon::BuildLocationComponentInfo(jsonRes);
     std::string locationInfo = jsonRes.dump();
     g_probe.mockComponentInfo = locationInfo;
     g_probe.mockRes = -1;
@@ -139,10 +157,8 @@ HWTEST_F(SecCompRegisterCallbackTest, Register002, TestSize.Level1)
  */
 HWTEST_F(SecCompRegisterCallbackTest, Register003, TestSize.Level1)
 {
-    SC_LOG_INFO(LABEL, "Register003.");
-
     nlohmann::json jsonRes;
-    LocationButtonSampleBuild::BuildLocationComponentInfo(jsonRes);
+    TestCommon::BuildLocationComponentInfo(jsonRes);
     std::string locationInfo = jsonRes.dump();
     g_probe.mockComponentInfo = locationInfo;
     g_probe.mockRes = 0;
@@ -151,3 +167,141 @@ HWTEST_F(SecCompRegisterCallbackTest, Register003, TestSize.Level1)
     ASSERT_EQ(SC_OK, SecCompKit::RegisterSecurityComponent(LOCATION_COMPONENT, locationInfo, scId));
 }
 
+/**
+ * @tc.name: RegisterSecurityComponent001
+ * @tc.desc: Test register security component check touch info failed
+ * @tc.type: FUNC
+ * @tc.require: AR000HO9J7
+ */
+HWTEST_F(SecCompRegisterCallbackTest, RegisterSecurityComponent001, TestSize.Level1)
+{
+    system("param set sec.comp.enhance 1");
+    nlohmann::json jsonRes;
+    TestCommon::BuildSaveComponentInfo(jsonRes);
+    std::string saveInfo = jsonRes.dump();
+    int32_t scId;
+
+    EXPECT_EQ(SC_OK, SecCompKit::RegisterSecurityComponent(SAVE_COMPONENT, saveInfo, scId));
+    uint8_t data[MAX_HMAC_SIZE] = { 0 };
+    struct SecCompClickEvent touchInfo = {
+        .touchX = TEST_COORDINATE,
+        .touchY = TEST_COORDINATE,
+        .timestamp = static_cast<uint64_t>(
+            std::chrono::high_resolution_clock::now().time_since_epoch().count())
+    };
+    touchInfo.extraInfo.dataSize = MAX_HMAC_SIZE;
+    touchInfo.extraInfo.data = data;
+    EXPECT_EQ(SC_SERVICE_ERROR_CLICK_EVENT_INVALID,
+        SecCompKit::ReportSecurityComponentClickEvent(scId, saveInfo, touchInfo, nullptr));
+    EXPECT_EQ(SC_OK, SecCompKit::UnregisterSecurityComponent(scId));
+    system("param set sec.comp.enhance 0");
+}
+
+/**
+ * @tc.name: RegisterSecurityComponent002
+ * @tc.desc: Test register security component permission grant failed
+ * @tc.type: FUNC
+ * @tc.require: AR000HO9J7
+ */
+HWTEST_F(SecCompRegisterCallbackTest, RegisterSecurityComponent002, TestSize.Level1)
+{
+    system("param set sec.comp.enhance 1");
+    nlohmann::json jsonRes;
+    TestCommon::BuildSaveComponentInfo(jsonRes);
+    std::string saveInfo = jsonRes.dump();
+    int32_t scId;
+
+    EXPECT_EQ(SC_OK, SecCompKit::RegisterSecurityComponent(SAVE_COMPONENT, saveInfo, scId));
+    uint8_t data[MAX_HMAC_SIZE] = { 0 };
+    struct SecCompClickEvent touchInfo = {
+        .touchX = TEST_COORDINATE,
+        .touchY = TEST_COORDINATE,
+        .timestamp = static_cast<uint64_t>(
+            std::chrono::high_resolution_clock::now().time_since_epoch().count()) / TIME_CONVERSION_UNIT
+    };
+    touchInfo.extraInfo.dataSize = MAX_HMAC_SIZE;
+    touchInfo.extraInfo.data = data;
+    EXPECT_EQ(SC_OK, SecCompKit::ReportSecurityComponentClickEvent(scId, saveInfo, touchInfo, nullptr));
+    EXPECT_EQ(SC_OK, SecCompKit::UnregisterSecurityComponent(scId));
+    system("param set sec.comp.enhance 0");
+}
+
+/**
+ * @tc.name: ReportSecurityComponentClickEvent003
+ * @tc.desc: Test register security component success
+ * @tc.type: FUNC
+ * @tc.require: AR000HO9J7
+ */
+HWTEST_F(SecCompRegisterCallbackTest, ReportSecurityComponentClickEvent003, TestSize.Level1)
+{
+    system("param set sec.comp.enhance 1");
+    nlohmann::json jsonRes;
+    TestCommon::BuildSaveComponentInfo(jsonRes);
+    std::string saveInfo = jsonRes.dump();
+    int32_t scId;
+
+    EXPECT_EQ(SC_OK, SecCompKit::RegisterSecurityComponent(SAVE_COMPONENT, saveInfo, scId));
+    uint8_t data[MAX_HMAC_SIZE] = { 0 };
+    struct SecCompClickEvent touchInfo = {
+        .touchX = TEST_COORDINATE,
+        .touchY = TEST_COORDINATE,
+        .timestamp = static_cast<uint64_t>(
+            std::chrono::high_resolution_clock::now().time_since_epoch().count()) / TIME_CONVERSION_UNIT
+    };
+    touchInfo.extraInfo.dataSize = MAX_HMAC_SIZE;
+    touchInfo.extraInfo.data = data;
+
+    ASSERT_EQ(SC_OK, SecCompKit::ReportSecurityComponentClickEvent(scId, saveInfo, touchInfo, nullptr));
+    uint32_t selfTokenId = GetSelfTokenID();
+    ASSERT_TRUE(SecCompKit::ReduceAfterVerifySavePermission(selfTokenId));
+    system("param set sec.comp.enhance 0");
+}
+
+/**
+ * @tc.name: ExceptCall001
+ * @tc.desc: Test update security component success
+ * @tc.type: FUNC
+ * @tc.require: AR000HO9IN
+ */
+HWTEST_F(SecCompRegisterCallbackTest, ExceptCall001, TestSize.Level1)
+{
+    nlohmann::json jsonRes;
+    TestCommon::BuildSaveComponentInfo(jsonRes);
+    std::string saveInfo = jsonRes.dump();
+    int32_t scId;
+    ASSERT_EQ(SC_OK, SecCompKit::RegisterSecurityComponent(LOCATION_COMPONENT, saveInfo, scId));
+    ASSERT_NE(-1, scId);
+    ASSERT_EQ(SC_OK, SecCompKit::UpdateSecurityComponent(scId, saveInfo));
+}
+
+/**
+ * @tc.name: ReportClickWithoutHmac001
+ * @tc.desc: Test report click event permission denied
+ * @tc.type: FUNC
+ * @tc.require: AR000HO9JM
+ */
+HWTEST_F(SecCompRegisterCallbackTest, ReportClickWithoutHmac001, TestSize.Level1)
+{
+    system("param set sec.comp.enhance 1");
+    nlohmann::json jsonRes;
+    TestCommon::BuildLocationComponentInfo(jsonRes);
+    std::string locationInfo = jsonRes.dump();
+    g_probe.mockComponentInfo = locationInfo;
+    g_probe.mockRes = 0;
+
+    int32_t scId;
+    ASSERT_EQ(SC_OK, SecCompKit::RegisterSecurityComponent(LOCATION_COMPONENT, locationInfo, scId));
+    ASSERT_NE(-1, scId);
+    uint8_t data[MAX_HMAC_SIZE] = { 0 };
+    struct SecCompClickEvent touch = {
+        .touchX = TEST_COORDINATE,
+        .touchY = TEST_COORDINATE,
+        .timestamp = static_cast<uint64_t>(
+            std::chrono::high_resolution_clock::now().time_since_epoch().count()) / TIME_CONVERSION_UNIT
+    };
+    touch.extraInfo.dataSize = MAX_HMAC_SIZE;
+    touch.extraInfo.data = data;
+    EXPECT_EQ(SC_SERVICE_ERROR_PERMISSION_OPER_FAIL,
+        SecCompKit::ReportSecurityComponentClickEvent(scId, locationInfo, touch, nullptr));
+    system("param set sec.comp.enhance 0");
+}

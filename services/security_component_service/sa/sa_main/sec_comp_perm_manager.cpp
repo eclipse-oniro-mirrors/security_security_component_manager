@@ -70,7 +70,8 @@ int32_t SecCompPermManager::GrantLocationPermission(AccessToken::AccessTokenID t
 {
     int32_t res = AccessToken::AccessTokenKit::GrantPermission(tokenId, permissionName,
         AccessToken::PermissionFlag::PERMISSION_COMPONENT_SET);
-    SC_LOG_INFO(LABEL, "grant permission: %{public}s, tokenId:%{public}d", permissionName.c_str(), tokenId);
+    SC_LOG_INFO(LABEL, "grant permission res: %{public}d, permission: %{public}s, tokenId:%{public}d",
+        res, permissionName.c_str(), tokenId);
     return res;
 }
 
@@ -79,7 +80,8 @@ int32_t SecCompPermManager::RevokeLocationPermission(AccessToken::AccessTokenID 
 {
     int32_t res =  AccessToken::AccessTokenKit::RevokePermission(tokenId, permissionName,
         AccessToken::PermissionFlag::PERMISSION_COMPONENT_SET);
-    SC_LOG_INFO(LABEL, "revoke permission: %{public}s, tokenId:%{public}d", permissionName.c_str(), tokenId);
+    SC_LOG_INFO(LABEL, "revoke permission res: %{public}d, permission: %{public}s, tokenId:%{public}d",
+        res, permissionName.c_str(), tokenId);
     return res;
 }
 

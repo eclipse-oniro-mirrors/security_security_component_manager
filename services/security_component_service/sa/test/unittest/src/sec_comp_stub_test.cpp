@@ -14,9 +14,11 @@
  */
 
 #include "sec_comp_stub_test.h"
+
 #include "sec_comp_log.h"
 #include "sec_comp_err.h"
 #include "sec_comp_click_event_parcel.h"
+#include "service_test_common.h"
 
 using namespace testing::ext;
 using namespace OHOS;
@@ -62,17 +64,15 @@ HWTEST_F(SecCompStubTest, OnRemoteRequest001, TestSize.Level1)
     MessageOption option;
 
     data.WriteInterfaceToken(u"wrong");
-    ASSERT_EQ(stub_->OnRemoteRequest(
-        static_cast<uint32_t>(SecurityComponentServiceInterfaceCode::REGISTER_SECURITY_COMPONENT),
-        data, reply, option), SC_SERVICE_ERROR_IPC_REQUEST_FAIL);
+    ASSERT_EQ(SC_SERVICE_ERROR_IPC_REQUEST_FAIL, stub_->OnRemoteRequest(static_cast<uint32_t>(
+        SecurityComponentServiceInterfaceCode::REGISTER_SECURITY_COMPONENT), data, reply, option));
 
     data.WriteInterfaceToken(u"ohos.security.ISecCompService");
-    ASSERT_EQ(stub_->OnRemoteRequest(
-        static_cast<uint32_t>(SecurityComponentServiceInterfaceCode::REGISTER_SECURITY_COMPONENT),
-        data, reply, option), SC_SERVICE_ERROR_PARCEL_OPERATE_FAIL);
+    ASSERT_EQ(SC_SERVICE_ERROR_PARCEL_OPERATE_FAIL, stub_->OnRemoteRequest(static_cast<uint32_t>(
+        SecurityComponentServiceInterfaceCode::REGISTER_SECURITY_COMPONENT), data, reply, option));
 
     data.WriteInterfaceToken(u"ohos.security.ISecCompService");
-    ASSERT_EQ(stub_->OnRemoteRequest(1000, data, reply, option), 305);
+    ASSERT_EQ(305, stub_->OnRemoteRequest(1000, data, reply, option));
 }
 
 /**
@@ -86,20 +86,20 @@ HWTEST_F(SecCompStubTest, RegisterSecurityComponentInner001, TestSize.Level1)
     MessageParcel data;
     MessageParcel reply;
 
-    ASSERT_EQ(stub_->RegisterSecurityComponentInner(data, reply), SC_SERVICE_ERROR_PARCEL_OPERATE_FAIL);
+    ASSERT_EQ(SC_SERVICE_ERROR_PARCEL_OPERATE_FAIL, stub_->RegisterSecurityComponentInner(data, reply));
 
     data.WriteUint32(UNKNOWN_SC_TYPE);
-    ASSERT_EQ(stub_->RegisterSecurityComponentInner(data, reply), SC_SERVICE_ERROR_VALUE_INVALID);
+    ASSERT_EQ(SC_SERVICE_ERROR_VALUE_INVALID, stub_->RegisterSecurityComponentInner(data, reply));
 
     data.WriteUint32(MAX_SC_TYPE);
-    ASSERT_EQ(stub_->RegisterSecurityComponentInner(data, reply), SC_SERVICE_ERROR_VALUE_INVALID);
+    ASSERT_EQ(SC_SERVICE_ERROR_VALUE_INVALID, stub_->RegisterSecurityComponentInner(data, reply));
 
     data.WriteUint32(LOCATION_COMPONENT);
-    ASSERT_EQ(stub_->RegisterSecurityComponentInner(data, reply), SC_SERVICE_ERROR_PARCEL_OPERATE_FAIL);
+    ASSERT_EQ(SC_SERVICE_ERROR_PARCEL_OPERATE_FAIL, stub_->RegisterSecurityComponentInner(data, reply));
 
     data.WriteUint32(LOCATION_COMPONENT);
     data.WriteString("");
-    ASSERT_EQ(stub_->RegisterSecurityComponentInner(data, reply), SC_OK);
+    ASSERT_EQ(SC_OK, stub_->RegisterSecurityComponentInner(data, reply));
 }
 
 /**
@@ -113,17 +113,17 @@ HWTEST_F(SecCompStubTest, UpdateSecurityComponentInner001, TestSize.Level1)
     MessageParcel data;
     MessageParcel reply;
 
-    ASSERT_EQ(stub_->UpdateSecurityComponentInner(data, reply), SC_SERVICE_ERROR_PARCEL_OPERATE_FAIL);
+    ASSERT_EQ(SC_SERVICE_ERROR_PARCEL_OPERATE_FAIL, stub_->UpdateSecurityComponentInner(data, reply));
 
     data.WriteInt32(-1);
-    ASSERT_EQ(stub_->UpdateSecurityComponentInner(data, reply), SC_SERVICE_ERROR_VALUE_INVALID);
+    ASSERT_EQ(SC_SERVICE_ERROR_VALUE_INVALID, stub_->UpdateSecurityComponentInner(data, reply));
 
     data.WriteInt32(1);
-    ASSERT_EQ(stub_->UpdateSecurityComponentInner(data, reply), SC_SERVICE_ERROR_PARCEL_OPERATE_FAIL);
+    ASSERT_EQ(SC_SERVICE_ERROR_PARCEL_OPERATE_FAIL, stub_->UpdateSecurityComponentInner(data, reply));
 
     data.WriteInt32(1);
     data.WriteString("");
-    ASSERT_EQ(stub_->UpdateSecurityComponentInner(data, reply), SC_OK);
+    ASSERT_EQ(SC_OK, stub_->UpdateSecurityComponentInner(data, reply));
 }
 
 /**
@@ -136,13 +136,13 @@ HWTEST_F(SecCompStubTest, UnregisterSecurityComponentInner001, TestSize.Level1)
 {
     MessageParcel data;
     MessageParcel reply;
-    ASSERT_EQ(stub_->UnregisterSecurityComponentInner(data, reply), SC_SERVICE_ERROR_PARCEL_OPERATE_FAIL);
+    ASSERT_EQ(SC_SERVICE_ERROR_PARCEL_OPERATE_FAIL, stub_->UnregisterSecurityComponentInner(data, reply));
 
     data.WriteInt32(-1);
-    ASSERT_EQ(stub_->UnregisterSecurityComponentInner(data, reply), SC_SERVICE_ERROR_VALUE_INVALID);
+    ASSERT_EQ(SC_SERVICE_ERROR_VALUE_INVALID, stub_->UnregisterSecurityComponentInner(data, reply));
 
     data.WriteInt32(1);
-    ASSERT_EQ(stub_->UnregisterSecurityComponentInner(data, reply), SC_OK);
+    ASSERT_EQ(SC_OK, stub_->UnregisterSecurityComponentInner(data, reply));
 }
 
 /**
@@ -155,17 +155,17 @@ HWTEST_F(SecCompStubTest, ReportSecurityComponentClickEventInner001, TestSize.Le
 {
     MessageParcel data;
     MessageParcel reply;
-    ASSERT_EQ(stub_->ReportSecurityComponentClickEventInner(data, reply), SC_SERVICE_ERROR_PARCEL_OPERATE_FAIL);
+    ASSERT_EQ(SC_SERVICE_ERROR_PARCEL_OPERATE_FAIL, stub_->ReportSecurityComponentClickEventInner(data, reply));
 
     data.WriteInt32(-1);
-    ASSERT_EQ(stub_->ReportSecurityComponentClickEventInner(data, reply), SC_SERVICE_ERROR_VALUE_INVALID);
+    ASSERT_EQ(SC_SERVICE_ERROR_VALUE_INVALID, stub_->ReportSecurityComponentClickEventInner(data, reply));
 
     data.WriteInt32(1);
-    ASSERT_EQ(stub_->ReportSecurityComponentClickEventInner(data, reply), SC_SERVICE_ERROR_PARCEL_OPERATE_FAIL);
+    ASSERT_EQ(SC_SERVICE_ERROR_PARCEL_OPERATE_FAIL, stub_->ReportSecurityComponentClickEventInner(data, reply));
 
     data.WriteInt32(1);
     data.WriteString("");
-    ASSERT_EQ(stub_->ReportSecurityComponentClickEventInner(data, reply), SC_SERVICE_ERROR_PARCEL_OPERATE_FAIL);
+    ASSERT_EQ(SC_SERVICE_ERROR_PARCEL_OPERATE_FAIL, stub_->ReportSecurityComponentClickEventInner(data, reply));
 
     data.WriteInt32(1);
     data.WriteString("");
@@ -173,5 +173,5 @@ HWTEST_F(SecCompStubTest, ReportSecurityComponentClickEventInner001, TestSize.Le
     sptr<SecCompClickEventParcel> parcel = new (std::nothrow) SecCompClickEventParcel();
     parcel->touchInfoParams_ = touchInfo;
     data.WriteParcelable(parcel);
-    ASSERT_EQ(stub_->ReportSecurityComponentClickEventInner(data, reply), SC_OK);
+    ASSERT_EQ(SC_OK, stub_->ReportSecurityComponentClickEventInner(data, reply));
 }

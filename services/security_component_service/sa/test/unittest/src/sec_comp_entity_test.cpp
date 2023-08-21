@@ -13,12 +13,14 @@
  * limitations under the License.
  */
 #include "sec_comp_entity_test.h"
+
 #include "sec_comp_log.h"
 #include "location_button.h"
 #include "paste_button.h"
 #include "save_button.h"
 #include "sec_comp_err.h"
 #include "sec_comp_tool.h"
+#include "service_test_common.h"
 
 using namespace testing::ext;
 using namespace OHOS;
@@ -28,9 +30,6 @@ using namespace OHOS::Security::AccessToken;
 namespace {
 static constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {
     LOG_CORE, SECURITY_DOMAIN_SECURITY_COMPONENT, "SecCompEntityTest"};
-static constexpr double TEST_COORDINATE = 100.0;
-static constexpr double TEST_DIFF_COORDINATE = 200.0;
-static constexpr uint64_t TIME_CONVERSION_UNIT = 1000;
 }
 
 void SecCompEntityTest::SetUpTestCase()
@@ -67,16 +66,16 @@ void SecCompEntityTest::TearDown()
 HWTEST_F(SecCompEntityTest, RevokeTempPermission001, TestSize.Level1)
 {
     entity_->isGrant_ = false;
-    ASSERT_EQ(entity_->RevokeTempPermission(), SC_OK);
+    ASSERT_EQ(SC_OK, entity_->RevokeTempPermission());
 
     entity_->isGrant_ = true;
     entity_->componentInfo_->type_ = UNKNOWN_SC_TYPE;
-    ASSERT_EQ(entity_->RevokeTempPermission(), SC_SERVICE_ERROR_PERMISSION_OPER_FAIL);
+    ASSERT_EQ(SC_SERVICE_ERROR_PERMISSION_OPER_FAIL, entity_->RevokeTempPermission());
     ASSERT_FALSE(entity_->isGrant_);
 
     entity_->isGrant_ = true;
     entity_->componentInfo_->type_ = LOCATION_COMPONENT;
-    ASSERT_EQ(entity_->RevokeTempPermission(), SC_OK);
+    ASSERT_EQ(SC_OK, entity_->RevokeTempPermission());
     ASSERT_FALSE(entity_->isGrant_);
 }
 
@@ -90,17 +89,17 @@ HWTEST_F(SecCompEntityTest, GrantTempPermission001, TestSize.Level1)
 {
     entity_->isGrant_ = false;
     entity_->componentInfo_->type_ = UNKNOWN_SC_TYPE;
-    ASSERT_EQ(entity_->GrantTempPermission(), SC_SERVICE_ERROR_PERMISSION_OPER_FAIL);
+    ASSERT_EQ(SC_SERVICE_ERROR_PERMISSION_OPER_FAIL, entity_->GrantTempPermission());
     ASSERT_TRUE(entity_->isGrant_);
 
     entity_->isGrant_ = false;
     entity_->componentInfo_->type_ = LOCATION_COMPONENT;
-    ASSERT_EQ(entity_->GrantTempPermission(), SC_OK);
+    ASSERT_EQ(SC_OK, entity_->GrantTempPermission());
     ASSERT_TRUE(entity_->isGrant_);
 
     entity_->isGrant_ = false;
     entity_->componentInfo_->type_ = PASTE_COMPONENT;
-    ASSERT_EQ(entity_->GrantTempPermission(), SC_OK);
+    ASSERT_EQ(SC_OK, entity_->GrantTempPermission());
     ASSERT_TRUE(entity_->isGrant_);
 }
 
@@ -118,8 +117,8 @@ HWTEST_F(SecCompEntityTest, GrantTempPermission002, TestSize.Level1)
     entity_ = std::make_shared<SecCompEntity>(pasteComponent, 0, 1);
     ASSERT_NE(nullptr, entity_);
 
-    ASSERT_EQ(entity_->GrantTempPermission(), SC_SERVICE_ERROR_PERMISSION_OPER_FAIL);
-    ASSERT_EQ(entity_->RevokeTempPermission(), SC_SERVICE_ERROR_PERMISSION_OPER_FAIL);
+    ASSERT_EQ(SC_SERVICE_ERROR_PERMISSION_OPER_FAIL, entity_->GrantTempPermission());
+    ASSERT_EQ(SC_SERVICE_ERROR_PERMISSION_OPER_FAIL, entity_->RevokeTempPermission());
 }
 
 /**
