@@ -39,8 +39,7 @@
         "window_manager"
       ],
       "third_party": [
-        "cJSON",
-        "googletest"
+        "cJSON"
       ]
     },
     "build": {
