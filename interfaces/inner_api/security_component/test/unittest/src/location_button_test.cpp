@@ -26,6 +26,7 @@ using namespace OHOS::Security::SecurityComponent;
 namespace {
 static constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {
     LOG_CORE, SECURITY_DOMAIN_SECURITY_COMPONENT, "LocationButtonTest"};
+static const std::string WRONG_TYPE = "wrongType";
 }
 
 void LocationButtonTest::SetUpTestCase()
@@ -109,32 +110,32 @@ HWTEST_F(LocationButtonTest, FromJson004, TestSize.Level1)
 
     jsonComponent[JsonTagConstants::JSON_RECT] =  nlohmann::json {
         {JsonTagConstants::JSON_RECT_X, WRONG_TYPE},
-        {JsonTagConstants::JSON_RECT_Y, TEST_COORDINATE},
-        {JsonTagConstants::JSON_RECT_WIDTH, TEST_COORDINATE},
-        {JsonTagConstants::JSON_RECT_HEIGHT, TEST_COORDINATE}
+        {JsonTagConstants::JSON_RECT_Y, TestCommon::TEST_COORDINATE},
+        {JsonTagConstants::JSON_RECT_WIDTH, TestCommon::TEST_COORDINATE},
+        {JsonTagConstants::JSON_RECT_HEIGHT, TestCommon::TEST_COORDINATE}
     };
     ASSERT_FALSE(comp.FromJson(jsonComponent));
 
     jsonComponent[JsonTagConstants::JSON_RECT] =  nlohmann::json {
-        {JsonTagConstants::JSON_RECT_X, TEST_COORDINATE},
+        {JsonTagConstants::JSON_RECT_X, TestCommon::TEST_COORDINATE},
         {JsonTagConstants::JSON_RECT_Y, WRONG_TYPE},
-        {JsonTagConstants::JSON_RECT_WIDTH, TEST_COORDINATE},
-        {JsonTagConstants::JSON_RECT_HEIGHT, TEST_COORDINATE}
+        {JsonTagConstants::JSON_RECT_WIDTH, TestCommon::TEST_COORDINATE},
+        {JsonTagConstants::JSON_RECT_HEIGHT, TestCommon::TEST_COORDINATE}
     };
     ASSERT_FALSE(comp.FromJson(jsonComponent));
 
     jsonComponent[JsonTagConstants::JSON_RECT] =  nlohmann::json {
-        {JsonTagConstants::JSON_RECT_X, TEST_COORDINATE},
-        {JsonTagConstants::JSON_RECT_Y, TEST_COORDINATE},
+        {JsonTagConstants::JSON_RECT_X, TestCommon::TEST_COORDINATE},
+        {JsonTagConstants::JSON_RECT_Y, TestCommon::TEST_COORDINATE},
         {JsonTagConstants::JSON_RECT_WIDTH, WRONG_TYPE},
-        {JsonTagConstants::JSON_RECT_HEIGHT, TEST_COORDINATE}
+        {JsonTagConstants::JSON_RECT_HEIGHT, TestCommon::TEST_COORDINATE}
     };
     ASSERT_FALSE(comp.FromJson(jsonComponent));
 
     jsonComponent[JsonTagConstants::JSON_RECT] =  nlohmann::json {
-        {JsonTagConstants::JSON_RECT_X, TEST_COORDINATE},
-        {JsonTagConstants::JSON_RECT_Y, TEST_COORDINATE},
-        {JsonTagConstants::JSON_RECT_WIDTH, TEST_COORDINATE},
+        {JsonTagConstants::JSON_RECT_X, TestCommon::TEST_COORDINATE},
+        {JsonTagConstants::JSON_RECT_Y, TestCommon::TEST_COORDINATE},
+        {JsonTagConstants::JSON_RECT_WIDTH, TestCommon::TEST_COORDINATE},
         {JsonTagConstants::JSON_RECT_HEIGHT, WRONG_TYPE}
     };
     ASSERT_FALSE(comp.FromJson(jsonComponent));
@@ -154,31 +155,31 @@ HWTEST_F(LocationButtonTest, FromJson005, TestSize.Level1)
     ASSERT_TRUE(comp.FromJson(jsonComponent));
 
     nlohmann::json jsonPadding = nlohmann::json {
-        { JsonTagConstants::JSON_PADDING_TOP_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_RIGHT_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_BOTTOM_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_LEFT_TAG, TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_TOP_TAG, TestCommon::TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_RIGHT_TAG, TestCommon::TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_BOTTOM_TAG, TestCommon::TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_LEFT_TAG, TestCommon::TEST_DIMENSION },
     };
 
     jsonComponent[JsonTagConstants::JSON_SIZE_TAG] = nlohmann::json {
         { JsonTagConstants::JSON_FONT_SIZE_TAG, WRONG_TYPE },
-        { JsonTagConstants::JSON_ICON_SIZE_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, TEST_SIZE },
+        { JsonTagConstants::JSON_ICON_SIZE_TAG, TestCommon::TEST_SIZE },
+        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, TestCommon::TEST_SIZE },
         { JsonTagConstants::JSON_PADDING_SIZE_TAG, jsonPadding },
     };
     ASSERT_FALSE(comp.FromJson(jsonComponent));
 
     jsonComponent[JsonTagConstants::JSON_SIZE_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_FONT_SIZE_TAG, TEST_SIZE },
+        { JsonTagConstants::JSON_FONT_SIZE_TAG, TestCommon::TEST_SIZE },
         { JsonTagConstants::JSON_ICON_SIZE_TAG, WRONG_TYPE },
-        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, TEST_SIZE },
+        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, TestCommon::TEST_SIZE },
         { JsonTagConstants::JSON_PADDING_SIZE_TAG, jsonPadding },
     };
     ASSERT_FALSE(comp.FromJson(jsonComponent));
 
     jsonComponent[JsonTagConstants::JSON_SIZE_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_FONT_SIZE_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_ICON_SIZE_TAG, TEST_SIZE },
+        { JsonTagConstants::JSON_FONT_SIZE_TAG, TestCommon::TEST_SIZE },
+        { JsonTagConstants::JSON_ICON_SIZE_TAG, TestCommon::TEST_SIZE },
         { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, WRONG_TYPE },
         { JsonTagConstants::JSON_PADDING_SIZE_TAG, jsonPadding },
     };
@@ -200,28 +201,28 @@ HWTEST_F(LocationButtonTest, FromJson006, TestSize.Level1)
 
     nlohmann::json jsonPadding = nlohmann::json {
         { JsonTagConstants::JSON_PADDING_TOP_TAG, WRONG_TYPE },
-        { JsonTagConstants::JSON_PADDING_RIGHT_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_BOTTOM_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_LEFT_TAG, TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_RIGHT_TAG, TestCommon::TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_BOTTOM_TAG, TestCommon::TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_LEFT_TAG, TestCommon::TEST_DIMENSION },
     };
     jsonComponent[JsonTagConstants::JSON_SIZE_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_FONT_SIZE_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_ICON_SIZE_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, TEST_SIZE },
+        { JsonTagConstants::JSON_FONT_SIZE_TAG, TestCommon::TEST_SIZE },
+        { JsonTagConstants::JSON_ICON_SIZE_TAG, TestCommon::TEST_SIZE },
+        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, TestCommon::TEST_SIZE },
         { JsonTagConstants::JSON_PADDING_SIZE_TAG, jsonPadding },
     };
     ASSERT_FALSE(comp.FromJson(jsonComponent));
 
     jsonPadding = nlohmann::json {
-        { JsonTagConstants::JSON_PADDING_TOP_TAG, TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_TOP_TAG, TestCommon::TEST_DIMENSION },
         { JsonTagConstants::JSON_PADDING_RIGHT_TAG, WRONG_TYPE },
-        { JsonTagConstants::JSON_PADDING_BOTTOM_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_LEFT_TAG, TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_BOTTOM_TAG, TestCommon::TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_LEFT_TAG, TestCommon::TEST_DIMENSION },
     };
     jsonComponent[JsonTagConstants::JSON_SIZE_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_FONT_SIZE_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_ICON_SIZE_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, TEST_SIZE },
+        { JsonTagConstants::JSON_FONT_SIZE_TAG, TestCommon::TEST_SIZE },
+        { JsonTagConstants::JSON_ICON_SIZE_TAG, TestCommon::TEST_SIZE },
+        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, TestCommon::TEST_SIZE },
         { JsonTagConstants::JSON_PADDING_SIZE_TAG, jsonPadding },
     };
     ASSERT_FALSE(comp.FromJson(jsonComponent));
@@ -241,29 +242,29 @@ HWTEST_F(LocationButtonTest, FromJson007, TestSize.Level1)
     ASSERT_TRUE(comp.FromJson(jsonComponent));
 
     nlohmann::json jsonPadding = nlohmann::json {
-        { JsonTagConstants::JSON_PADDING_TOP_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_RIGHT_TAG, TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_TOP_TAG, TestCommon::TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_RIGHT_TAG, TestCommon::TEST_DIMENSION },
         { JsonTagConstants::JSON_PADDING_BOTTOM_TAG, WRONG_TYPE },
-        { JsonTagConstants::JSON_PADDING_LEFT_TAG, TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_LEFT_TAG, TestCommon::TEST_DIMENSION },
     };
     jsonComponent[JsonTagConstants::JSON_SIZE_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_FONT_SIZE_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_ICON_SIZE_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, TEST_SIZE },
+        { JsonTagConstants::JSON_FONT_SIZE_TAG, TestCommon::TEST_SIZE },
+        { JsonTagConstants::JSON_ICON_SIZE_TAG, TestCommon::TEST_SIZE },
+        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, TestCommon::TEST_SIZE },
         { JsonTagConstants::JSON_PADDING_SIZE_TAG, jsonPadding },
     };
     ASSERT_FALSE(comp.FromJson(jsonComponent));
 
     jsonPadding = nlohmann::json {
-        { JsonTagConstants::JSON_PADDING_TOP_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_RIGHT_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_BOTTOM_TAG, TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_TOP_TAG, TestCommon::TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_RIGHT_TAG, TestCommon::TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_BOTTOM_TAG, TestCommon::TEST_DIMENSION },
         { JsonTagConstants::JSON_PADDING_LEFT_TAG, WRONG_TYPE },
     };
     jsonComponent[JsonTagConstants::JSON_SIZE_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_FONT_SIZE_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_ICON_SIZE_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, TEST_SIZE },
+        { JsonTagConstants::JSON_FONT_SIZE_TAG, TestCommon::TEST_SIZE },
+        { JsonTagConstants::JSON_ICON_SIZE_TAG, TestCommon::TEST_SIZE },
+        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, TestCommon::TEST_SIZE },
         { JsonTagConstants::JSON_PADDING_SIZE_TAG, jsonPadding },
     };
     ASSERT_FALSE(comp.FromJson(jsonComponent));
@@ -344,21 +345,21 @@ HWTEST_F(LocationButtonTest, FromJson010, TestSize.Level1)
 
     jsonComponent[JsonTagConstants::JSON_COLORS_TAG] = nlohmann::json {
         { JsonTagConstants::JSON_FONT_COLOR_TAG, WRONG_TYPE },
-        { JsonTagConstants::JSON_ICON_COLOR_TAG, TEST_COLOR_BLUE },
-        { JsonTagConstants::JSON_BG_COLOR_TAG, TEST_COLOR_YELLOW }
+        { JsonTagConstants::JSON_ICON_COLOR_TAG, TestCommon::TEST_COLOR_BLUE },
+        { JsonTagConstants::JSON_BG_COLOR_TAG, TestCommon::TEST_COLOR_YELLOW }
     };
     ASSERT_FALSE(button.FromJson(jsonComponent));
 
     jsonComponent[JsonTagConstants::JSON_COLORS_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_FONT_COLOR_TAG, TEST_COLOR_RED },
+        { JsonTagConstants::JSON_FONT_COLOR_TAG, TestCommon::TEST_COLOR_RED },
         { JsonTagConstants::JSON_ICON_COLOR_TAG, WRONG_TYPE },
-        { JsonTagConstants::JSON_BG_COLOR_TAG, TEST_COLOR_YELLOW }
+        { JsonTagConstants::JSON_BG_COLOR_TAG, TestCommon::TEST_COLOR_YELLOW }
     };
     ASSERT_FALSE(button.FromJson(jsonComponent));
 
     jsonComponent[JsonTagConstants::JSON_COLORS_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_FONT_COLOR_TAG, TEST_COLOR_RED },
-        { JsonTagConstants::JSON_ICON_COLOR_TAG, TEST_COLOR_BLUE },
+        { JsonTagConstants::JSON_FONT_COLOR_TAG, TestCommon::TEST_COLOR_RED },
+        { JsonTagConstants::JSON_ICON_COLOR_TAG, TestCommon::TEST_COLOR_BLUE },
         { JsonTagConstants::JSON_BG_COLOR_TAG, WRONG_TYPE }
     };
     ASSERT_FALSE(button.FromJson(jsonComponent));
@@ -505,47 +506,47 @@ HWTEST_F(LocationButtonTest, CompareLocationButton002, TestSize.Level1)
 
     comp1.fontSize_ = DEFAULT_DIMENSION;
     ASSERT_FALSE(comp1.CompareComponentBasicInfo(&comp2, true));
-    comp1.fontSize_ = TEST_SIZE;
+    comp1.fontSize_ = TestCommon::TEST_SIZE;
 
     comp1.iconSize_ = DEFAULT_DIMENSION;
     ASSERT_FALSE(comp1.CompareComponentBasicInfo(&comp2, true));
-    comp1.iconSize_ = TEST_SIZE;
+    comp1.iconSize_ = TestCommon::TEST_SIZE;
 
     comp1.padding_.top = DEFAULT_DIMENSION;
     ASSERT_FALSE(comp1.CompareComponentBasicInfo(&comp2, true));
-    comp1.padding_.top = TEST_DIMENSION;
+    comp1.padding_.top = TestCommon::TEST_DIMENSION;
 
     comp1.padding_.right = DEFAULT_DIMENSION;
     ASSERT_FALSE(comp1.CompareComponentBasicInfo(&comp2, true));
-    comp1.padding_.right = TEST_DIMENSION;
+    comp1.padding_.right = TestCommon::TEST_DIMENSION;
 
     comp1.padding_.bottom = DEFAULT_DIMENSION;
     ASSERT_FALSE(comp1.CompareComponentBasicInfo(&comp2, true));
-    comp1.padding_.bottom = TEST_DIMENSION;
+    comp1.padding_.bottom = TestCommon::TEST_DIMENSION;
 
     comp1.padding_.left = DEFAULT_DIMENSION;
     ASSERT_FALSE(comp1.CompareComponentBasicInfo(&comp2, true));
-    comp1.padding_.left = TEST_DIMENSION;
+    comp1.padding_.left = TestCommon::TEST_DIMENSION;
 
     comp1.textIconSpace_ = DEFAULT_DIMENSION;
     ASSERT_FALSE(comp1.CompareComponentBasicInfo(&comp2, true));
-    comp1.textIconSpace_ = TEST_SIZE;
+    comp1.textIconSpace_ = TestCommon::TEST_SIZE;
 
     comp1.borderWidth_ = DEFAULT_DIMENSION;
     ASSERT_FALSE(comp1.CompareComponentBasicInfo(&comp2, true));
-    comp1.borderWidth_ = TEST_SIZE;
+    comp1.borderWidth_ = TestCommon::TEST_SIZE;
 
-    comp1.fontColor_.value = TEST_DIFF_COLOR;
+    comp1.fontColor_.value = TestCommon::TEST_DIFF_COLOR;
     ASSERT_FALSE(comp1.CompareComponentBasicInfo(&comp2, true));
-    comp1.fontColor_.value = TEST_COLOR_RED;
+    comp1.fontColor_.value = TestCommon::TEST_COLOR_RED;
 
-    comp1.bgColor_.value = TEST_DIFF_COLOR;
+    comp1.bgColor_.value = TestCommon::TEST_DIFF_COLOR;
     ASSERT_FALSE(comp1.CompareComponentBasicInfo(&comp2, true));
-    comp1.bgColor_.value = TEST_COLOR_YELLOW;
+    comp1.bgColor_.value = TestCommon::TEST_COLOR_YELLOW;
 
-    comp1.iconColor_.value = TEST_DIFF_COLOR;
+    comp1.iconColor_.value = TestCommon::TEST_DIFF_COLOR;
     ASSERT_FALSE(comp1.CompareComponentBasicInfo(&comp2, true));
-    comp1.iconColor_.value = TEST_COLOR_BLUE;
+    comp1.iconColor_.value = TestCommon::TEST_COLOR_BLUE;
 
     ASSERT_TRUE(comp1.CompareComponentBasicInfo(&comp2, true));
 }

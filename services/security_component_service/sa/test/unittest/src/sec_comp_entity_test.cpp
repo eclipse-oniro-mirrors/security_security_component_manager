@@ -130,8 +130,8 @@ HWTEST_F(SecCompEntityTest, GrantTempPermission002, TestSize.Level1)
 HWTEST_F(SecCompEntityTest, CheckTouchInfo001, TestSize.Level1)
 {
     SecCompClickEvent touch = {
-        .touchX = TEST_COORDINATE,
-        .touchY = TEST_COORDINATE,
+        .touchX = ServiceTestCommon::TEST_COORDINATE,
+        .touchY = ServiceTestCommon::TEST_COORDINATE,
         .timestamp = 0,
     };
     ASSERT_FALSE(entity_->CheckTouchInfo(touch));
@@ -140,17 +140,17 @@ HWTEST_F(SecCompEntityTest, CheckTouchInfo001, TestSize.Level1)
     touch.timestamp = current + 10000L; // 10s
     ASSERT_FALSE(entity_->CheckTouchInfo(touch));
 
-    entity_->componentInfo_->rect_.x_ = TEST_DIFF_COORDINATE; // click event will not hit this rect
-    entity_->componentInfo_->rect_.y_ = TEST_DIFF_COORDINATE;
-    entity_->componentInfo_->rect_.width_ = TEST_DIFF_COORDINATE;
-    entity_->componentInfo_->rect_.height_ = TEST_DIFF_COORDINATE;
+    entity_->componentInfo_->rect_.x_ = ServiceTestCommon::TEST_DIFF_COORDINATE; // click event will not hit this rect
+    entity_->componentInfo_->rect_.y_ = ServiceTestCommon::TEST_DIFF_COORDINATE;
+    entity_->componentInfo_->rect_.width_ = ServiceTestCommon::TEST_DIFF_COORDINATE;
+    entity_->componentInfo_->rect_.height_ = ServiceTestCommon::TEST_DIFF_COORDINATE;
     touch.timestamp = static_cast<uint64_t>(
-        std::chrono::high_resolution_clock::now().time_since_epoch().count()) / TIME_CONVERSION_UNIT;
+        std::chrono::high_resolution_clock::now().time_since_epoch().count()) / ServiceTestCommon::TIME_CONVERSION_UNIT;
     ASSERT_FALSE(entity_->CheckTouchInfo(touch));
 
-    entity_->componentInfo_->rect_.x_ = TEST_COORDINATE;
-    entity_->componentInfo_->rect_.y_ = TEST_COORDINATE;
+    entity_->componentInfo_->rect_.x_ = ServiceTestCommon::TEST_COORDINATE;
+    entity_->componentInfo_->rect_.y_ = ServiceTestCommon::TEST_COORDINATE;
     touch.timestamp = static_cast<uint64_t>(
-        std::chrono::high_resolution_clock::now().time_since_epoch().count()) / TIME_CONVERSION_UNIT;
+        std::chrono::high_resolution_clock::now().time_since_epoch().count()) / ServiceTestCommon::TIME_CONVERSION_UNIT;
     ASSERT_FALSE(entity_->CheckTouchInfo(touch));
 }

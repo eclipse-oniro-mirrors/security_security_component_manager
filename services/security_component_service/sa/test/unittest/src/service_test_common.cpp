@@ -22,39 +22,39 @@ void ServiceTestCommon::BuildLocationComponentJson(nlohmann::json& jsonComponent
     jsonComponent[JsonTagConstants::JSON_SC_TYPE] = LOCATION_COMPONENT;
     jsonComponent[JsonTagConstants::JSON_NODE_ID] = 0;
     jsonComponent[JsonTagConstants::JSON_RECT] =  nlohmann::json {
-        {JsonTagConstants::JSON_RECT_X, TEST_COORDINATE },
-        {JsonTagConstants::JSON_RECT_Y, TEST_COORDINATE },
-        {JsonTagConstants::JSON_RECT_WIDTH, TEST_COORDINATE },
-        {JsonTagConstants::JSON_RECT_HEIGHT, TEST_COORDINATE }
+        {JsonTagConstants::JSON_RECT_X, ServiceTestCommon::TEST_COORDINATE },
+        {JsonTagConstants::JSON_RECT_Y, ServiceTestCommon::TEST_COORDINATE },
+        {JsonTagConstants::JSON_RECT_WIDTH, ServiceTestCommon::TEST_COORDINATE },
+        {JsonTagConstants::JSON_RECT_HEIGHT, ServiceTestCommon::TEST_COORDINATE }
     };
     jsonComponent[JsonTagConstants::JSON_WINDOW_RECT] = nlohmann::json {
-        { JsonTagConstants::JSON_RECT_X, TEST_COORDINATE },
-        { JsonTagConstants::JSON_RECT_Y, TEST_COORDINATE },
-        { JsonTagConstants::JSON_RECT_WIDTH, TEST_COORDINATE },
-        { JsonTagConstants::JSON_RECT_HEIGHT, TEST_COORDINATE }
+        { JsonTagConstants::JSON_RECT_X, ServiceTestCommon::TEST_COORDINATE },
+        { JsonTagConstants::JSON_RECT_Y, ServiceTestCommon::TEST_COORDINATE },
+        { JsonTagConstants::JSON_RECT_WIDTH, ServiceTestCommon::TEST_COORDINATE },
+        { JsonTagConstants::JSON_RECT_HEIGHT, ServiceTestCommon::TEST_COORDINATE }
     };
     nlohmann::json jsonPadding = nlohmann::json {
-        { JsonTagConstants::JSON_PADDING_TOP_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_RIGHT_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_BOTTOM_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_LEFT_TAG, TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_TOP_TAG, ServiceTestCommon::TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_RIGHT_TAG, ServiceTestCommon::TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_BOTTOM_TAG, ServiceTestCommon::TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_LEFT_TAG, ServiceTestCommon::TEST_DIMENSION },
     };
 
     jsonComponent[JsonTagConstants::JSON_SIZE_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_FONT_SIZE_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_ICON_SIZE_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, TEST_SIZE },
+        { JsonTagConstants::JSON_FONT_SIZE_TAG, ServiceTestCommon::TEST_SIZE },
+        { JsonTagConstants::JSON_ICON_SIZE_TAG, ServiceTestCommon::TEST_SIZE },
+        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, ServiceTestCommon::TEST_SIZE },
         { JsonTagConstants::JSON_PADDING_SIZE_TAG, jsonPadding },
     };
 
     jsonComponent[JsonTagConstants::JSON_COLORS_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_FONT_COLOR_TAG, TEST_COLOR_RED },
-        { JsonTagConstants::JSON_ICON_COLOR_TAG, TEST_COLOR_BLUE },
-        { JsonTagConstants::JSON_BG_COLOR_TAG, TEST_COLOR_YELLOW }
+        { JsonTagConstants::JSON_FONT_COLOR_TAG, ServiceTestCommon::TEST_COLOR_RED },
+        { JsonTagConstants::JSON_ICON_COLOR_TAG, ServiceTestCommon::TEST_COLOR_BLUE },
+        { JsonTagConstants::JSON_BG_COLOR_TAG, ServiceTestCommon::TEST_COLOR_YELLOW }
     };
 
     jsonComponent[JsonTagConstants::JSON_BORDER_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_BORDER_WIDTH_TAG, TEST_SIZE },
+        { JsonTagConstants::JSON_BORDER_WIDTH_TAG, ServiceTestCommon::TEST_SIZE },
     };
     jsonComponent[JsonTagConstants::JSON_PARENT_TAG] = nlohmann::json {
         { JsonTagConstants::JSON_PARENT_EFFECT_TAG, false },
@@ -71,39 +71,39 @@ void ServiceTestCommon::BuildSaveComponentJson(nlohmann::json& jsonComponent)
     jsonComponent[JsonTagConstants::JSON_SC_TYPE] = SAVE_COMPONENT;
     jsonComponent[JsonTagConstants::JSON_NODE_ID] = 0;
     jsonComponent[JsonTagConstants::JSON_RECT] = nlohmann::json {
-        {JsonTagConstants::JSON_RECT_X, TEST_COORDINATE },
-        {JsonTagConstants::JSON_RECT_Y, TEST_COORDINATE },
-        {JsonTagConstants::JSON_RECT_WIDTH, TEST_COORDINATE },
-        {JsonTagConstants::JSON_RECT_HEIGHT, TEST_COORDINATE }
+        {JsonTagConstants::JSON_RECT_X, ServiceTestCommon::TEST_COORDINATE },
+        {JsonTagConstants::JSON_RECT_Y, ServiceTestCommon::TEST_COORDINATE },
+        {JsonTagConstants::JSON_RECT_WIDTH, ServiceTestCommon::TEST_COORDINATE },
+        {JsonTagConstants::JSON_RECT_HEIGHT, ServiceTestCommon::TEST_COORDINATE }
     };
     jsonComponent[JsonTagConstants::JSON_WINDOW_RECT] = nlohmann::json {
-        {JsonTagConstants::JSON_RECT_X, TEST_COORDINATE },
-        {JsonTagConstants::JSON_RECT_Y, TEST_COORDINATE },
-        {JsonTagConstants::JSON_RECT_WIDTH, TEST_COORDINATE },
-        {JsonTagConstants::JSON_RECT_HEIGHT, TEST_COORDINATE }
+        {JsonTagConstants::JSON_RECT_X, ServiceTestCommon::TEST_COORDINATE },
+        {JsonTagConstants::JSON_RECT_Y, ServiceTestCommon::TEST_COORDINATE },
+        {JsonTagConstants::JSON_RECT_WIDTH, ServiceTestCommon::TEST_COORDINATE },
+        {JsonTagConstants::JSON_RECT_HEIGHT, ServiceTestCommon::TEST_COORDINATE }
     };
     nlohmann::json jsonPadding = nlohmann::json {
-        { JsonTagConstants::JSON_PADDING_TOP_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_RIGHT_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_BOTTOM_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_LEFT_TAG, TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_TOP_TAG, ServiceTestCommon::TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_RIGHT_TAG, ServiceTestCommon::TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_BOTTOM_TAG, ServiceTestCommon::TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_LEFT_TAG, ServiceTestCommon::TEST_DIMENSION },
     };
 
     jsonComponent[JsonTagConstants::JSON_SIZE_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_FONT_SIZE_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_ICON_SIZE_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, TEST_SIZE },
+        { JsonTagConstants::JSON_FONT_SIZE_TAG, ServiceTestCommon::TEST_SIZE },
+        { JsonTagConstants::JSON_ICON_SIZE_TAG, ServiceTestCommon::TEST_SIZE },
+        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, ServiceTestCommon::TEST_SIZE },
         { JsonTagConstants::JSON_PADDING_SIZE_TAG, jsonPadding },
     };
 
     jsonComponent[JsonTagConstants::JSON_COLORS_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_FONT_COLOR_TAG, TEST_COLOR_RED },
-        { JsonTagConstants::JSON_ICON_COLOR_TAG, TEST_COLOR_BLUE },
-        { JsonTagConstants::JSON_BG_COLOR_TAG, TEST_COLOR_YELLOW }
+        { JsonTagConstants::JSON_FONT_COLOR_TAG, ServiceTestCommon::TEST_COLOR_RED },
+        { JsonTagConstants::JSON_ICON_COLOR_TAG, ServiceTestCommon::TEST_COLOR_BLUE },
+        { JsonTagConstants::JSON_BG_COLOR_TAG, ServiceTestCommon::TEST_COLOR_YELLOW }
     };
 
     jsonComponent[JsonTagConstants::JSON_BORDER_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_BORDER_WIDTH_TAG, TEST_SIZE },
+        { JsonTagConstants::JSON_BORDER_WIDTH_TAG, ServiceTestCommon::TEST_SIZE },
     };
     jsonComponent[JsonTagConstants::JSON_PARENT_TAG] = nlohmann::json {
         { JsonTagConstants::JSON_PARENT_EFFECT_TAG, false },
@@ -120,39 +120,39 @@ void ServiceTestCommon::BuildPasteComponentJson(nlohmann::json& jsonComponent)
     jsonComponent[JsonTagConstants::JSON_SC_TYPE] = PASTE_COMPONENT;
     jsonComponent[JsonTagConstants::JSON_NODE_ID] = 0;
     jsonComponent[JsonTagConstants::JSON_RECT] = nlohmann::json {
-        {JsonTagConstants::JSON_RECT_X, TEST_COORDINATE },
-        {JsonTagConstants::JSON_RECT_Y, TEST_COORDINATE },
-        {JsonTagConstants::JSON_RECT_WIDTH, TEST_COORDINATE },
-        {JsonTagConstants::JSON_RECT_HEIGHT, TEST_COORDINATE }
+        {JsonTagConstants::JSON_RECT_X, ServiceTestCommon::TEST_COORDINATE },
+        {JsonTagConstants::JSON_RECT_Y, ServiceTestCommon::TEST_COORDINATE },
+        {JsonTagConstants::JSON_RECT_WIDTH, ServiceTestCommon::TEST_COORDINATE },
+        {JsonTagConstants::JSON_RECT_HEIGHT, ServiceTestCommon::TEST_COORDINATE }
     };
     jsonComponent[JsonTagConstants::JSON_WINDOW_RECT] = nlohmann::json {
-        {JsonTagConstants::JSON_RECT_X, TEST_COORDINATE },
-        {JsonTagConstants::JSON_RECT_Y, TEST_COORDINATE },
-        {JsonTagConstants::JSON_RECT_WIDTH, TEST_COORDINATE },
-        {JsonTagConstants::JSON_RECT_HEIGHT, TEST_COORDINATE }
+        {JsonTagConstants::JSON_RECT_X, ServiceTestCommon::TEST_COORDINATE },
+        {JsonTagConstants::JSON_RECT_Y, ServiceTestCommon::TEST_COORDINATE },
+        {JsonTagConstants::JSON_RECT_WIDTH, ServiceTestCommon::TEST_COORDINATE },
+        {JsonTagConstants::JSON_RECT_HEIGHT, ServiceTestCommon::TEST_COORDINATE }
     };
     nlohmann::json jsonPadding = nlohmann::json {
-        { JsonTagConstants::JSON_PADDING_TOP_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_RIGHT_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_BOTTOM_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_LEFT_TAG, TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_TOP_TAG, ServiceTestCommon::TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_RIGHT_TAG, ServiceTestCommon::TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_BOTTOM_TAG, ServiceTestCommon::TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_LEFT_TAG, ServiceTestCommon::TEST_DIMENSION },
     };
 
     jsonComponent[JsonTagConstants::JSON_SIZE_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_FONT_SIZE_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_ICON_SIZE_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, TEST_SIZE },
+        { JsonTagConstants::JSON_FONT_SIZE_TAG, ServiceTestCommon::TEST_SIZE },
+        { JsonTagConstants::JSON_ICON_SIZE_TAG, ServiceTestCommon::TEST_SIZE },
+        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, ServiceTestCommon::TEST_SIZE },
         { JsonTagConstants::JSON_PADDING_SIZE_TAG, jsonPadding },
     };
 
     jsonComponent[JsonTagConstants::JSON_COLORS_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_FONT_COLOR_TAG, TEST_COLOR_RED },
-        { JsonTagConstants::JSON_ICON_COLOR_TAG, TEST_COLOR_BLUE },
-        { JsonTagConstants::JSON_BG_COLOR_TAG, TEST_COLOR_YELLOW }
+        { JsonTagConstants::JSON_FONT_COLOR_TAG, ServiceTestCommon::TEST_COLOR_RED },
+        { JsonTagConstants::JSON_ICON_COLOR_TAG, ServiceTestCommon::TEST_COLOR_BLUE },
+        { JsonTagConstants::JSON_BG_COLOR_TAG, ServiceTestCommon::TEST_COLOR_YELLOW }
     };
 
     jsonComponent[JsonTagConstants::JSON_BORDER_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_BORDER_WIDTH_TAG, TEST_SIZE },
+        { JsonTagConstants::JSON_BORDER_WIDTH_TAG, ServiceTestCommon::TEST_SIZE },
     };
     jsonComponent[JsonTagConstants::JSON_PARENT_TAG] = nlohmann::json {
         { JsonTagConstants::JSON_PARENT_EFFECT_TAG, false },

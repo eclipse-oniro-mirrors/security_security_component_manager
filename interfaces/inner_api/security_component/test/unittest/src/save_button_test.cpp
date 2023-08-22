@@ -152,47 +152,47 @@ HWTEST_F(SaveButtonTest, CompareSaveButton002, TestSize.Level1)
 
     comp1.fontSize_ = DEFAULT_DIMENSION;
     ASSERT_FALSE(comp1.CompareComponentBasicInfo(&comp2, true));
-    comp1.fontSize_ = TEST_SIZE;
+    comp1.fontSize_ = TestCommon::TEST_SIZE;
 
     comp1.iconSize_ = DEFAULT_DIMENSION;
     ASSERT_FALSE(comp1.CompareComponentBasicInfo(&comp2, true));
-    comp1.iconSize_ = TEST_SIZE;
+    comp1.iconSize_ = TestCommon::TEST_SIZE;
 
     comp1.padding_.top = DEFAULT_DIMENSION;
     ASSERT_FALSE(comp1.CompareComponentBasicInfo(&comp2, true));
-    comp1.padding_.top = TEST_DIMENSION;
+    comp1.padding_.top = TestCommon::TEST_DIMENSION;
 
     comp1.padding_.right = DEFAULT_DIMENSION;
     ASSERT_FALSE(comp1.CompareComponentBasicInfo(&comp2, true));
-    comp1.padding_.right = TEST_DIMENSION;
+    comp1.padding_.right = TestCommon::TEST_DIMENSION;
 
     comp1.padding_.bottom = DEFAULT_DIMENSION;
     ASSERT_FALSE(comp1.CompareComponentBasicInfo(&comp2, true));
-    comp1.padding_.bottom = TEST_DIMENSION;
+    comp1.padding_.bottom = TestCommon::TEST_DIMENSION;
 
     comp1.padding_.left = DEFAULT_DIMENSION;
     ASSERT_FALSE(comp1.CompareComponentBasicInfo(&comp2, true));
-    comp1.padding_.left = TEST_DIMENSION;
+    comp1.padding_.left = TestCommon::TEST_DIMENSION;
 
     comp1.textIconSpace_ = DEFAULT_DIMENSION;
     ASSERT_FALSE(comp1.CompareComponentBasicInfo(&comp2, true));
-    comp1.textIconSpace_ = TEST_SIZE;
+    comp1.textIconSpace_ = TestCommon::TEST_SIZE;
 
     comp1.borderWidth_ = DEFAULT_DIMENSION;
     ASSERT_FALSE(comp1.CompareComponentBasicInfo(&comp2, true));
-    comp1.borderWidth_ = TEST_SIZE;
+    comp1.borderWidth_ = TestCommon::TEST_SIZE;
 
-    comp1.fontColor_.value = TEST_DIFF_COLOR;
+    comp1.fontColor_.value = TestCommon::TEST_DIFF_COLOR;
     ASSERT_FALSE(comp1.CompareComponentBasicInfo(&comp2, true));
-    comp1.fontColor_.value = TEST_COLOR_RED;
+    comp1.fontColor_.value = TestCommon::TEST_COLOR_RED;
 
-    comp1.bgColor_.value = TEST_DIFF_COLOR;
+    comp1.bgColor_.value = TestCommon::TEST_DIFF_COLOR;
     ASSERT_FALSE(comp1.CompareComponentBasicInfo(&comp2, true));
-    comp1.bgColor_.value = TEST_COLOR_YELLOW;
+    comp1.bgColor_.value = TestCommon::TEST_COLOR_YELLOW;
 
-    comp1.iconColor_.value = TEST_DIFF_COLOR;
+    comp1.iconColor_.value = TestCommon::TEST_DIFF_COLOR;
     ASSERT_FALSE(comp1.CompareComponentBasicInfo(&comp2, true));
-    comp1.iconColor_.value = TEST_COLOR_BLUE;
+    comp1.iconColor_.value = TestCommon::TEST_COLOR_BLUE;
 
     ASSERT_TRUE(comp1.CompareComponentBasicInfo(&comp2, true));
 }

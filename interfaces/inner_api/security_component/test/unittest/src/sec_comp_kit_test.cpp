@@ -89,23 +89,23 @@ void SecCompKitTest::TearDown()
 HWTEST_F(SecCompKitTest, ExceptCall001, TestSize.Level1)
 {
     LocationButton comp;
-    comp.fontSize_ = TEST_SIZE;
-    comp.iconSize_ = TEST_SIZE;
-    comp.padding_.top = TEST_DIMENSION;
-    comp.padding_.right = TEST_DIMENSION;
-    comp.padding_.bottom = TEST_DIMENSION;
-    comp.padding_.left = TEST_DIMENSION;
-    comp.textIconSpace_ = TEST_SIZE;
-    comp.bgColor_.value = TEST_COLOR;
-    comp.fontColor_.value = TEST_COLOR;
-    comp.iconColor_.value = TEST_COLOR;
-    comp.borderWidth_ = TEST_SIZE;
+    comp.fontSize_ = TestCommon::TEST_SIZE;
+    comp.iconSize_ = TestCommon::TEST_SIZE;
+    comp.padding_.top = TestCommon::TEST_DIMENSION;
+    comp.padding_.right = TestCommon::TEST_DIMENSION;
+    comp.padding_.bottom = TestCommon::TEST_DIMENSION;
+    comp.padding_.left = TestCommon::TEST_DIMENSION;
+    comp.textIconSpace_ = TestCommon::TEST_SIZE;
+    comp.bgColor_.value = TestCommon::TEST_COLOR;
+    comp.fontColor_.value = TestCommon::TEST_COLOR;
+    comp.iconColor_.value = TestCommon::TEST_COLOR;
+    comp.borderWidth_ = TestCommon::TEST_SIZE;
     comp.parentEffect_ = true;
     comp.type_ = LOCATION_COMPONENT;
-    comp.rect_.x_ = TEST_COORDINATE;
-    comp.rect_.y_ = TEST_COORDINATE;
-    comp.rect_.width_ = TEST_COORDINATE;
-    comp.rect_.height_ = TEST_COORDINATE;
+    comp.rect_.x_ = TestCommon::TEST_COORDINATE;
+    comp.rect_.y_ = TestCommon::TEST_COORDINATE;
+    comp.rect_.width_ = TestCommon::TEST_COORDINATE;
+    comp.rect_.height_ = TestCommon::TEST_COORDINATE;
 
     nlohmann::json jsonRes;
     comp.ToJson(jsonRes);
@@ -116,8 +116,8 @@ HWTEST_F(SecCompKitTest, ExceptCall001, TestSize.Level1)
     ASSERT_NE(SC_OK, SecCompKit::UpdateSecurityComponent(scId, jsonStr));
 
     struct SecCompClickEvent touch = {
-        .touchX = TEST_COORDINATE,
-        .touchY = TEST_COORDINATE,
+        .touchX = TestCommon::TEST_COORDINATE,
+        .touchY = TestCommon::TEST_COORDINATE,
         .timestamp = static_cast<uint64_t>(std::chrono::high_resolution_clock::now().time_since_epoch().count())
     };
     EXPECT_NE(SC_OK, SecCompKit::ReportSecurityComponentClickEvent(scId, jsonStr, touch, nullptr));
@@ -163,7 +163,7 @@ HWTEST_F(SecCompKitTest, TestCallerCheck002, TestSize.Level1)
     SecCompCallerAuthorization::GetInstance().kitCallerList_.clear();
     SecCompCallerAuthorization::GetInstance().isInit_ = false;
 
-    for (size_t i = 0; i < MAX_CALLER_SIZE + 1; i++) {
+    for (size_t i = 0; i < TestCommon::MAX_CALLER_SIZE + 1; i++) {
         callerList.emplace_back(reinterpret_cast<uintptr_t>(TestInCallerNotCheckList));
     }
     SecCompUiRegister registerCallback2(callerList, nullptr);

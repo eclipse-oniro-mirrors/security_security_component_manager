@@ -52,7 +52,7 @@ void SecCompServiceMockTest::SetUp()
     if (secCompService_ != nullptr) {
         return;
     }
-    SecCompService* ptr = new (std::nothrow) SecCompService(SA_ID, true);
+    SecCompService* ptr = new (std::nothrow) SecCompService(ServiceTestCommon::SA_ID, true);
     secCompService_ = sptr<SecCompService>(ptr);
     ASSERT_NE(nullptr, secCompService_);
     secCompService_->appStateObserver_ = new (std::nothrow) AppStateObserver();
@@ -87,7 +87,7 @@ HWTEST_F(SecCompServiceMockTest, RegisterSecurityComponent001, TestSize.Level1)
     std::string saveInfo = jsonRes.dump();
 
     // parse component json fail
-    ASSERT_EQ(0, SetSelfTokenID(HAP_TOKEN_ID));
+    ASSERT_EQ(0, SetSelfTokenID(ServiceTestCommon::HAP_TOKEN_ID));
     AppExecFwk::AppStateData stateData = {
         .uid = getuid()
     };
@@ -101,8 +101,8 @@ HWTEST_F(SecCompServiceMockTest, RegisterSecurityComponent001, TestSize.Level1)
     struct SecCompClickEvent touch = {
         .touchX = 100,
         .touchY = 100,
-        .timestamp = static_cast<uint64_t>(
-            std::chrono::high_resolution_clock::now().time_since_epoch().count()) / TIME_CONVERSION_UNIT
+        .timestamp = static_cast<uint64_t>(std::chrono::high_resolution_clock::now().time_since_epoch().count()) /
+            ServiceTestCommon::TIME_CONVERSION_UNIT
     };
 
     EXPECT_EQ(SC_OK, secCompService_->ReportSecurityComponentClickEvent(scId, saveInfo, touch, nullptr));
@@ -125,7 +125,7 @@ HWTEST_F(SecCompServiceMockTest, RegisterSecurityComponent002, TestSize.Level1)
     ServiceTestCommon::BuildSaveComponentJson(jsonRes);
     std::string saveInfo = jsonRes.dump();
 
-    ASSERT_EQ(0, SetSelfTokenID(HAP_TOKEN_ID));
+    ASSERT_EQ(0, SetSelfTokenID(ServiceTestCommon::HAP_TOKEN_ID));
     AppExecFwk::AppStateData stateData = {
         .uid = getuid()
     };
@@ -168,8 +168,8 @@ HWTEST_F(SecCompServiceMockTest, RegisterSecurityComponent003, TestSize.Level1)
     struct SecCompClickEvent touch = {
         .touchX = 100,
         .touchY = 100,
-        .timestamp = static_cast<uint64_t>(
-            std::chrono::high_resolution_clock::now().time_since_epoch().count()) / TIME_CONVERSION_UNIT
+        .timestamp = static_cast<uint64_t>(std::chrono::high_resolution_clock::now().time_since_epoch().count()) /
+            ServiceTestCommon::TIME_CONVERSION_UNIT
     };
     EXPECT_EQ(SC_SERVICE_ERROR_PERMISSION_OPER_FAIL,
         secCompService_->ReportSecurityComponentClickEvent(scId, saveInfo, touch, nullptr));
@@ -191,7 +191,7 @@ HWTEST_F(SecCompServiceMockTest, ReportSecurityComponentClickEvent001, TestSize.
     ServiceTestCommon::BuildSaveComponentJson(jsonRes);
     std::string saveInfo = jsonRes.dump();
 
-    ASSERT_EQ(0, SetSelfTokenID(HAP_TOKEN_ID));
+    ASSERT_EQ(0, SetSelfTokenID(ServiceTestCommon::HAP_TOKEN_ID));
     AppExecFwk::AppStateData stateData = {
         .uid = getuid()
     };
@@ -201,19 +201,19 @@ HWTEST_F(SecCompServiceMockTest, ReportSecurityComponentClickEvent001, TestSize.
     struct SecCompClickEvent touchInfo = {
         .touchX = 100,
         .touchY = 100,
-        .timestamp = static_cast<uint64_t>(
-            std::chrono::high_resolution_clock::now().time_since_epoch().count()) / TIME_CONVERSION_UNIT
+        .timestamp = static_cast<uint64_t>(std::chrono::high_resolution_clock::now().time_since_epoch().count()) /
+            ServiceTestCommon::TIME_CONVERSION_UNIT
     };
 
     ASSERT_EQ(SC_OK, secCompService_->ReportSecurityComponentClickEvent(scId, saveInfo, touchInfo, nullptr));
 
-    ASSERT_TRUE(secCompService_->ReduceAfterVerifySavePermission(HAP_TOKEN_ID));
+    ASSERT_TRUE(secCompService_->ReduceAfterVerifySavePermission(ServiceTestCommon::HAP_TOKEN_ID));
 
-    ASSERT_FALSE(secCompService_->ReduceAfterVerifySavePermission(HAP_TOKEN_ID));
+    ASSERT_FALSE(secCompService_->ReduceAfterVerifySavePermission(ServiceTestCommon::HAP_TOKEN_ID));
 
     ASSERT_EQ(SC_OK, secCompService_->ReportSecurityComponentClickEvent(scId, saveInfo, touchInfo, nullptr));
     sleep(6);
-    ASSERT_FALSE(secCompService_->ReduceAfterVerifySavePermission(HAP_TOKEN_ID));
+    ASSERT_FALSE(secCompService_->ReduceAfterVerifySavePermission(ServiceTestCommon::HAP_TOKEN_ID));
     EXPECT_EQ(SC_OK, secCompService_->UnregisterSecurityComponent(scId));
 }
 
@@ -232,7 +232,7 @@ HWTEST_F(SecCompServiceMockTest, ReportSecurityComponentClickEvent002, TestSize.
     ServiceTestCommon::BuildSaveComponentJson(jsonRes);
     std::string saveInfo = jsonRes.dump();
 
-    ASSERT_EQ(0, SetSelfTokenID(HAP_TOKEN_ID));
+    ASSERT_EQ(0, SetSelfTokenID(ServiceTestCommon::HAP_TOKEN_ID));
     AppExecFwk::AppStateData stateData = {
         .uid = getuid()
     };
@@ -242,37 +242,37 @@ HWTEST_F(SecCompServiceMockTest, ReportSecurityComponentClickEvent002, TestSize.
     struct SecCompClickEvent touchInfo = {
         .touchX = 100,
         .touchY = 100,
-        .timestamp = static_cast<uint64_t>(
-            std::chrono::high_resolution_clock::now().time_since_epoch().count()) / TIME_CONVERSION_UNIT
+        .timestamp = static_cast<uint64_t>(std::chrono::high_resolution_clock::now().time_since_epoch().count()) /
+            ServiceTestCommon::TIME_CONVERSION_UNIT
     };
 
     ASSERT_EQ(SC_OK, secCompService_->ReportSecurityComponentClickEvent(scId, saveInfo, touchInfo, nullptr));
     ASSERT_EQ(SC_OK, secCompService_->ReportSecurityComponentClickEvent(scId, saveInfo, touchInfo, nullptr));
 
-    ASSERT_TRUE(secCompService_->ReduceAfterVerifySavePermission(HAP_TOKEN_ID));
-    ASSERT_TRUE(secCompService_->ReduceAfterVerifySavePermission(HAP_TOKEN_ID));
-    ASSERT_FALSE(secCompService_->ReduceAfterVerifySavePermission(HAP_TOKEN_ID));
+    ASSERT_TRUE(secCompService_->ReduceAfterVerifySavePermission(ServiceTestCommon::HAP_TOKEN_ID));
+    ASSERT_TRUE(secCompService_->ReduceAfterVerifySavePermission(ServiceTestCommon::HAP_TOKEN_ID));
+    ASSERT_FALSE(secCompService_->ReduceAfterVerifySavePermission(ServiceTestCommon::HAP_TOKEN_ID));
 
     ASSERT_EQ(SC_OK, secCompService_->ReportSecurityComponentClickEvent(scId, saveInfo, touchInfo, nullptr));
     sleep(3);
     touchInfo.timestamp = static_cast<uint64_t>(
-        std::chrono::high_resolution_clock::now().time_since_epoch().count()) / TIME_CONVERSION_UNIT;
+        std::chrono::high_resolution_clock::now().time_since_epoch().count()) / ServiceTestCommon::TIME_CONVERSION_UNIT;
     ASSERT_EQ(SC_OK, secCompService_->ReportSecurityComponentClickEvent(scId, saveInfo, touchInfo, nullptr));
     sleep(3);
-    ASSERT_TRUE(secCompService_->ReduceAfterVerifySavePermission(HAP_TOKEN_ID));
-    ASSERT_FALSE(secCompService_->ReduceAfterVerifySavePermission(HAP_TOKEN_ID));
+    ASSERT_TRUE(secCompService_->ReduceAfterVerifySavePermission(ServiceTestCommon::HAP_TOKEN_ID));
+    ASSERT_FALSE(secCompService_->ReduceAfterVerifySavePermission(ServiceTestCommon::HAP_TOKEN_ID));
 
     touchInfo.timestamp = static_cast<uint64_t>(
-        std::chrono::high_resolution_clock::now().time_since_epoch().count()) / TIME_CONVERSION_UNIT;
+        std::chrono::high_resolution_clock::now().time_since_epoch().count()) / ServiceTestCommon::TIME_CONVERSION_UNIT;
     ASSERT_EQ(SC_OK, secCompService_->ReportSecurityComponentClickEvent(scId, saveInfo, touchInfo, nullptr));
     sleep(3);
     touchInfo.timestamp = static_cast<uint64_t>(
-        std::chrono::high_resolution_clock::now().time_since_epoch().count()) / TIME_CONVERSION_UNIT;;
+        std::chrono::high_resolution_clock::now().time_since_epoch().count()) / ServiceTestCommon::TIME_CONVERSION_UNIT;
     ASSERT_EQ(SC_OK, secCompService_->ReportSecurityComponentClickEvent(scId, saveInfo, touchInfo, nullptr));
-    ASSERT_TRUE(secCompService_->ReduceAfterVerifySavePermission(HAP_TOKEN_ID));
+    ASSERT_TRUE(secCompService_->ReduceAfterVerifySavePermission(ServiceTestCommon::HAP_TOKEN_ID));
     sleep(3);
-    ASSERT_TRUE(secCompService_->ReduceAfterVerifySavePermission(HAP_TOKEN_ID));
-    ASSERT_FALSE(secCompService_->ReduceAfterVerifySavePermission(HAP_TOKEN_ID));
+    ASSERT_TRUE(secCompService_->ReduceAfterVerifySavePermission(ServiceTestCommon::HAP_TOKEN_ID));
+    ASSERT_FALSE(secCompService_->ReduceAfterVerifySavePermission(ServiceTestCommon::HAP_TOKEN_ID));
 }
 
 /**
@@ -290,7 +290,7 @@ HWTEST_F(SecCompServiceMockTest, ReportSecurityComponentClickEvent003, TestSize.
     ServiceTestCommon::BuildSaveComponentJson(jsonRes);
     std::string saveInfo = jsonRes.dump();
 
-    ASSERT_EQ(0, SetSelfTokenID(HAP_TOKEN_ID));
+    ASSERT_EQ(0, SetSelfTokenID(ServiceTestCommon::HAP_TOKEN_ID));
     AppExecFwk::AppStateData stateData = {
         .uid = getuid()
     };
@@ -300,24 +300,24 @@ HWTEST_F(SecCompServiceMockTest, ReportSecurityComponentClickEvent003, TestSize.
     struct SecCompClickEvent touchInfo = {
         .touchX = 100,
         .touchY = 100,
-        .timestamp = static_cast<uint64_t>(
-            std::chrono::high_resolution_clock::now().time_since_epoch().count()) / TIME_CONVERSION_UNIT
+        .timestamp = static_cast<uint64_t>(std::chrono::high_resolution_clock::now().time_since_epoch().count()) /
+            ServiceTestCommon::TIME_CONVERSION_UNIT
     };
 
     ASSERT_EQ(SC_OK, secCompService_->ReportSecurityComponentClickEvent(scId, saveInfo, touchInfo, nullptr));
     sleep(3);
     touchInfo.timestamp = static_cast<uint64_t>(
-        std::chrono::high_resolution_clock::now().time_since_epoch().count()) / TIME_CONVERSION_UNIT;
+        std::chrono::high_resolution_clock::now().time_since_epoch().count()) / ServiceTestCommon::TIME_CONVERSION_UNIT;
     ASSERT_EQ(SC_OK, secCompService_->ReportSecurityComponentClickEvent(scId, saveInfo, touchInfo, nullptr));
     sleep(6);
-    ASSERT_FALSE(secCompService_->ReduceAfterVerifySavePermission(HAP_TOKEN_ID));
+    ASSERT_FALSE(secCompService_->ReduceAfterVerifySavePermission(ServiceTestCommon::HAP_TOKEN_ID));
 
     touchInfo.timestamp = static_cast<uint64_t>(
-        std::chrono::high_resolution_clock::now().time_since_epoch().count()) / TIME_CONVERSION_UNIT;
+        std::chrono::high_resolution_clock::now().time_since_epoch().count()) / ServiceTestCommon::TIME_CONVERSION_UNIT;
     ASSERT_EQ(SC_OK, secCompService_->ReportSecurityComponentClickEvent(scId, saveInfo, touchInfo, nullptr));
-    ASSERT_TRUE(secCompService_->ReduceAfterVerifySavePermission(HAP_TOKEN_ID));
+    ASSERT_TRUE(secCompService_->ReduceAfterVerifySavePermission(ServiceTestCommon::HAP_TOKEN_ID));
     ASSERT_EQ(SC_OK, secCompService_->ReportSecurityComponentClickEvent(scId, saveInfo, touchInfo, nullptr));
     sleep(3);
-    ASSERT_TRUE(secCompService_->ReduceAfterVerifySavePermission(HAP_TOKEN_ID));
-    ASSERT_FALSE(secCompService_->ReduceAfterVerifySavePermission(HAP_TOKEN_ID));
+    ASSERT_TRUE(secCompService_->ReduceAfterVerifySavePermission(ServiceTestCommon::HAP_TOKEN_ID));
+    ASSERT_FALSE(secCompService_->ReduceAfterVerifySavePermission(ServiceTestCommon::HAP_TOKEN_ID));
 }

@@ -37,9 +37,11 @@ private:
     int32_t ReportSecurityComponentClickEventInner(MessageParcel& data, MessageParcel& reply);
     int32_t ReduceAfterVerifySavePermissionInner(MessageParcel& data, MessageParcel& reply);
     int32_t GetEnhanceRemoteObjectInner(MessageParcel& data, MessageParcel& reply);
+    bool IsMediaLibraryCalling();
 
     using RequestFuncType = int32_t (SecCompStub::*)(MessageParcel& data, MessageParcel& reply);
     std::map<uint32_t, RequestFuncType> requestFuncMap_;
+    AccessToken::AccessTokenID mediaLibraryTokenId_ = 0;
 };
 }  // namespace SecurityComponent
 }  // namespace Security

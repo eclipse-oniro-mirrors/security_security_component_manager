@@ -59,8 +59,8 @@ static bool GetScreenSize()
 void SecCompInfoHelperTest::SetUpTestCase()
 {
     ASSERT_TRUE(GetScreenSize());
-    g_testWidth = (ZERO_OFFSET + g_curScreenWidth) / QUARTER;
-    g_testHeight = (ZERO_OFFSET + g_curScreenHeight) / QUARTER;
+    g_testWidth = (ServiceTestCommon::ZERO_OFFSET + g_curScreenWidth) / ServiceTestCommon::QUARTER;
+    g_testHeight = (ServiceTestCommon::ZERO_OFFSET + g_curScreenHeight) / ServiceTestCommon::QUARTER;
 }
 
 void SecCompInfoHelperTest::TearDownTestCase()
@@ -146,9 +146,9 @@ HWTEST_F(SecCompInfoHelperTest, ParseComponent004, TestSize.Level1)
     };
     ASSERT_TRUE(SecCompInfoHelper::CheckRectValid(rect, windowRect));
 
-    rect.x_ = TEST_INVALID_DIMENSION;
+    rect.x_ = ServiceTestCommon::TEST_INVALID_DIMENSION;
     ASSERT_FALSE(SecCompInfoHelper::CheckRectValid(rect, windowRect));
-    rect.y_ = TEST_INVALID_DIMENSION;
+    rect.y_ = ServiceTestCommon::TEST_INVALID_DIMENSION;
     ASSERT_FALSE(SecCompInfoHelper::CheckRectValid(rect, windowRect));
     rect.x_ = g_curScreenWidth + 1;
     ASSERT_FALSE(SecCompInfoHelper::CheckRectValid(rect, windowRect));
@@ -194,9 +194,9 @@ HWTEST_F(SecCompInfoHelperTest, ParseComponent005, TestSize.Level1)
     ASSERT_FALSE(SecCompInfoHelper::CheckRectValid(rect, windowRect));
     windowRect.height_ = g_testHeight - 1;
     ASSERT_FALSE(SecCompInfoHelper::CheckRectValid(rect, windowRect));
-    windowRect.width_ = TEST_INVALID_DIMENSION;
+    windowRect.width_ = ServiceTestCommon::TEST_INVALID_DIMENSION;
     ASSERT_FALSE(SecCompInfoHelper::CheckRectValid(rect, windowRect));
-    windowRect.height_ = TEST_INVALID_DIMENSION;
+    windowRect.height_ = ServiceTestCommon::TEST_INVALID_DIMENSION;
     ASSERT_FALSE(SecCompInfoHelper::CheckRectValid(rect, windowRect));
 }
 
@@ -236,48 +236,48 @@ HWTEST_F(SecCompInfoHelperTest, ParseComponent007, TestSize.Level1)
     ASSERT_TRUE(comp->GetValid());
 
     nlohmann::json jsonPadding = nlohmann::json {
-        { JsonTagConstants::JSON_PADDING_TOP_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_RIGHT_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_BOTTOM_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_LEFT_TAG, TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_TOP_TAG, ServiceTestCommon::TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_RIGHT_TAG, ServiceTestCommon::TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_BOTTOM_TAG, ServiceTestCommon::TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_LEFT_TAG, ServiceTestCommon::TEST_DIMENSION },
     };
 
     jsonComponent[JsonTagConstants::JSON_SIZE_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_FONT_SIZE_TAG, TEST_INVALID_DIMENSION },
-        { JsonTagConstants::JSON_ICON_SIZE_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, TEST_SIZE },
+        { JsonTagConstants::JSON_FONT_SIZE_TAG, ServiceTestCommon::TEST_INVALID_DIMENSION },
+        { JsonTagConstants::JSON_ICON_SIZE_TAG, ServiceTestCommon::TEST_SIZE },
+        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, ServiceTestCommon::TEST_SIZE },
         { JsonTagConstants::JSON_PADDING_SIZE_TAG, jsonPadding },
     };
     comp = SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent);
     ASSERT_FALSE(comp->GetValid());
 
     jsonPadding = nlohmann::json {
-        { JsonTagConstants::JSON_PADDING_TOP_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_RIGHT_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_BOTTOM_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_LEFT_TAG, TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_TOP_TAG, ServiceTestCommon::TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_RIGHT_TAG, ServiceTestCommon::TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_BOTTOM_TAG, ServiceTestCommon::TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_LEFT_TAG, ServiceTestCommon::TEST_DIMENSION },
     };
 
     jsonComponent[JsonTagConstants::JSON_SIZE_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_FONT_SIZE_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_ICON_SIZE_TAG, TEST_INVALID_DIMENSION },
-        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, TEST_SIZE },
+        { JsonTagConstants::JSON_FONT_SIZE_TAG, ServiceTestCommon::TEST_SIZE },
+        { JsonTagConstants::JSON_ICON_SIZE_TAG, ServiceTestCommon::TEST_INVALID_DIMENSION },
+        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, ServiceTestCommon::TEST_SIZE },
         { JsonTagConstants::JSON_PADDING_SIZE_TAG, jsonPadding },
     };
     comp = SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent);
     ASSERT_FALSE(comp->GetValid());
 
     jsonPadding = nlohmann::json {
-        { JsonTagConstants::JSON_PADDING_TOP_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_RIGHT_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_BOTTOM_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_LEFT_TAG, TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_TOP_TAG, ServiceTestCommon::TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_RIGHT_TAG, ServiceTestCommon::TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_BOTTOM_TAG, ServiceTestCommon::TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_LEFT_TAG, ServiceTestCommon::TEST_DIMENSION },
     };
 
     jsonComponent[JsonTagConstants::JSON_SIZE_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_FONT_SIZE_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_ICON_SIZE_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, TEST_INVALID_DIMENSION },
+        { JsonTagConstants::JSON_FONT_SIZE_TAG, ServiceTestCommon::TEST_SIZE },
+        { JsonTagConstants::JSON_ICON_SIZE_TAG, ServiceTestCommon::TEST_SIZE },
+        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, ServiceTestCommon::TEST_INVALID_DIMENSION },
         { JsonTagConstants::JSON_PADDING_SIZE_TAG, jsonPadding },
     };
     comp = SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent);
@@ -298,32 +298,32 @@ HWTEST_F(SecCompInfoHelperTest, ParseComponent008, TestSize.Level1)
     ASSERT_TRUE(comp->GetValid());
 
     nlohmann::json jsonPadding = nlohmann::json {
-        { JsonTagConstants::JSON_PADDING_TOP_TAG, TEST_INVALID_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_RIGHT_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_BOTTOM_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_LEFT_TAG, TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_TOP_TAG, ServiceTestCommon::TEST_INVALID_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_RIGHT_TAG, ServiceTestCommon::TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_BOTTOM_TAG, ServiceTestCommon::TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_LEFT_TAG, ServiceTestCommon::TEST_DIMENSION },
     };
 
     jsonComponent[JsonTagConstants::JSON_SIZE_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_FONT_SIZE_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_ICON_SIZE_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, TEST_SIZE },
+        { JsonTagConstants::JSON_FONT_SIZE_TAG, ServiceTestCommon::TEST_SIZE },
+        { JsonTagConstants::JSON_ICON_SIZE_TAG, ServiceTestCommon::TEST_SIZE },
+        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, ServiceTestCommon::TEST_SIZE },
         { JsonTagConstants::JSON_PADDING_SIZE_TAG, jsonPadding },
     };
     comp = SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent);
     ASSERT_FALSE(comp->GetValid());
 
     jsonPadding = nlohmann::json {
-        { JsonTagConstants::JSON_PADDING_TOP_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_RIGHT_TAG, TEST_INVALID_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_BOTTOM_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_LEFT_TAG, TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_TOP_TAG, ServiceTestCommon::TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_RIGHT_TAG, ServiceTestCommon::TEST_INVALID_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_BOTTOM_TAG, ServiceTestCommon::TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_LEFT_TAG, ServiceTestCommon::TEST_DIMENSION },
     };
 
     jsonComponent[JsonTagConstants::JSON_SIZE_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_FONT_SIZE_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_ICON_SIZE_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, TEST_SIZE },
+        { JsonTagConstants::JSON_FONT_SIZE_TAG, ServiceTestCommon::TEST_SIZE },
+        { JsonTagConstants::JSON_ICON_SIZE_TAG, ServiceTestCommon::TEST_SIZE },
+        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, ServiceTestCommon::TEST_SIZE },
         { JsonTagConstants::JSON_PADDING_SIZE_TAG, jsonPadding },
     };
     comp = SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent);
@@ -344,32 +344,32 @@ HWTEST_F(SecCompInfoHelperTest, ParseComponent009, TestSize.Level1)
     ASSERT_TRUE(comp->GetValid());
 
     nlohmann::json jsonPadding = nlohmann::json {
-        { JsonTagConstants::JSON_PADDING_TOP_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_RIGHT_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_BOTTOM_TAG, TEST_INVALID_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_LEFT_TAG, TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_TOP_TAG, ServiceTestCommon::TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_RIGHT_TAG, ServiceTestCommon::TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_BOTTOM_TAG, ServiceTestCommon::TEST_INVALID_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_LEFT_TAG, ServiceTestCommon::TEST_DIMENSION },
     };
 
     jsonComponent[JsonTagConstants::JSON_SIZE_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_FONT_SIZE_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_ICON_SIZE_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, TEST_SIZE },
+        { JsonTagConstants::JSON_FONT_SIZE_TAG, ServiceTestCommon::TEST_SIZE },
+        { JsonTagConstants::JSON_ICON_SIZE_TAG, ServiceTestCommon::TEST_SIZE },
+        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, ServiceTestCommon::TEST_SIZE },
         { JsonTagConstants::JSON_PADDING_SIZE_TAG, jsonPadding },
     };
     comp = SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent);
     ASSERT_FALSE(comp->GetValid());
 
     jsonPadding = nlohmann::json {
-        { JsonTagConstants::JSON_PADDING_TOP_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_RIGHT_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_BOTTOM_TAG, TEST_DIMENSION },
-        { JsonTagConstants::JSON_PADDING_LEFT_TAG, TEST_INVALID_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_TOP_TAG, ServiceTestCommon::TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_RIGHT_TAG, ServiceTestCommon::TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_BOTTOM_TAG, ServiceTestCommon::TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_LEFT_TAG, ServiceTestCommon::TEST_INVALID_DIMENSION },
     };
 
     jsonComponent[JsonTagConstants::JSON_SIZE_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_FONT_SIZE_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_ICON_SIZE_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, TEST_SIZE },
+        { JsonTagConstants::JSON_FONT_SIZE_TAG, ServiceTestCommon::TEST_SIZE },
+        { JsonTagConstants::JSON_ICON_SIZE_TAG, ServiceTestCommon::TEST_SIZE },
+        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, ServiceTestCommon::TEST_SIZE },
         { JsonTagConstants::JSON_PADDING_SIZE_TAG, jsonPadding },
     };
     comp = SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent);
@@ -390,25 +390,25 @@ HWTEST_F(SecCompInfoHelperTest, ParseComponent010, TestSize.Level1)
     ASSERT_TRUE(comp->GetValid());
 
     jsonComponent[JsonTagConstants::JSON_COLORS_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_FONT_COLOR_TAG, TEST_COLOR_INVALID },
-        { JsonTagConstants::JSON_ICON_COLOR_TAG, TEST_COLOR_BLUE },
-        { JsonTagConstants::JSON_BG_COLOR_TAG, TEST_COLOR_YELLOW }
+        { JsonTagConstants::JSON_FONT_COLOR_TAG, ServiceTestCommon::TEST_COLOR_INVALID },
+        { JsonTagConstants::JSON_ICON_COLOR_TAG, ServiceTestCommon::TEST_COLOR_BLUE },
+        { JsonTagConstants::JSON_BG_COLOR_TAG, ServiceTestCommon::TEST_COLOR_YELLOW }
     };
     comp = SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent);
     ASSERT_FALSE(comp->GetValid());
 
     jsonComponent[JsonTagConstants::JSON_COLORS_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_FONT_COLOR_TAG, TEST_COLOR_RED },
-        { JsonTagConstants::JSON_ICON_COLOR_TAG, TEST_COLOR_INVALID },
-        { JsonTagConstants::JSON_BG_COLOR_TAG, TEST_COLOR_YELLOW }
+        { JsonTagConstants::JSON_FONT_COLOR_TAG, ServiceTestCommon::TEST_COLOR_RED },
+        { JsonTagConstants::JSON_ICON_COLOR_TAG, ServiceTestCommon::TEST_COLOR_INVALID },
+        { JsonTagConstants::JSON_BG_COLOR_TAG, ServiceTestCommon::TEST_COLOR_YELLOW }
     };
     comp = SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent);
     ASSERT_FALSE(comp->GetValid());
 
     jsonComponent[JsonTagConstants::JSON_COLORS_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_FONT_COLOR_TAG, TEST_COLOR_RED },
-        { JsonTagConstants::JSON_ICON_COLOR_TAG, TEST_COLOR_BLUE },
-        { JsonTagConstants::JSON_BG_COLOR_TAG, TEST_COLOR_INVALID }
+        { JsonTagConstants::JSON_FONT_COLOR_TAG, ServiceTestCommon::TEST_COLOR_RED },
+        { JsonTagConstants::JSON_ICON_COLOR_TAG, ServiceTestCommon::TEST_COLOR_BLUE },
+        { JsonTagConstants::JSON_BG_COLOR_TAG, ServiceTestCommon::TEST_COLOR_INVALID }
     };
     comp = SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent);
     ASSERT_FALSE(comp->GetValid());
@@ -455,9 +455,9 @@ HWTEST_F(SecCompInfoHelperTest, ParseComponent012, TestSize.Level1)
         { JsonTagConstants::JSON_BG_TAG, SecCompBackground::CIRCLE },
     };
     jsonComponent[JsonTagConstants::JSON_COLORS_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_FONT_COLOR_TAG, TEST_COLOR_YELLOW },
-        { JsonTagConstants::JSON_ICON_COLOR_TAG, TEST_COLOR_BLUE },
-        { JsonTagConstants::JSON_BG_COLOR_TAG, TEST_COLOR_YELLOW }
+        { JsonTagConstants::JSON_FONT_COLOR_TAG, ServiceTestCommon::TEST_COLOR_YELLOW },
+        { JsonTagConstants::JSON_ICON_COLOR_TAG, ServiceTestCommon::TEST_COLOR_BLUE },
+        { JsonTagConstants::JSON_BG_COLOR_TAG, ServiceTestCommon::TEST_COLOR_YELLOW }
     };
     comp = SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent);
     ASSERT_FALSE(comp->GetValid());
@@ -468,9 +468,9 @@ HWTEST_F(SecCompInfoHelperTest, ParseComponent012, TestSize.Level1)
         { JsonTagConstants::JSON_BG_TAG, SecCompBackground::CIRCLE },
     };
     jsonComponent[JsonTagConstants::JSON_COLORS_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_FONT_COLOR_TAG, TEST_COLOR_RED },
-        { JsonTagConstants::JSON_ICON_COLOR_TAG, TEST_COLOR_YELLOW },
-        { JsonTagConstants::JSON_BG_COLOR_TAG, TEST_COLOR_YELLOW }
+        { JsonTagConstants::JSON_FONT_COLOR_TAG, ServiceTestCommon::TEST_COLOR_RED },
+        { JsonTagConstants::JSON_ICON_COLOR_TAG, ServiceTestCommon::TEST_COLOR_YELLOW },
+        { JsonTagConstants::JSON_BG_COLOR_TAG, ServiceTestCommon::TEST_COLOR_YELLOW }
     };
     comp = SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent);
     ASSERT_FALSE(comp->GetValid());
@@ -481,9 +481,9 @@ HWTEST_F(SecCompInfoHelperTest, ParseComponent012, TestSize.Level1)
         { JsonTagConstants::JSON_BG_TAG, SecCompBackground::NO_BG_TYPE },
     };
     jsonComponent[JsonTagConstants::JSON_COLORS_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_FONT_COLOR_TAG, TEST_COLOR_RED },
-        { JsonTagConstants::JSON_ICON_COLOR_TAG, TEST_COLOR_YELLOW },
-        { JsonTagConstants::JSON_BG_COLOR_TAG, TEST_COLOR_YELLOW }
+        { JsonTagConstants::JSON_FONT_COLOR_TAG, ServiceTestCommon::TEST_COLOR_RED },
+        { JsonTagConstants::JSON_ICON_COLOR_TAG, ServiceTestCommon::TEST_COLOR_YELLOW },
+        { JsonTagConstants::JSON_BG_COLOR_TAG, ServiceTestCommon::TEST_COLOR_YELLOW }
     };
     comp = SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent);
     ASSERT_FALSE(comp->GetValid());
@@ -508,16 +508,16 @@ HWTEST_F(SecCompInfoHelperTest, ParseComponent013, TestSize.Level1)
         { JsonTagConstants::JSON_BG_TAG, SecCompBackground::NO_BG_TYPE },
     };
     nlohmann::json jsonPadding = nlohmann::json {
-        { JsonTagConstants::JSON_PADDING_TOP_TAG, TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_TOP_TAG, ServiceTestCommon::TEST_DIMENSION },
         { JsonTagConstants::JSON_PADDING_RIGHT_TAG, MIN_PADDING_WITHOUT_BG },
         { JsonTagConstants::JSON_PADDING_BOTTOM_TAG, MIN_PADDING_WITHOUT_BG },
         { JsonTagConstants::JSON_PADDING_LEFT_TAG, MIN_PADDING_WITHOUT_BG },
     };
 
     jsonComponent[JsonTagConstants::JSON_SIZE_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_FONT_SIZE_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_ICON_SIZE_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, TEST_SIZE },
+        { JsonTagConstants::JSON_FONT_SIZE_TAG, ServiceTestCommon::TEST_SIZE },
+        { JsonTagConstants::JSON_ICON_SIZE_TAG, ServiceTestCommon::TEST_SIZE },
+        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, ServiceTestCommon::TEST_SIZE },
         { JsonTagConstants::JSON_PADDING_SIZE_TAG, jsonPadding },
     };
     comp = SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent);
@@ -525,15 +525,15 @@ HWTEST_F(SecCompInfoHelperTest, ParseComponent013, TestSize.Level1)
 
     jsonPadding = nlohmann::json {
         { JsonTagConstants::JSON_PADDING_TOP_TAG, MIN_PADDING_WITHOUT_BG },
-        { JsonTagConstants::JSON_PADDING_RIGHT_TAG, TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_RIGHT_TAG, ServiceTestCommon::TEST_DIMENSION },
         { JsonTagConstants::JSON_PADDING_BOTTOM_TAG, MIN_PADDING_WITHOUT_BG },
         { JsonTagConstants::JSON_PADDING_LEFT_TAG, MIN_PADDING_WITHOUT_BG },
     };
 
     jsonComponent[JsonTagConstants::JSON_SIZE_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_FONT_SIZE_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_ICON_SIZE_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, TEST_SIZE },
+        { JsonTagConstants::JSON_FONT_SIZE_TAG, ServiceTestCommon::TEST_SIZE },
+        { JsonTagConstants::JSON_ICON_SIZE_TAG, ServiceTestCommon::TEST_SIZE },
+        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, ServiceTestCommon::TEST_SIZE },
         { JsonTagConstants::JSON_PADDING_SIZE_TAG, jsonPadding },
     };
     comp = SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent);
@@ -562,14 +562,14 @@ HWTEST_F(SecCompInfoHelperTest, ParseComponent014, TestSize.Level1)
     nlohmann::json jsonPadding = nlohmann::json {
         { JsonTagConstants::JSON_PADDING_TOP_TAG, MIN_PADDING_WITHOUT_BG },
         { JsonTagConstants::JSON_PADDING_RIGHT_TAG, MIN_PADDING_WITHOUT_BG },
-        { JsonTagConstants::JSON_PADDING_BOTTOM_TAG, TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_BOTTOM_TAG, ServiceTestCommon::TEST_DIMENSION },
         { JsonTagConstants::JSON_PADDING_LEFT_TAG, MIN_PADDING_WITHOUT_BG },
     };
 
     jsonComponent[JsonTagConstants::JSON_SIZE_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_FONT_SIZE_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_ICON_SIZE_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, TEST_SIZE },
+        { JsonTagConstants::JSON_FONT_SIZE_TAG, ServiceTestCommon::TEST_SIZE },
+        { JsonTagConstants::JSON_ICON_SIZE_TAG, ServiceTestCommon::TEST_SIZE },
+        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, ServiceTestCommon::TEST_SIZE },
         { JsonTagConstants::JSON_PADDING_SIZE_TAG, jsonPadding },
     };
     comp = SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent);
@@ -579,13 +579,13 @@ HWTEST_F(SecCompInfoHelperTest, ParseComponent014, TestSize.Level1)
         { JsonTagConstants::JSON_PADDING_TOP_TAG, MIN_PADDING_WITHOUT_BG },
         { JsonTagConstants::JSON_PADDING_RIGHT_TAG, MIN_PADDING_WITHOUT_BG },
         { JsonTagConstants::JSON_PADDING_BOTTOM_TAG, MIN_PADDING_WITHOUT_BG },
-        { JsonTagConstants::JSON_PADDING_LEFT_TAG, TEST_DIMENSION },
+        { JsonTagConstants::JSON_PADDING_LEFT_TAG, ServiceTestCommon::TEST_DIMENSION },
     };
 
     jsonComponent[JsonTagConstants::JSON_SIZE_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_FONT_SIZE_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_ICON_SIZE_TAG, TEST_SIZE },
-        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, TEST_SIZE },
+        { JsonTagConstants::JSON_FONT_SIZE_TAG, ServiceTestCommon::TEST_SIZE },
+        { JsonTagConstants::JSON_ICON_SIZE_TAG, ServiceTestCommon::TEST_SIZE },
+        { JsonTagConstants::JSON_TEXT_ICON_PADDING_TAG, ServiceTestCommon::TEST_SIZE },
         { JsonTagConstants::JSON_PADDING_SIZE_TAG, jsonPadding },
     };
     comp = SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent);
@@ -606,9 +606,9 @@ HWTEST_F(SecCompInfoHelperTest, CheckComponentValid001, TestSize.Level1)
     SecCompBase* comp = SecCompInfoHelper::ParseComponent(LOCATION_COMPONENT, jsonComponent);
     ASSERT_TRUE(comp->GetValid());
     jsonComponent[JsonTagConstants::JSON_COLORS_TAG] = nlohmann::json {
-        { JsonTagConstants::JSON_FONT_COLOR_TAG, TEST_COLOR_RED },
-        { JsonTagConstants::JSON_ICON_COLOR_TAG, TEST_COLOR_BLACK },
-        { JsonTagConstants::JSON_BG_COLOR_TAG, TEST_COLOR_WHITE }
+        { JsonTagConstants::JSON_FONT_COLOR_TAG, ServiceTestCommon::TEST_COLOR_RED },
+        { JsonTagConstants::JSON_ICON_COLOR_TAG, ServiceTestCommon::TEST_COLOR_BLACK },
+        { JsonTagConstants::JSON_BG_COLOR_TAG, ServiceTestCommon::TEST_COLOR_WHITE }
     };
     ASSERT_TRUE(SecCompInfoHelper::CheckComponentValid(comp));
 }

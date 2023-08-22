@@ -40,7 +40,9 @@ static AccessTokenID g_selfTokenId = 0;
 }
 
 void SecCompServiceTest::SetUpTestCase()
-{}
+{
+    system("kill -9 `pidof security_compon`");
+}
 
 void SecCompServiceTest::TearDownTestCase()
 {}
@@ -51,7 +53,7 @@ void SecCompServiceTest::SetUp()
     if (secCompService_ != nullptr) {
         return;
     }
-    SecCompService* ptr = new (std::nothrow) SecCompService(SA_ID, true);
+    SecCompService* ptr = new (std::nothrow) SecCompService(ServiceTestCommon::SA_ID, true);
     secCompService_ = sptr<SecCompService>(ptr);
     ASSERT_NE(nullptr, secCompService_);
     secCompService_->appStateObserver_ = new (std::nothrow) AppStateObserver();
@@ -187,7 +189,7 @@ HWTEST_F(SecCompServiceTest, GetCallerInfo001, TestSize.Level1)
     // set token id to hap token, but uid is not in foreground
     EXPECT_FALSE(secCompService_->GetCallerInfo(caller));
     setuid(0);
-    ASSERT_EQ(0, SetSelfTokenID(HAP_TOKEN_ID));
+    ASSERT_EQ(0, SetSelfTokenID(ServiceTestCommon::HAP_TOKEN_ID));
     // add local uid to foreground.
     AppExecFwk::AppStateData stateData = {
         .uid = getuid()
@@ -205,7 +207,8 @@ HWTEST_F(SecCompServiceTest, GetCallerInfo001, TestSize.Level1)
 HWTEST_F(SecCompServiceTest, UnregisterSecurityComponent001, TestSize.Level1)
 {
     // get caller fail
-    EXPECT_EQ(SC_SERVICE_ERROR_COMPONENT_NOT_EXIST, secCompService_->UnregisterSecurityComponent(TEST_SC_ID_1));
+    EXPECT_EQ(SC_SERVICE_ERROR_COMPONENT_NOT_EXIST,
+        secCompService_->UnregisterSecurityComponent(ServiceTestCommon::TEST_SC_ID_1));
 }
 
 /**
@@ -217,14 +220,16 @@ HWTEST_F(SecCompServiceTest, UnregisterSecurityComponent001, TestSize.Level1)
 HWTEST_F(SecCompServiceTest, UpdateSecurityComponent001, TestSize.Level1)
 {
     // get caller fail
-    EXPECT_EQ(SC_SERVICE_ERROR_VALUE_INVALID, secCompService_->UpdateSecurityComponent(TEST_SC_ID_1, ""));
+    EXPECT_EQ(SC_SERVICE_ERROR_VALUE_INVALID,
+        secCompService_->UpdateSecurityComponent(ServiceTestCommon::TEST_SC_ID_1, ""));
 
-    ASSERT_EQ(0, SetSelfTokenID(HAP_TOKEN_ID));
+    ASSERT_EQ(0, SetSelfTokenID(ServiceTestCommon::HAP_TOKEN_ID));
     AppExecFwk::AppStateData stateData = {
         .uid = getuid()
     };
     secCompService_->appStateObserver_->AddProcessToForegroundSet(stateData);
-    EXPECT_EQ(SC_SERVICE_ERROR_VALUE_INVALID, secCompService_->UpdateSecurityComponent(TEST_SC_ID_1, "{a"));
+    EXPECT_EQ(SC_SERVICE_ERROR_VALUE_INVALID,
+        secCompService_->UpdateSecurityComponent(ServiceTestCommon::TEST_SC_ID_1, "{a"));
 }
 
 /**
@@ -246,7 +251,7 @@ HWTEST_F(SecCompServiceTest, ReportSecurityComponentClickEvent001, TestSize.Leve
     std::string locationInfo = jsonRes.dump();
 
     // parse component json fail
-    ASSERT_EQ(0, SetSelfTokenID(HAP_TOKEN_ID));
+    ASSERT_EQ(0, SetSelfTokenID(ServiceTestCommon::HAP_TOKEN_ID));
     setuid(100);
     AppExecFwk::AppStateData stateData = {
         .uid = getuid()
@@ -259,8 +264,8 @@ HWTEST_F(SecCompServiceTest, ReportSecurityComponentClickEvent001, TestSize.Leve
     struct SecCompClickEvent touch = {
         .touchX = 100,
         .touchY = 100,
-        .timestamp = static_cast<uint64_t>(
-            std::chrono::high_resolution_clock::now().time_since_epoch().count()) / TIME_CONVERSION_UNIT,
+        .timestamp = static_cast<uint64_t>(std::chrono::high_resolution_clock::now().time_since_epoch().count()) /
+            ServiceTestCommon::TIME_CONVERSION_UNIT,
         .extraInfo.data = data,
         .extraInfo.dataSize = 16,
     };
