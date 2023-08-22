@@ -21,22 +21,20 @@
 namespace OHOS {
 namespace Security {
 namespace SecurityComponent {
-const std::string WRONG_TYPE = "wrongType";
-constexpr float TEST_SIZE = 100.0;
-constexpr double TEST_COORDINATE = 100.0;
-constexpr double TEST_DIMENSION = 100.0;
-constexpr uint32_t TEST_COLOR = 0xffffffff;
-constexpr uint32_t TEST_COLOR_YELLOW = 0xffffff00;
-constexpr uint32_t TEST_COLOR_RED = 0xffff0000;
-constexpr uint32_t TEST_COLOR_BLUE = 0xff0000ff;
-constexpr uint32_t TEST_DIFF_COLOR = 0;
-constexpr uint64_t TIME_CONVERSION_UNIT = 1000;
-constexpr uint32_t HAP_TOKEN_ID = 537715419;
-constexpr uint32_t MAX_HMAC_SIZE = 64;
-constexpr size_t MAX_CALLER_SIZE = 10;
-
 class TestCommon {
 public:
+    static constexpr float TEST_SIZE = 100.0;
+    static constexpr double TEST_COORDINATE = 100.0;
+    static constexpr double TEST_DIMENSION = 100.0;
+    static constexpr uint32_t TEST_COLOR = 0xffffffff;
+    static constexpr uint32_t TEST_COLOR_YELLOW = 0xffffff00;
+    static constexpr uint32_t TEST_COLOR_RED = 0xffff0000;
+    static constexpr uint32_t TEST_COLOR_BLUE = 0xff0000ff;
+    static constexpr uint32_t TEST_DIFF_COLOR = 0;
+    static constexpr uint64_t TIME_CONVERSION_UNIT = 1000;
+    static constexpr uint32_t MAX_HMAC_SIZE = 64;
+    static constexpr size_t MAX_CALLER_SIZE = 10;
+
     static void BuildLocationComponentInfo(nlohmann::json& jsonComponent);
     static void BuildSaveComponentInfo(nlohmann::json& jsonComponent);
     static void BuildPasteComponentInfo(nlohmann::json& jsonComponent);

@@ -57,8 +57,8 @@ bool SecCompEntity::CheckTouchInfo(const SecCompClickEvent& touchInfo) const
     auto current = static_cast<uint64_t>(
         std::chrono::high_resolution_clock::now().time_since_epoch().count()) / TIME_CONVERSION_UNIT;
     if (touchInfo.timestamp < current - MAX_TOUCH_INTERVAL || touchInfo.timestamp > current) {
-        SC_LOG_ERROR(LABEL, "touch timestamp invalid touchInfo. timestamp: %{public}lu, current: %{public}lu",
-            touchInfo.timestamp, current);
+        SC_LOG_ERROR(LABEL, "touch timestamp invalid touchInfo. timestamp: %{public}llu, current: %{public}llu",
+            static_cast<unsigned long long>(touchInfo.timestamp), static_cast<unsigned long long>(current));
         return false;
     }
 
@@ -70,8 +70,9 @@ bool SecCompEntity::CheckTouchInfo(const SecCompClickEvent& touchInfo) const
     int32_t res = SecCompEnhanceAdapter::CheckExtraInfo(touchInfo);
     if ((res != SC_OK) && (res != SC_ENHANCE_ERROR_NOT_EXIST_ENHANCE)) {
         SC_LOG_ERROR(LABEL, "HMAC checkout failed,"
-            "touchX:%{public}f, touchY:%{public}f, timestamp:%{public}lu, dataSize:%{public}d",
-            touchInfo.touchX, touchInfo.touchY, touchInfo.timestamp, touchInfo.extraInfo.dataSize);
+            "touchX:%{public}f, touchY:%{public}f, timestamp:%{public}llu, dataSize:%{public}d",
+            touchInfo.touchX, touchInfo.touchY, static_cast<unsigned long long>(touchInfo.timestamp),
+            touchInfo.extraInfo.dataSize);
         HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SEC_COMPONENT, "CLICK_INFO_CHECK_FAILED",
             HiviewDFX::HiSysEvent::EventType::SECURITY, "CALLER_UID", IPCSkeleton::GetCallingUid(),
             "CALLER_PID", IPCSkeleton::GetCallingPid(), "SC_ID", scId_, "SC_TYPE", componentInfo_->type_);

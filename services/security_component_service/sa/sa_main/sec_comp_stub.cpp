@@ -14,6 +14,7 @@
  */
 #include "sec_comp_stub.h"
 
+#include "accesstoken_kit.h"
 #include "ipc_skeleton.h"
 #include "sec_comp_click_event_parcel.h"
 #include "sec_comp_err.h"
@@ -24,6 +25,8 @@ namespace Security {
 namespace SecurityComponent {
 namespace {
 static constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {LOG_CORE, SECURITY_DOMAIN_SECURITY_COMPONENT, "SecCompStub"};
+static constexpr int32_t ROOT_UID = 0;
+static constexpr int32_t BASE_USER_RANGE = 200000;
 }  // namespace
 
 int32_t SecCompStub::OnRemoteRequest(
@@ -165,6 +168,10 @@ int32_t SecCompStub::ReportSecurityComponentClickEventInner(MessageParcel& data,
 
 int32_t SecCompStub::ReduceAfterVerifySavePermissionInner(MessageParcel& data, MessageParcel& reply)
 {
+    if (!IsMediaLibraryCalling()) {
+        SC_LOG_ERROR(LABEL, "Not medialibrary called");
+        return SC_SERVICE_ERROR_CALLER_INVALID;
+    }
     uint32_t tokenId;
     if (!data.ReadUint32(tokenId)) {
         SC_LOG_ERROR(LABEL, "Read component id fail");
@@ -192,6 +199,21 @@ int32_t SecCompStub::GetEnhanceRemoteObjectInner(MessageParcel& data, MessagePar
         return SC_SERVICE_ERROR_PARCEL_OPERATE_FAIL;
     }
     return SC_OK;
+}
+
+bool SecCompStub::IsMediaLibraryCalling()
+{
+    int32_t uid = IPCSkeleton::GetCallingUid();
+    if (uid == ROOT_UID) {
+        return true;
+    }
+    int32_t userId = uid / BASE_USER_RANGE;
+    uint32_t tokenCaller = IPCSkeleton::GetCallingTokenID();
+    if (mediaLibraryTokenId_ == 0) {
+        mediaLibraryTokenId_ = AccessToken::AccessTokenKit::GetHapTokenID(
+            userId, "com.ohos.medialibrary.medialibrarydata", 0);
+    }
+    return tokenCaller == mediaLibraryTokenId_;
 }
 
 SecCompStub::SecCompStub()

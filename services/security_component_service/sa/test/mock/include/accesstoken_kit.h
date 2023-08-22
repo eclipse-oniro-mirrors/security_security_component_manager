@@ -41,6 +41,11 @@ public:
         return 0;
     };
 
+    static AccessTokenID GetHapTokenID(int32_t userID, const std::string& bundleName, int32_t instIndex)
+    {
+        return 0;
+    };
+
     static ATokenTypeEnum GetTokenTypeFlag(AccessTokenID tokenID)
     {
         AccessTokenIDInner *idInner = reinterpret_cast<AccessTokenIDInner *>(&tokenID);

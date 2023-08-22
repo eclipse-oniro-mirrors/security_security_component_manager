@@ -33,26 +33,26 @@ static constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {
 static LocationButton BuildInvalidLocationComponent()
 {
     LocationButton button;
-    button.fontSize_ = TEST_INVALID_SIZE;
-    button.iconSize_ = TEST_INVALID_SIZE;
-    button.padding_.top = TEST_INVALID_SIZE;
-    button.padding_.right = TEST_INVALID_SIZE;
-    button.padding_.bottom = TEST_INVALID_SIZE;
-    button.padding_.left = TEST_INVALID_SIZE;
-    button.textIconSpace_ = TEST_INVALID_SIZE;
-    button.fontColor_.value = TEST_COLOR_WHITE;
-    button.iconColor_.value = TEST_COLOR_WHITE;
-    button.bgColor_.value = TEST_COLOR_WHITE;
-    button.borderWidth_ = TEST_INVALID_SIZE;
+    button.fontSize_ = ServiceTestCommon::TEST_INVALID_SIZE;
+    button.iconSize_ = ServiceTestCommon::TEST_INVALID_SIZE;
+    button.padding_.top = ServiceTestCommon::TEST_INVALID_SIZE;
+    button.padding_.right = ServiceTestCommon::TEST_INVALID_SIZE;
+    button.padding_.bottom = ServiceTestCommon::TEST_INVALID_SIZE;
+    button.padding_.left = ServiceTestCommon::TEST_INVALID_SIZE;
+    button.textIconSpace_ = ServiceTestCommon::TEST_INVALID_SIZE;
+    button.fontColor_.value = ServiceTestCommon::TEST_COLOR_WHITE;
+    button.iconColor_.value = ServiceTestCommon::TEST_COLOR_WHITE;
+    button.bgColor_.value = ServiceTestCommon::TEST_COLOR_WHITE;
+    button.borderWidth_ = ServiceTestCommon::TEST_INVALID_SIZE;
     button.type_ = LOCATION_COMPONENT;
-    button.rect_.x_ = TEST_COORDINATE;
-    button.rect_.y_ = TEST_COORDINATE;
-    button.rect_.width_ = TEST_COORDINATE;
-    button.rect_.height_ = TEST_COORDINATE;
-    button.windowRect_.x_ = TEST_COORDINATE;
-    button.windowRect_.y_ = TEST_COORDINATE;
-    button.windowRect_.width_ = TEST_COORDINATE;
-    button.windowRect_.height_ = TEST_COORDINATE;
+    button.rect_.x_ = ServiceTestCommon::TEST_COORDINATE;
+    button.rect_.y_ = ServiceTestCommon::TEST_COORDINATE;
+    button.rect_.width_ = ServiceTestCommon::TEST_COORDINATE;
+    button.rect_.height_ = ServiceTestCommon::TEST_COORDINATE;
+    button.windowRect_.x_ = ServiceTestCommon::TEST_COORDINATE;
+    button.windowRect_.y_ = ServiceTestCommon::TEST_COORDINATE;
+    button.windowRect_.width_ = ServiceTestCommon::TEST_COORDINATE;
+    button.windowRect_.height_ = ServiceTestCommon::TEST_COORDINATE;
     button.text_ = UNKNOWN_TEXT;
     button.icon_ = UNKNOWN_ICON;
     button.bg_ = SecCompBackground::UNKNOWN_BG;
@@ -62,26 +62,26 @@ static LocationButton BuildInvalidLocationComponent()
 static LocationButton BuildValidLocationComponent()
 {
     LocationButton button;
-    button.fontSize_ = TEST_SIZE;
-    button.iconSize_ = TEST_SIZE;
-    button.padding_.top = TEST_SIZE;
-    button.padding_.right = TEST_SIZE;
-    button.padding_.bottom = TEST_SIZE;
-    button.padding_.left = TEST_SIZE;
-    button.textIconSpace_ = TEST_SIZE;
-    button.fontColor_.value = TEST_COLOR_YELLOW;
-    button.iconColor_.value = TEST_COLOR_RED;
-    button.bgColor_.value = TEST_COLOR_BLUE;
-    button.borderWidth_ = TEST_SIZE;
+    button.fontSize_ = ServiceTestCommon::TEST_SIZE;
+    button.iconSize_ = ServiceTestCommon::TEST_SIZE;
+    button.padding_.top = ServiceTestCommon::TEST_SIZE;
+    button.padding_.right = ServiceTestCommon::TEST_SIZE;
+    button.padding_.bottom = ServiceTestCommon::TEST_SIZE;
+    button.padding_.left = ServiceTestCommon::TEST_SIZE;
+    button.textIconSpace_ = ServiceTestCommon::TEST_SIZE;
+    button.fontColor_.value = ServiceTestCommon::TEST_COLOR_YELLOW;
+    button.iconColor_.value = ServiceTestCommon::TEST_COLOR_RED;
+    button.bgColor_.value = ServiceTestCommon::TEST_COLOR_BLUE;
+    button.borderWidth_ = ServiceTestCommon::TEST_SIZE;
     button.type_ = LOCATION_COMPONENT;
-    button.rect_.x_ = TEST_COORDINATE;
-    button.rect_.y_ = TEST_COORDINATE;
-    button.rect_.width_ = TEST_COORDINATE;
-    button.rect_.height_ = TEST_COORDINATE;
-    button.windowRect_.x_ = TEST_COORDINATE;
-    button.windowRect_.y_ = TEST_COORDINATE;
-    button.windowRect_.width_ = TEST_COORDINATE;
-    button.windowRect_.height_ = TEST_COORDINATE;
+    button.rect_.x_ = ServiceTestCommon::TEST_COORDINATE;
+    button.rect_.y_ = ServiceTestCommon::TEST_COORDINATE;
+    button.rect_.width_ = ServiceTestCommon::TEST_COORDINATE;
+    button.rect_.height_ = ServiceTestCommon::TEST_COORDINATE;
+    button.windowRect_.x_ = ServiceTestCommon::TEST_COORDINATE;
+    button.windowRect_.y_ = ServiceTestCommon::TEST_COORDINATE;
+    button.windowRect_.width_ = ServiceTestCommon::TEST_COORDINATE;
+    button.windowRect_.height_ = ServiceTestCommon::TEST_COORDINATE;
     button.text_ = static_cast<int32_t>(LocationDesc::SELECT_LOCATION);
     button.icon_ = static_cast<int32_t>(LocationIcon::LINE_ICON);
     button.bg_ = SecCompBackground::CIRCLE;
@@ -114,11 +114,11 @@ void SecCompManagerTest::TearDown()
  */
 HWTEST_F(SecCompManagerTest, CreateScId001, TestSize.Level1)
 {
-    SecCompManager::GetInstance().scIdStart_ = MAX_INT_NUM;
-    ASSERT_EQ(SC_ID_START, SecCompManager::GetInstance().CreateScId());
+    SecCompManager::GetInstance().scIdStart_ = ServiceTestCommon::MAX_INT_NUM;
+    ASSERT_EQ(ServiceTestCommon::SC_ID_START, SecCompManager::GetInstance().CreateScId());
 
-    SecCompManager::GetInstance().scIdStart_ = SC_ID_START;
-    ASSERT_EQ(SC_ID_START + 1, SecCompManager::GetInstance().CreateScId());
+    SecCompManager::GetInstance().scIdStart_ = ServiceTestCommon::SC_ID_START;
+    ASSERT_EQ(ServiceTestCommon::SC_ID_START + 1, SecCompManager::GetInstance().CreateScId());
 }
 
 /**
@@ -131,21 +131,21 @@ HWTEST_F(SecCompManagerTest, AddSecurityComponentToList001, TestSize.Level1)
 {
     std::shared_ptr<LocationButton> compPtr = std::make_shared<LocationButton>();
     ASSERT_NE(nullptr, compPtr);
-    compPtr->rect_.x_ = TEST_COORDINATE;
-    compPtr->rect_.y_ = TEST_COORDINATE;
-    compPtr->rect_.width_ = TEST_COORDINATE;
-    compPtr->rect_.height_ = TEST_COORDINATE;
-    SecCompEntity entity(compPtr, TEST_TOKEN_ID, TEST_SC_ID_1);
+    compPtr->rect_.x_ = ServiceTestCommon::TEST_COORDINATE;
+    compPtr->rect_.y_ = ServiceTestCommon::TEST_COORDINATE;
+    compPtr->rect_.width_ = ServiceTestCommon::TEST_COORDINATE;
+    compPtr->rect_.height_ = ServiceTestCommon::TEST_COORDINATE;
+    SecCompEntity entity(compPtr, ServiceTestCommon::TEST_TOKEN_ID, ServiceTestCommon::TEST_SC_ID_1);
 
     ASSERT_EQ(SC_OK, SecCompManager::GetInstance().AddSecurityComponentToList(1, entity));
 
     std::shared_ptr<LocationButton> compPtrNew = std::make_shared<LocationButton>();
     ASSERT_NE(nullptr, compPtrNew);
-    compPtrNew->rect_.x_ = TEST_COORDINATE * 2; // not overlap
-    compPtrNew->rect_.y_ = TEST_COORDINATE * 2; // not overlap
-    compPtrNew->rect_.width_ = TEST_COORDINATE;
-    compPtrNew->rect_.height_ = TEST_COORDINATE;
-    SecCompEntity entityNew(compPtrNew, TEST_TOKEN_ID, TEST_SC_ID_2);
+    compPtrNew->rect_.x_ = ServiceTestCommon::TEST_COORDINATE * 2; // not overlap
+    compPtrNew->rect_.y_ = ServiceTestCommon::TEST_COORDINATE * 2; // not overlap
+    compPtrNew->rect_.width_ = ServiceTestCommon::TEST_COORDINATE;
+    compPtrNew->rect_.height_ = ServiceTestCommon::TEST_COORDINATE;
+    SecCompEntity entityNew(compPtrNew, ServiceTestCommon::TEST_TOKEN_ID, ServiceTestCommon::TEST_SC_ID_2);
     ASSERT_EQ(SC_OK, SecCompManager::GetInstance().AddSecurityComponentToList(1, entityNew));
 }
 
@@ -157,22 +157,23 @@ HWTEST_F(SecCompManagerTest, AddSecurityComponentToList001, TestSize.Level1)
  */
 HWTEST_F(SecCompManagerTest, DeleteSecurityComponentFromList001, TestSize.Level1)
 {
-    ASSERT_EQ(SecCompManager::GetInstance().DeleteSecurityComponentFromList(TEST_PID_1, TEST_SC_ID_1),
-        SC_SERVICE_ERROR_COMPONENT_NOT_EXIST);
+    ASSERT_EQ(SC_SERVICE_ERROR_COMPONENT_NOT_EXIST, SecCompManager::GetInstance().DeleteSecurityComponentFromList(
+        ServiceTestCommon::TEST_PID_1, ServiceTestCommon::TEST_SC_ID_1));
 
     std::shared_ptr<LocationButton> compPtr = std::make_shared<LocationButton>();
     ASSERT_NE(nullptr, compPtr);
-    compPtr->rect_.x_ = TEST_COORDINATE;
-    compPtr->rect_.y_ = TEST_COORDINATE;
-    compPtr->rect_.width_ = TEST_COORDINATE;
-    compPtr->rect_.height_ = TEST_COORDINATE;
-    SecCompEntity entity(compPtr, TEST_TOKEN_ID, TEST_SC_ID_1);
-    ASSERT_EQ(SC_OK, SecCompManager::GetInstance().AddSecurityComponentToList(TEST_PID_1, entity));
+    compPtr->rect_.x_ = ServiceTestCommon::TEST_COORDINATE;
+    compPtr->rect_.y_ = ServiceTestCommon::TEST_COORDINATE;
+    compPtr->rect_.width_ = ServiceTestCommon::TEST_COORDINATE;
+    compPtr->rect_.height_ = ServiceTestCommon::TEST_COORDINATE;
+    SecCompEntity entity(compPtr, ServiceTestCommon::TEST_TOKEN_ID, ServiceTestCommon::TEST_SC_ID_1);
+    ASSERT_EQ(SC_OK, SecCompManager::GetInstance().AddSecurityComponentToList(ServiceTestCommon::TEST_PID_1, entity));
 
-    ASSERT_EQ(SC_SERVICE_ERROR_COMPONENT_NOT_EXIST,
-        SecCompManager::GetInstance().DeleteSecurityComponentFromList(TEST_PID_1, TEST_SC_ID_2));
+    ASSERT_EQ(SC_SERVICE_ERROR_COMPONENT_NOT_EXIST, SecCompManager::GetInstance().DeleteSecurityComponentFromList(
+        ServiceTestCommon::TEST_PID_1, ServiceTestCommon::TEST_SC_ID_2));
 
-    ASSERT_EQ(SC_OK, SecCompManager::GetInstance().DeleteSecurityComponentFromList(TEST_PID_1, TEST_SC_ID_1));
+    ASSERT_EQ(SC_OK, SecCompManager::GetInstance().DeleteSecurityComponentFromList(
+        ServiceTestCommon::TEST_PID_1, ServiceTestCommon::TEST_SC_ID_1));
 }
 
 /**
@@ -183,18 +184,21 @@ HWTEST_F(SecCompManagerTest, DeleteSecurityComponentFromList001, TestSize.Level1
  */
 HWTEST_F(SecCompManagerTest, GetSecurityComponentFromList001, TestSize.Level1)
 {
-    ASSERT_EQ(nullptr, SecCompManager::GetInstance().GetSecurityComponentFromList(TEST_PID_1, TEST_SC_ID_1));
+    ASSERT_EQ(nullptr, SecCompManager::GetInstance().GetSecurityComponentFromList(
+        ServiceTestCommon::TEST_PID_1, ServiceTestCommon::TEST_SC_ID_1));
 
     std::shared_ptr<LocationButton> compPtr = std::make_shared<LocationButton>();
     ASSERT_NE(nullptr, compPtr);
-    compPtr->rect_.x_ = TEST_COORDINATE;
-    compPtr->rect_.y_ = TEST_COORDINATE;
-    compPtr->rect_.width_ = TEST_COORDINATE;
-    compPtr->rect_.height_ = TEST_COORDINATE;
-    SecCompEntity entity(compPtr, TEST_TOKEN_ID, TEST_SC_ID_1);
-    ASSERT_EQ(SC_OK, SecCompManager::GetInstance().AddSecurityComponentToList(TEST_PID_1, entity));
-    ASSERT_EQ(nullptr, SecCompManager::GetInstance().GetSecurityComponentFromList(TEST_PID_1, TEST_SC_ID_2));
-    ASSERT_NE(nullptr, SecCompManager::GetInstance().GetSecurityComponentFromList(TEST_PID_1, TEST_SC_ID_1));
+    compPtr->rect_.x_ = ServiceTestCommon::TEST_COORDINATE;
+    compPtr->rect_.y_ = ServiceTestCommon::TEST_COORDINATE;
+    compPtr->rect_.width_ = ServiceTestCommon::TEST_COORDINATE;
+    compPtr->rect_.height_ = ServiceTestCommon::TEST_COORDINATE;
+    SecCompEntity entity(compPtr, ServiceTestCommon::TEST_TOKEN_ID, ServiceTestCommon::TEST_SC_ID_1);
+    ASSERT_EQ(SC_OK, SecCompManager::GetInstance().AddSecurityComponentToList(ServiceTestCommon::TEST_PID_1, entity));
+    ASSERT_EQ(nullptr, SecCompManager::GetInstance().GetSecurityComponentFromList(
+        ServiceTestCommon::TEST_PID_1, ServiceTestCommon::TEST_SC_ID_2));
+    ASSERT_NE(nullptr, SecCompManager::GetInstance().GetSecurityComponentFromList(
+        ServiceTestCommon::TEST_PID_1, ServiceTestCommon::TEST_SC_ID_1));
 }
 
 /**
@@ -205,22 +209,23 @@ HWTEST_F(SecCompManagerTest, GetSecurityComponentFromList001, TestSize.Level1)
  */
 HWTEST_F(SecCompManagerTest, NotifyProcessBackground001, TestSize.Level1)
 {
-    SecCompManager::GetInstance().NotifyProcessBackground(TEST_PID_1);
+    SecCompManager::GetInstance().NotifyProcessBackground(ServiceTestCommon::TEST_PID_1);
 
     std::shared_ptr<LocationButton> compPtr = std::make_shared<LocationButton>();
     ASSERT_NE(nullptr, compPtr);
-    compPtr->rect_.x_ = TEST_COORDINATE;
-    compPtr->rect_.y_ = TEST_COORDINATE;
-    compPtr->rect_.width_ = TEST_COORDINATE;
-    compPtr->rect_.height_ = TEST_COORDINATE;
-    SecCompEntity entity(compPtr, TEST_TOKEN_ID, TEST_SC_ID_1);
-    ASSERT_EQ(SC_OK, SecCompManager::GetInstance().AddSecurityComponentToList(TEST_PID_1, entity));
-    auto component = SecCompManager::GetInstance().GetSecurityComponentFromList(TEST_PID_1, TEST_SC_ID_1);
+    compPtr->rect_.x_ = ServiceTestCommon::TEST_COORDINATE;
+    compPtr->rect_.y_ = ServiceTestCommon::TEST_COORDINATE;
+    compPtr->rect_.width_ = ServiceTestCommon::TEST_COORDINATE;
+    compPtr->rect_.height_ = ServiceTestCommon::TEST_COORDINATE;
+    SecCompEntity entity(compPtr, ServiceTestCommon::TEST_TOKEN_ID, ServiceTestCommon::TEST_SC_ID_1);
+    ASSERT_EQ(SC_OK, SecCompManager::GetInstance().AddSecurityComponentToList(ServiceTestCommon::TEST_PID_1, entity));
+    auto component = SecCompManager::GetInstance().GetSecurityComponentFromList(
+        ServiceTestCommon::TEST_PID_1, ServiceTestCommon::TEST_SC_ID_1);
     ASSERT_NE(nullptr, component);
-    SecCompManager::GetInstance().NotifyProcessForeground(TEST_PID_1);
+    SecCompManager::GetInstance().NotifyProcessForeground(ServiceTestCommon::TEST_PID_1);
     ASSERT_TRUE(SecCompManager::GetInstance().IsForegroundCompExist());
 
-    SecCompManager::GetInstance().NotifyProcessBackground(TEST_PID_1);
+    SecCompManager::GetInstance().NotifyProcessBackground(ServiceTestCommon::TEST_PID_1);
     ASSERT_FALSE(SecCompManager::GetInstance().IsForegroundCompExist());
 }
 
@@ -234,27 +239,29 @@ HWTEST_F(SecCompManagerTest, NotifyProcessDied001, TestSize.Level1)
 {
     std::shared_ptr<LocationButton> compPtr = std::make_shared<LocationButton>();
     ASSERT_NE(nullptr, compPtr);
-    compPtr->rect_.x_ = TEST_COORDINATE;
-    compPtr->rect_.y_ = TEST_COORDINATE;
-    compPtr->rect_.width_ = TEST_COORDINATE;
-    compPtr->rect_.height_ = TEST_COORDINATE;
-    SecCompEntity entity(compPtr, TEST_TOKEN_ID, TEST_SC_ID_1);
-    ASSERT_EQ(SC_OK, SecCompManager::GetInstance().AddSecurityComponentToList(TEST_PID_1, entity));
+    compPtr->rect_.x_ = ServiceTestCommon::TEST_COORDINATE;
+    compPtr->rect_.y_ = ServiceTestCommon::TEST_COORDINATE;
+    compPtr->rect_.width_ = ServiceTestCommon::TEST_COORDINATE;
+    compPtr->rect_.height_ = ServiceTestCommon::TEST_COORDINATE;
+    SecCompEntity entity(compPtr, ServiceTestCommon::TEST_TOKEN_ID, ServiceTestCommon::TEST_SC_ID_1);
+    ASSERT_EQ(SC_OK, SecCompManager::GetInstance().AddSecurityComponentToList(ServiceTestCommon::TEST_PID_1, entity));
 
     std::shared_ptr<LocationButton> compPtr2 = std::make_shared<LocationButton>();
     ASSERT_NE(nullptr, compPtr2);
-    compPtr2->rect_.x_ = TEST_COORDINATE * 2; // not overlap
-    compPtr2->rect_.y_ = TEST_COORDINATE * 2; // not overlap
-    compPtr2->rect_.width_ = TEST_COORDINATE;
-    compPtr2->rect_.height_ = TEST_COORDINATE;
-    SecCompEntity entity2(compPtr2, TEST_TOKEN_ID, TEST_SC_ID_2);
-    ASSERT_EQ(SC_OK, SecCompManager::GetInstance().AddSecurityComponentToList(TEST_PID_2, entity2));
+    compPtr2->rect_.x_ = ServiceTestCommon::TEST_COORDINATE * 2; // not overlap
+    compPtr2->rect_.y_ = ServiceTestCommon::TEST_COORDINATE * 2; // not overlap
+    compPtr2->rect_.width_ = ServiceTestCommon::TEST_COORDINATE;
+    compPtr2->rect_.height_ = ServiceTestCommon::TEST_COORDINATE;
+    SecCompEntity entity2(compPtr2, ServiceTestCommon::TEST_TOKEN_ID, ServiceTestCommon::TEST_SC_ID_2);
+    ASSERT_EQ(SC_OK, SecCompManager::GetInstance().AddSecurityComponentToList(ServiceTestCommon::TEST_PID_2, entity2));
 
-    SecCompManager::GetInstance().NotifyProcessDied(TEST_PID_3);
-    ASSERT_NE(nullptr, SecCompManager::GetInstance().GetSecurityComponentFromList(TEST_PID_1, TEST_SC_ID_1));
+    SecCompManager::GetInstance().NotifyProcessDied(ServiceTestCommon::TEST_PID_3);
+    ASSERT_NE(nullptr, SecCompManager::GetInstance().GetSecurityComponentFromList(
+        ServiceTestCommon::TEST_PID_1, ServiceTestCommon::TEST_SC_ID_1));
 
-    SecCompManager::GetInstance().NotifyProcessDied(TEST_PID_1);
-    ASSERT_EQ(nullptr, SecCompManager::GetInstance().GetSecurityComponentFromList(TEST_PID_1, TEST_SC_ID_1));
+    SecCompManager::GetInstance().NotifyProcessDied(ServiceTestCommon::TEST_PID_1);
+    ASSERT_EQ(nullptr, SecCompManager::GetInstance().GetSecurityComponentFromList(
+        ServiceTestCommon::TEST_PID_1, ServiceTestCommon::TEST_SC_ID_1));
 }
 
 /**
@@ -270,8 +277,8 @@ HWTEST_F(SecCompManagerTest, RegisterSecurityComponent001, TestSize.Level1)
     buttonInvalid.ToJson(jsonInvalid);
     int32_t scId;
     SecCompCallerInfo caller = {
-        .tokenId = TEST_TOKEN_ID,
-        .pid = TEST_PID_1
+        .tokenId = ServiceTestCommon::TEST_TOKEN_ID,
+        .pid = ServiceTestCommon::TEST_PID_1
     };
     ASSERT_EQ(SC_SERVICE_ERROR_COMPONENT_INFO_INVALID,
         SecCompManager::GetInstance().RegisterSecurityComponent(LOCATION_COMPONENT, jsonInvalid, caller, scId));
@@ -298,10 +305,11 @@ HWTEST_F(SecCompManagerTest, UpdateSecurityComponent001, TestSize.Level1)
     LocationButton buttonValid = BuildValidLocationComponent();
     buttonValid.ToJson(jsonValid);
     SecCompCallerInfo caller = {
-        .tokenId = TEST_TOKEN_ID,
-        .pid = TEST_PID_1
+        .tokenId = ServiceTestCommon::TEST_TOKEN_ID,
+        .pid = ServiceTestCommon::TEST_PID_1
     };
-    ASSERT_NE(SC_OK, SecCompManager::GetInstance().UpdateSecurityComponent(TEST_SC_ID_1, jsonValid, caller));
+    ASSERT_NE(SC_OK, SecCompManager::GetInstance().UpdateSecurityComponent(
+        ServiceTestCommon::TEST_SC_ID_1, jsonValid, caller));
 }
 
 /**
@@ -313,12 +321,12 @@ HWTEST_F(SecCompManagerTest, UpdateSecurityComponent001, TestSize.Level1)
 HWTEST_F(SecCompManagerTest, UnregisterSecurityComponent001, TestSize.Level1)
 {
     SecCompCallerInfo caller = {
-        .tokenId = TEST_TOKEN_ID,
-        .pid = TEST_PID_1
+        .tokenId = ServiceTestCommon::TEST_TOKEN_ID,
+        .pid = ServiceTestCommon::TEST_PID_1
     };
 
     ASSERT_EQ(SC_SERVICE_ERROR_VALUE_INVALID,
-        SecCompManager::GetInstance().UnregisterSecurityComponent(TEST_INVALID_SC_ID, caller));
+        SecCompManager::GetInstance().UnregisterSecurityComponent(ServiceTestCommon::TEST_INVALID_SC_ID, caller));
 }
 
 /**
@@ -330,8 +338,8 @@ HWTEST_F(SecCompManagerTest, UnregisterSecurityComponent001, TestSize.Level1)
 HWTEST_F(SecCompManagerTest, ReportSecurityComponentClickEvent001, TestSize.Level1)
 {
     SecCompCallerInfo caller = {
-        .tokenId = TEST_TOKEN_ID,
-        .pid = TEST_PID_1
+        .tokenId = ServiceTestCommon::TEST_TOKEN_ID,
+        .pid = ServiceTestCommon::TEST_PID_1
     };
     SecCompClickEvent touchInfo;
     nlohmann::json jsonVaild;

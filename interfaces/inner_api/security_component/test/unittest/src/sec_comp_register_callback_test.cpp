@@ -182,14 +182,14 @@ HWTEST_F(SecCompRegisterCallbackTest, RegisterSecurityComponent001, TestSize.Lev
     int32_t scId;
 
     EXPECT_EQ(SC_OK, SecCompKit::RegisterSecurityComponent(SAVE_COMPONENT, saveInfo, scId));
-    uint8_t data[MAX_HMAC_SIZE] = { 0 };
+    uint8_t data[TestCommon::MAX_HMAC_SIZE] = { 0 };
     struct SecCompClickEvent touchInfo = {
-        .touchX = TEST_COORDINATE,
-        .touchY = TEST_COORDINATE,
+        .touchX = TestCommon::TEST_COORDINATE,
+        .touchY = TestCommon::TEST_COORDINATE,
         .timestamp = static_cast<uint64_t>(
             std::chrono::high_resolution_clock::now().time_since_epoch().count())
     };
-    touchInfo.extraInfo.dataSize = MAX_HMAC_SIZE;
+    touchInfo.extraInfo.dataSize = TestCommon::MAX_HMAC_SIZE;
     touchInfo.extraInfo.data = data;
     EXPECT_EQ(SC_SERVICE_ERROR_CLICK_EVENT_INVALID,
         SecCompKit::ReportSecurityComponentClickEvent(scId, saveInfo, touchInfo, nullptr));
@@ -212,14 +212,14 @@ HWTEST_F(SecCompRegisterCallbackTest, RegisterSecurityComponent002, TestSize.Lev
     int32_t scId;
 
     EXPECT_EQ(SC_OK, SecCompKit::RegisterSecurityComponent(SAVE_COMPONENT, saveInfo, scId));
-    uint8_t data[MAX_HMAC_SIZE] = { 0 };
+    uint8_t data[TestCommon::MAX_HMAC_SIZE] = { 0 };
     struct SecCompClickEvent touchInfo = {
-        .touchX = TEST_COORDINATE,
-        .touchY = TEST_COORDINATE,
+        .touchX = TestCommon::TEST_COORDINATE,
+        .touchY = TestCommon::TEST_COORDINATE,
         .timestamp = static_cast<uint64_t>(
-            std::chrono::high_resolution_clock::now().time_since_epoch().count()) / TIME_CONVERSION_UNIT
+            std::chrono::high_resolution_clock::now().time_since_epoch().count()) / TestCommon::TIME_CONVERSION_UNIT
     };
-    touchInfo.extraInfo.dataSize = MAX_HMAC_SIZE;
+    touchInfo.extraInfo.dataSize = TestCommon::MAX_HMAC_SIZE;
     touchInfo.extraInfo.data = data;
     EXPECT_EQ(SC_OK, SecCompKit::ReportSecurityComponentClickEvent(scId, saveInfo, touchInfo, nullptr));
     EXPECT_EQ(SC_OK, SecCompKit::UnregisterSecurityComponent(scId));
@@ -241,14 +241,14 @@ HWTEST_F(SecCompRegisterCallbackTest, ReportSecurityComponentClickEvent003, Test
     int32_t scId;
 
     EXPECT_EQ(SC_OK, SecCompKit::RegisterSecurityComponent(SAVE_COMPONENT, saveInfo, scId));
-    uint8_t data[MAX_HMAC_SIZE] = { 0 };
+    uint8_t data[TestCommon::MAX_HMAC_SIZE] = { 0 };
     struct SecCompClickEvent touchInfo = {
-        .touchX = TEST_COORDINATE,
-        .touchY = TEST_COORDINATE,
+        .touchX = TestCommon::TEST_COORDINATE,
+        .touchY = TestCommon::TEST_COORDINATE,
         .timestamp = static_cast<uint64_t>(
-            std::chrono::high_resolution_clock::now().time_since_epoch().count()) / TIME_CONVERSION_UNIT
+            std::chrono::high_resolution_clock::now().time_since_epoch().count()) / TestCommon::TIME_CONVERSION_UNIT
     };
-    touchInfo.extraInfo.dataSize = MAX_HMAC_SIZE;
+    touchInfo.extraInfo.dataSize = TestCommon::MAX_HMAC_SIZE;
     touchInfo.extraInfo.data = data;
 
     ASSERT_EQ(SC_OK, SecCompKit::ReportSecurityComponentClickEvent(scId, saveInfo, touchInfo, nullptr));
@@ -292,14 +292,14 @@ HWTEST_F(SecCompRegisterCallbackTest, ReportClickWithoutHmac001, TestSize.Level1
     int32_t scId;
     ASSERT_EQ(SC_OK, SecCompKit::RegisterSecurityComponent(LOCATION_COMPONENT, locationInfo, scId));
     ASSERT_NE(-1, scId);
-    uint8_t data[MAX_HMAC_SIZE] = { 0 };
+    uint8_t data[TestCommon::MAX_HMAC_SIZE] = { 0 };
     struct SecCompClickEvent touch = {
-        .touchX = TEST_COORDINATE,
-        .touchY = TEST_COORDINATE,
+        .touchX = TestCommon::TEST_COORDINATE,
+        .touchY = TestCommon::TEST_COORDINATE,
         .timestamp = static_cast<uint64_t>(
-            std::chrono::high_resolution_clock::now().time_since_epoch().count()) / TIME_CONVERSION_UNIT
+            std::chrono::high_resolution_clock::now().time_since_epoch().count()) / TestCommon::TIME_CONVERSION_UNIT
     };
-    touch.extraInfo.dataSize = MAX_HMAC_SIZE;
+    touch.extraInfo.dataSize = TestCommon::MAX_HMAC_SIZE;
     touch.extraInfo.data = data;
     EXPECT_EQ(SC_SERVICE_ERROR_PERMISSION_OPER_FAIL,
         SecCompKit::ReportSecurityComponentClickEvent(scId, locationInfo, touch, nullptr));
