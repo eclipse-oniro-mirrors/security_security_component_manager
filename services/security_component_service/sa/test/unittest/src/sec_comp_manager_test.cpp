@@ -287,9 +287,14 @@ HWTEST_F(SecCompManagerTest, RegisterSecurityComponent001, TestSize.Level1)
     LocationButton buttonValid = BuildValidLocationComponent();
     buttonValid.ToJson(jsonValid);
 
+#ifdef SECURITY_COMPONENT_ENHANCE_ENABLE
     // callback check failed
     ASSERT_EQ(SC_ENHANCE_ERROR_CALLBACK_NOT_EXIST,
         SecCompManager::GetInstance().RegisterSecurityComponent(LOCATION_COMPONENT, jsonValid, caller, scId));
+#else
+    ASSERT_EQ(SC_OK,
+        SecCompManager::GetInstance().RegisterSecurityComponent(LOCATION_COMPONENT, jsonValid, caller, scId));
+#endif
     SecCompManager::GetInstance().maliciousAppList_.clear();
 }
 

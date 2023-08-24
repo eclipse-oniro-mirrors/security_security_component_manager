@@ -258,8 +258,13 @@ HWTEST_F(SecCompServiceTest, ReportSecurityComponentClickEvent001, TestSize.Leve
     };
     secCompService_->appStateObserver_->AddProcessToForegroundSet(stateData);
 
+#ifdef SECURITY_COMPONENT_ENHANCE_ENABLE
     EXPECT_EQ(SC_ENHANCE_ERROR_CALLBACK_NOT_EXIST,
         secCompService_->RegisterSecurityComponent(LOCATION_COMPONENT, locationInfo, scId));
+#else
+    EXPECT_EQ(SC_OK,
+        secCompService_->RegisterSecurityComponent(LOCATION_COMPONENT, locationInfo, scId));
+#endif
     uint8_t data[16] = { 0 };
     struct SecCompClickEvent touch = {
         .touchX = 100,
@@ -269,8 +274,14 @@ HWTEST_F(SecCompServiceTest, ReportSecurityComponentClickEvent001, TestSize.Leve
         .extraInfo.data = data,
         .extraInfo.dataSize = 16,
     };
+#ifdef SECURITY_COMPONENT_ENHANCE_ENABLE
     EXPECT_EQ(SC_ENHANCE_ERROR_IN_MALICIOUS_LIST,
         secCompService_->ReportSecurityComponentClickEvent(scId, locationInfo, touch, nullptr));
     EXPECT_EQ(SC_SERVICE_ERROR_COMPONENT_NOT_EXIST, secCompService_->UnregisterSecurityComponent(scId));
+#else
+    EXPECT_EQ(SC_OK,
+        secCompService_->ReportSecurityComponentClickEvent(scId, locationInfo, touch, nullptr));
+    EXPECT_EQ(SC_OK, secCompService_->UnregisterSecurityComponent(scId));
+#endif
     setuid(uid);
 }
