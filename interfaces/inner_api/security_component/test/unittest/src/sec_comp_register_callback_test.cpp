@@ -103,9 +103,15 @@ HWTEST_F(SecCompRegisterCallbackTest, RegisterWithoutPreprocess001, TestSize.Lev
 
     SecCompEnhanceAdapter::InitEnhanceHandler(SEC_COMP_ENHANCE_CLIENT_INTERFACE);
     int32_t scId;
+#ifdef SECURITY_COMPONENT_ENHANCE_ENABLE
     ASSERT_EQ(SC_ENHANCE_ERROR_CHALLENGE_CHECK_FAIL,
         SecCompClient::GetInstance().RegisterSecurityComponent(LOCATION_COMPONENT, locationInfo, scId));
     ASSERT_EQ(-1, scId);
+#else
+    ASSERT_EQ(SC_OK,
+        SecCompClient::GetInstance().RegisterSecurityComponent(LOCATION_COMPONENT, locationInfo, scId));
+    ASSERT_NE(-1, scId);
+#endif
 }
 
 /**
@@ -144,9 +150,15 @@ HWTEST_F(SecCompRegisterCallbackTest, Register002, TestSize.Level1)
     g_probe.mockRes = -1;
 
     int32_t scId;
+#ifdef SECURITY_COMPONENT_ENHANCE_ENABLE
     ASSERT_EQ(SC_ENHANCE_ERROR_CALLBACK_OPER_FAIL,
         SecCompKit::RegisterSecurityComponent(LOCATION_COMPONENT, locationInfo, scId));
     ASSERT_EQ(-1, scId);
+#else
+    ASSERT_EQ(SC_OK,
+        SecCompKit::RegisterSecurityComponent(LOCATION_COMPONENT, locationInfo, scId));
+    ASSERT_NE(-1, scId);
+#endif
 }
 
 /**

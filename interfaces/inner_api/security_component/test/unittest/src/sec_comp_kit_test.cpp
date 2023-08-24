@@ -185,7 +185,13 @@ HWTEST_F(SecCompKitTest, RegisterWithoutCallback001, TestSize.Level1)
     std::string locationInfo = jsonRes.dump();
 
     int32_t scId;
+#ifdef SECURITY_COMPONENT_ENHANCE_ENABLE
     ASSERT_EQ(SC_ENHANCE_ERROR_CALLBACK_NOT_EXIST,
         SecCompKit::RegisterSecurityComponent(LOCATION_COMPONENT, locationInfo, scId));
     ASSERT_EQ(-1, scId);
+#else
+    ASSERT_EQ(SC_OK,
+        SecCompKit::RegisterSecurityComponent(LOCATION_COMPONENT, locationInfo, scId));
+    ASSERT_NE(-1, scId);
+#endif
 }
