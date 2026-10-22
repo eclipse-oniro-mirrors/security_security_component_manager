@@ -1328,3 +1328,65 @@ HWTEST_F(SecCompManagerTest, GetFoldOffsetY003, TestSize.Level1)
     SetGrantAdapterAlwaysFail(false);
     SecCompManager::GetInstance().superFoldOffsetY_ = 0;
 }
+
+namespace {
+std::shared_ptr<SecCompEntity> BuildCriticalTestEntity(int32_t scId)
+{
+    auto compPtr = std::make_shared<LocationButton>();
+    compPtr->rect_.x_ = ServiceTestCommon::TEST_COORDINATE;
+    compPtr->rect_.y_ = ServiceTestCommon::TEST_COORDINATE;
+    compPtr->rect_.width_ = ServiceTestCommon::TEST_COORDINATE;
+    compPtr->rect_.height_ = ServiceTestCommon::TEST_COORDINATE;
+    return std::make_shared<SecCompEntity>(compPtr, scId, BuildOwnerInfo());
+}
+}
+
+/**
+ * @tc.name: SaCriticalLifecycle001
+ * @tc.desc: hosting app lifecycle through register, died and unregister
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SecCompManagerTest, SaCriticalLifecycle001, TestSize.Level1)
+{
+    SecCompManager::GetInstance().isSaCritical_ = false;
+    auto entity = BuildCriticalTestEntity(ServiceTestCommon::TEST_SC_ID_1);
+    ASSERT_EQ(SC_OK, SecCompManager::GetInstance().AddSecurityComponentToList(
+        ServiceTestCommon::TEST_PID_1, 0, entity));
+    EXPECT_TRUE(SecCompManager::GetInstance().isSaCritical_);
+
+    SecCompManager::GetInstance().NotifyProcessDied(ServiceTestCommon::TEST_PID_1, false);
+    EXPECT_FALSE(SecCompManager::GetInstance().isSaCritical_);
+
+    entity = BuildCriticalTestEntity(ServiceTestCommon::TEST_SC_ID_1);
+    ASSERT_EQ(SC_OK, SecCompManager::GetInstance().AddSecurityComponentToList(
+        ServiceTestCommon::TEST_PID_1, 0, entity));
+    ASSERT_EQ(SC_OK, SecCompManager::GetInstance().DeleteSecurityComponentFromList(
+        ServiceTestCommon::TEST_PID_1, ServiceTestCommon::TEST_SC_ID_1));
+    EXPECT_FALSE(SecCompManager::GetInstance().isSaCritical_);
+}
+
+/**
+ * @tc.name: SaCriticalMultiProcess001
+ * @tc.desc: sa stays protected while any component exists
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SecCompManagerTest, SaCriticalMultiProcess001, TestSize.Level1)
+{
+    SecCompManager::GetInstance().isSaCritical_ = false;
+    auto entity1 = BuildCriticalTestEntity(ServiceTestCommon::TEST_SC_ID_1);
+    ASSERT_EQ(SC_OK, SecCompManager::GetInstance().AddSecurityComponentToList(
+        ServiceTestCommon::TEST_PID_1, 0, entity1));
+    auto entity2 = BuildCriticalTestEntity(ServiceTestCommon::TEST_SC_ID_2);
+    ASSERT_EQ(SC_OK, SecCompManager::GetInstance().AddSecurityComponentToList(
+        ServiceTestCommon::TEST_PID_2, 0, entity2));
+
+    ASSERT_EQ(SC_OK, SecCompManager::GetInstance().DeleteSecurityComponentFromList(
+        ServiceTestCommon::TEST_PID_2, ServiceTestCommon::TEST_SC_ID_2));
+    EXPECT_TRUE(SecCompManager::GetInstance().isSaCritical_);
+
+    ASSERT_EQ(SC_OK, SecCompManager::GetInstance().DeleteSecurityComponentFromList(
+        ServiceTestCommon::TEST_PID_1, ServiceTestCommon::TEST_SC_ID_1));
+    EXPECT_FALSE(SecCompManager::GetInstance().isSaCritical_);
+}

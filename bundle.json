@@ -40,6 +40,7 @@
         "init",
         "ipc",
         "json",
+        "memmgr",
         "safwk",
         "samgr",
         "window_manager"
