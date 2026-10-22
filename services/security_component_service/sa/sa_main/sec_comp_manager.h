@@ -15,6 +15,7 @@
 #ifndef SECURITY_COMPONENT_MANAGER_H
 #define SECURITY_COMPONENT_MANAGER_H
 
+#include <atomic>
 #include <functional>
 #include <map>
 #include <memory>
@@ -77,6 +78,7 @@ public:
     void NotifyProcessDied(int32_t pid, bool isProcessCached);
     void DumpSecComp(std::string& dumpStr);
     bool Initialize();
+    void NotifySaProcessStopped();
     void InitGrantAdapterAsync();
     void ExitSaProcess();
     void ExitWhenAppMgrDied();
@@ -97,6 +99,7 @@ private:
         SecCompType type, const std::string& scene, int32_t res);
     int32_t CreateScId();
     void GetFoldOffsetY(const CrossAxisState crossAxisState);
+    void SetSaCritical(bool critical);
     int32_t CheckComponentInfoValid(const ComponentCheckParams& params);
     int32_t CheckRectInfo(const ComponentCheckParams& params);
     bool AllowToBypassArkuiCheck(const SecCompCallerInfo& caller);
@@ -108,6 +111,7 @@ private:
     int32_t scIdStart_;
     bool isSaExit_ = false;
     int32_t superFoldOffsetY_ = 0;
+    std::atomic<bool> isSaCritical_ {false};
 
     std::shared_ptr<AppExecFwk::EventRunner> secRunner_;
     std::shared_ptr<SecEventHandler> secHandler_;

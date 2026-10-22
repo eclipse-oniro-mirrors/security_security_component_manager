@@ -14,12 +14,14 @@
  */
 #include "sec_comp_manager.h"
 
+#include <unistd.h>
 #include "delay_exit_task.h"
 #include "first_use_dialog.h"
 #include "hisysevent.h"
 #include "isec_comp_service.h"
 #include "ipc_skeleton.h"
 #include "iservice_registry.h"
+#include "mem_mgr_client.h"
 #include "sec_comp_bundle_name_cache.h"
 #include "sec_comp_enhance_adapter.h"
 #include "sec_comp_err.h"
@@ -42,6 +44,9 @@ const std::string START_DIALOG = "start dialog, onclick will be trap after dialo
 constexpr int32_t SA_ID_SECURITY_COMPONENT_SERVICE = 3506;
 const std::string CUSTOMIZE_SAVE_BUTTON = "ohos.permission.CUSTOMIZE_SAVE_BUTTON";
 const std::string READ_PASTEBOARD_PERMISSION = "ohos.permission.READ_PASTEBOARD";
+constexpr int32_t MEM_MGR_PROCESS_TYPE = 1;
+constexpr int32_t MEM_MGR_PROCESS_STATUS_STARTED = 1;
+constexpr int32_t MEM_MGR_PROCESS_STATUS_STOPPED = 0;
 }
 
 SecCompManager::SecCompManager()
@@ -95,6 +100,7 @@ int32_t SecCompManager::AddSecurityComponentToList(int32_t pid,
         SC_LOG_ERROR(LABEL, "SA is exiting, retry...");
         return SC_SERVICE_ERROR_SERVICE_NOT_EXIST;
     }
+    SetSaCritical(true);
 
     auto iter = componentMap_.find(pid);
     if (iter != componentMap_.end()) {
@@ -126,6 +132,7 @@ int32_t SecCompManager::DeleteSecurityComponentFromList(int32_t pid, int32_t scI
         return SC_SERVICE_ERROR_COMPONENT_NOT_EXIST;
     }
     auto& list = iter->second.compList;
+    bool isComponentDeleted = false;
     for (auto it = list.begin(); it != list.end(); ++it) {
         std::shared_ptr<SecCompEntity> sc = *it;
         if (sc == nullptr) {
@@ -134,12 +141,19 @@ int32_t SecCompManager::DeleteSecurityComponentFromList(int32_t pid, int32_t scI
         }
         if (sc->scId_ == scId) {
             list.erase(it);
-            DelayExitTask::GetInstance().Start();
-            return SC_OK;
+            isComponentDeleted = true;
+            break;
         }
     }
-    SC_LOG_ERROR(LABEL, "Can not find component");
-    return SC_SERVICE_ERROR_COMPONENT_NOT_EXIST;
+    if (!isComponentDeleted) {
+        SC_LOG_ERROR(LABEL, "Can not find component");
+        return SC_SERVICE_ERROR_COMPONENT_NOT_EXIST;
+    }
+    DelayExitTask::GetInstance().Start();
+    if (!IsCompExist()) {
+        SetSaCritical(false);
+    }
+    return SC_OK;
 }
 
 static std::string TransformCallBackResult(enum SCErrCode error)
@@ -244,6 +258,31 @@ void SecCompManager::NotifyProcessDied(int32_t pid, bool isProcessCached)
     componentMap_.erase(pid);
 
     DelayExitTask::GetInstance().Start();
+    if (!IsCompExist()) {
+        SetSaCritical(false);
+    }
+}
+
+void SecCompManager::SetSaCritical(bool critical)
+{
+    if (critical == isSaCritical_.load()) {
+        return;
+    }
+    int32_t ret = Memory::MemMgrClient::GetInstance().SetCritical(getpid(), critical,
+        SA_ID_SECURITY_COMPONENT_SERVICE);
+    if (ret != 0) {
+        SC_LOG_ERROR(LABEL, "SetCritical %{public}d failed, ret: %{public}d", critical, ret);
+        return;
+    }
+    isSaCritical_.store(critical);
+    SC_LOG_INFO(LABEL, "SetCritical %{public}d success", critical);
+}
+
+void SecCompManager::NotifySaProcessStopped()
+{
+    SetSaCritical(false);
+    Memory::MemMgrClient::GetInstance().NotifyProcessStatus(getpid(), MEM_MGR_PROCESS_TYPE,
+        MEM_MGR_PROCESS_STATUS_STOPPED, SA_ID_SECURITY_COMPONENT_SERVICE);
 }
 
 void SecCompManager::ExitSaProcess()
@@ -325,6 +364,7 @@ void SecCompManager::SendCheckInfoEnhanceSysEvent(int32_t scId,
 
 int32_t SecCompManager::AddSecurityComponentProcess(const SecCompCallerInfo& caller)
 {
+    SetSaCritical(true);
     DelayExitTask::GetInstance().Stop();
     {
         std::unique_lock<ffrt::shared_mutex> lk(this->componentInfoLock_);
@@ -663,6 +703,10 @@ void SecCompManager::DumpSecComp(std::string& dumpStr)
 bool SecCompManager::Initialize()
 {
     SC_LOG_DEBUG(LABEL, "Initialize!!");
+    Memory::MemMgrClient::GetInstance().NotifyProcessStatus(getpid(), MEM_MGR_PROCESS_TYPE,
+        MEM_MGR_PROCESS_STATUS_STARTED, SA_ID_SECURITY_COMPONENT_SERVICE);
+    SetSaCritical(true);
+
     SecCompEnhanceAdapter::StartEnhanceService();
 
     secRunner_ = AppExecFwk::EventRunner::Create(true, AppExecFwk::ThreadMode::FFRT);
@@ -679,6 +723,12 @@ bool SecCompManager::Initialize()
     FirstUseDialog::GetInstance().Init(secHandler_);
     SecCompPermManager::GetInstance().InitEventHandler(secHandler_);
     DelayExitTask::GetInstance().Start();
+    {
+        std::unique_lock<ffrt::shared_mutex> lk(this->componentInfoLock_);
+        if (!IsCompExist()) {
+            SetSaCritical(false);
+        }
+    }
 
     return true;
 }

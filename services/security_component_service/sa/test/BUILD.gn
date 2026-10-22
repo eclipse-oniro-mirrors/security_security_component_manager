@@ -50,6 +50,7 @@ ohos_unittest("sec_comp_service_test") {
     "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/wm_mini_client.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/test/mock/src/wm_mini_client_test.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/test/mock/src/accesstoken_kit.cpp",
+    "${sec_comp_root_dir}/services/security_component_service/sa/test/mock/src/mem_mgr_client.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/test/mock/src/display_manager_lite.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/test/mock/src/mock_app_mgr_proxy.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/test/mock/src/mock_iservice_registry.cpp",
@@ -101,6 +102,7 @@ ohos_unittest("sec_comp_service_test") {
     "hitrace:hitrace_meter",
     "ipc:ipc_core",
     "json:nlohmann_json_static",
+    "memmgr:memmgrclient",
     "samgr:samgr_proxy",
     "window_manager:libdm_lite",
   ]
@@ -145,6 +147,7 @@ ohos_unittest("sec_comp_service_mock_test") {
     "${sec_comp_root_dir}/services/security_component_service/sa/sa_main/wm_mini_client.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/test/mock/src/wm_mini_client_test.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/test/mock/src/accesstoken_kit.cpp",
+    "${sec_comp_root_dir}/services/security_component_service/sa/test/mock/src/mem_mgr_client.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/test/mock/src/mock_app_mgr_proxy.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/test/mock/src/mock_iservice_registry.cpp",
     "${sec_comp_root_dir}/services/security_component_service/sa/test/mock/src/sec_comp_enhance_adapter.cpp",
@@ -182,6 +185,7 @@ ohos_unittest("sec_comp_service_mock_test") {
     "hitrace:hitrace_meter",
     "ipc:ipc_core",
     "json:nlohmann_json_static",
+    "memmgr:memmgrclient",
     "samgr:samgr_proxy",
     "window_manager:libdm_lite",
   ]

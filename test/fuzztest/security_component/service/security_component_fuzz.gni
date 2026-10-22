@@ -44,6 +44,7 @@ sc_external_deps = [
   "hisysevent:libhisysevent",
   "hitrace:hitrace_meter",
   "ipc:ipc_core",
+  "memmgr:memmgrclient",
   "safwk:system_ability_fwk",
   "samgr:samgr_proxy",
   "window_manager:libdm",
@@ -75,6 +76,7 @@ sc_service_sources = [
 
 sc_mock_sources = [
   "${sec_comp_dir}/services/security_component_service/sa/test/mock/src/accesstoken_kit.cpp",
+  "${sec_comp_dir}/services/security_component_service/sa/test/mock/src/mem_mgr_client.cpp",
   "${sec_comp_dir}/services/security_component_service/sa/test/mock/src/mock_app_mgr_proxy.cpp",
   "${sec_comp_dir}/services/security_component_service/sa/test/mock/src/sec_comp_enhance_adapter.cpp",
   "${sec_comp_dir}/services/security_component_service/sa/test/mock/src/sec_comp_grant_adapter.cpp",

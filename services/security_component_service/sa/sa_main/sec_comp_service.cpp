@@ -95,6 +95,7 @@ void SecCompService::OnStop()
 {
     SC_LOG_INFO(LABEL, "Stop service");
     state_ = ServiceRunningState::STATE_NOT_START;
+    SecCompManager::GetInstance().NotifySaProcessStopped();
     UnregisterAppStateObserver();
 }
 
