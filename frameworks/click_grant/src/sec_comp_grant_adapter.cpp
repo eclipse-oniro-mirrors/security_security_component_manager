@@ -51,11 +51,13 @@ void SecCompGrantAdapter::InitGrantHandler()
             reinterpret_cast<GrantAdapterFactory>(dlsym(handler, "GetGrantAdapterInstance"));
         if (getGrantInstance == nullptr) {
             SC_LOG_ERROR(LABEL, "dlsym GetGrantAdapterInstance failed at attempt %{public}u", attempt);
+            dlclose(handler);
             return;
         }
         SecCompGrantInterface* instance = getGrantInstance();
         if (instance == nullptr) {
             SC_LOG_ERROR(LABEL, "GetGrantAdapterInstance returns null at attempt %{public}u", attempt);
+            dlclose(handler);
             return;
         }
         SC_LOG_DEBUG(LABEL, "Dlopen click grant adapter successful.");
