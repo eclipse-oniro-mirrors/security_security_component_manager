@@ -37,8 +37,14 @@ public:
     virtual void OnStop() {};
 #ifndef FUZZ_ENABLE
     MOCK_METHOD1(Publish, bool(sptr<IRemoteObject>));
+    MOCK_METHOD1(OnStartFail, bool(int32_t));
 #else
     bool Publish(sptr<IRemoteObject> obj)
+    {
+        return true;
+    }
+
+    bool OnStartFail(int32_t errCode)
     {
         return true;
     }

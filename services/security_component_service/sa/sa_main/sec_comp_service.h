@@ -71,6 +71,7 @@ private:
     bool Initialize() const;
     bool RegisterAppStateObserver();
     void UnregisterAppStateObserver();
+    void HandleOnStartFailed(int32_t errCode);
     bool GetCallerInfo(SecCompCallerInfo& caller);
     bool IsMediaLibraryCalling();
 
