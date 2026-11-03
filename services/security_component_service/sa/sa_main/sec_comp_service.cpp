@@ -64,12 +64,12 @@ void SecCompService::OnStart()
     SC_LOG_INFO(LABEL, "SecCompService is starting");
     if (!RegisterAppStateObserver()) {
         SC_LOG_ERROR(LABEL, "Failed to register app state observer!");
-        FinishTrace(HITRACE_TAG_ACCESS_CONTROL);
+        HandleOnStartFailed(SC_SERVICE_ERROR_ON_START_REGISTER_OBSERVER_FAIL);
         return;
     }
     if (!Initialize()) {
         SC_LOG_ERROR(LABEL, "Failed to initialize");
-        FinishTrace(HITRACE_TAG_ACCESS_CONTROL);
+        HandleOnStartFailed(SC_SERVICE_ERROR_ON_START_INITIALIZE_FAIL);
         return;
     }
 
@@ -77,7 +77,7 @@ void SecCompService::OnStart()
     bool ret = Publish(this);
     if (!ret) {
         SC_LOG_ERROR(LABEL, "Failed to publish service!");
-        FinishTrace(HITRACE_TAG_ACCESS_CONTROL);
+        HandleOnStartFailed(SC_SERVICE_ERROR_ON_START_PUBLISH_FAIL);
         return;
     }
     SecCompManager::GetInstance().InitGrantAdapterAsync();
@@ -97,6 +97,17 @@ void SecCompService::OnStop()
     state_ = ServiceRunningState::STATE_NOT_START;
     SecCompManager::GetInstance().NotifySaProcessStopped();
     UnregisterAppStateObserver();
+}
+
+void SecCompService::HandleOnStartFailed(int32_t errCode)
+{
+    state_ = ServiceRunningState::STATE_NOT_START;
+    UnregisterAppStateObserver();
+    SecCompManager::GetInstance().NotifySaProcessStopped();
+    if (!OnStartFail(errCode)) {
+        SC_LOG_ERROR(LABEL, "Failed to notify samgr of OnStart failure, errCode: %{public}d", errCode);
+    }
+    FinishTrace(HITRACE_TAG_ACCESS_CONTROL);
 }
 
 bool SecCompService::RegisterAppStateObserver()
@@ -159,6 +170,7 @@ void SecCompService::UnregisterAppStateObserver()
     if (iAppMgr_ != nullptr && appStateObserver_ != nullptr) {
         iAppMgr_->UnregisterApplicationStateObserver(appStateObserver_);
     }
+    appStateObserver_ = nullptr;
 }
 
 bool SecCompService::GetCallerInfo(SecCompCallerInfo& caller)
@@ -171,9 +183,15 @@ bool SecCompService::GetCallerInfo(SecCompCallerInfo& caller)
         return false;
     }
     std::unique_lock<std::mutex> lock(secCompSrvMutex_);
-    if ((uid != ROOT_UID) && (!appStateObserver_->IsProcessForeground(pid, uid))) {
-        SC_LOG_ERROR(LABEL, "caller pid is not in foreground");
-        return false;
+    if (uid != ROOT_UID) {
+        if (appStateObserver_ == nullptr) {
+            SC_LOG_ERROR(LABEL, "AppStateObserver is not ready");
+            return false;
+        }
+        if (!appStateObserver_->IsProcessForeground(pid, uid)) {
+            SC_LOG_ERROR(LABEL, "caller pid is not in foreground");
+            return false;
+        }
     }
     caller.tokenId = tokenId;
     caller.pid = pid;
