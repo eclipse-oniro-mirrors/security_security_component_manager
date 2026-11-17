@@ -35,6 +35,7 @@ using namespace OHOS;
 namespace {
 static constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {
     LOG_CORE, SECURITY_DOMAIN_SECURITY_COMPONENT, "SecCompRegisterCallbackTest"};
+static constexpr int32_t WAIT_SERVICE_RETRY_TIMES = 10;
 static AccessTokenID g_selfTokenId = 0;
 static int32_t g_selfUid = 0;
 static uint32_t g_token_sum = 0;
@@ -92,7 +93,17 @@ public:
 void SecCompRegisterCallbackTest::SetUpTestCase()
 {
     system("kill -9 `pidof security_component_service`");
+    sleep(1);
     InitUiRegister();
+    SecCompKit::LoadService();
+    int32_t retryTimes = 0;
+    while (!SecCompKit::IsServiceExist() && retryTimes < WAIT_SERVICE_RETRY_TIMES) {
+        sleep(1);
+        retryTimes++;
+    }
+    if (!SecCompKit::IsServiceExist()) {
+        SC_LOG_ERROR(LABEL, "Wait security component service start timeout.");
+    }
     SC_LOG_INFO(LABEL, "SecCompRegisterCallbackTest.");
 }
 
